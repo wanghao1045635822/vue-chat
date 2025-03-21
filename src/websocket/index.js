@@ -44,7 +44,7 @@ export default class VueWebSocket {
     userDisconnect = false;
     isconnected = false;
     resolvePromiseMap = new Map();
-    
+
     // constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType,vuexStore){
     //     this.ws_protocol = ws_protocol;
     //     this.ip= ip;
@@ -89,9 +89,9 @@ export default class VueWebSocket {
             console.log("ws open");
             websocketObj.isconnected = true;
             websocketObj.lastInteractionTime(new Date().getTime());
-            websocketObj.pingIntervalId = setInterval(() => {
-                 websocketObj.ping();
-             }, websocketObj.heartbeatTimeout);
+            // websocketObj.pingIntervalId = setInterval(() => {
+            //      websocketObj.ping();
+            //  }, websocketObj.heartbeatTimeout);
              websocketObj.userDisconnect = false;
              //发送connect指令
              websocketObj.sendConnectMessage();
@@ -105,7 +105,7 @@ export default class VueWebSocket {
             websocketObj.isconnected = false;
             console.log("ws onclose");
             websocketObj.ws.close();
-            clearInterval(websocketObj.pingIntervalId);
+            // clearInterval(websocketObj.pingIntervalId);
             if(!websocketObj.userDisconnect){
                 console.log("reconnect websocket");
                 websocketObj.reconnect(event);
@@ -142,7 +142,7 @@ export default class VueWebSocket {
         } else {
             console.log("curent websocket is close");
         }
-        
+
     }
 
     /**
@@ -258,7 +258,7 @@ export default class VueWebSocket {
     handleFriendRequest(value){
         this.sendPublishMessage(FHR,value);
     }
-    
+
     /**
      * 获取用户详细信息
      */
@@ -272,10 +272,10 @@ export default class VueWebSocket {
     }
 
     /**
-     * 
+     *
      * @param {用户信息} info: {
      * type:  0
-     * value: 
+     * value:
      * }
      */
     modifyMyInfo(info){
@@ -283,9 +283,9 @@ export default class VueWebSocket {
     }
 
     /**
-     * 
-     * @param {群组id} groupId 
-     * @param {是否需要刷新} refresh 
+     *
+     * @param {群组id} groupId
+     * @param {是否需要刷新} refresh
      */
     getGroupInfo(groupId,refresh){
         var groupIds = [];
@@ -401,9 +401,9 @@ export default class VueWebSocket {
     }
 
     /**
-     * 
-     * @param {子信令} subsignal 
-     * @param {消息体内容} content 
+     *
+     * @param {子信令} subsignal
+     * @param {消息体内容} content
      */
     sendPublishMessage(subsignal,content,protoMessageId = 0){
         var websocketprotomessage = new WebSocketProtoMessage();
@@ -417,7 +417,7 @@ export default class VueWebSocket {
         websocketprotomessage.setMessageId(++messageId);
         LocalStore.saveMessageId(messageId);
         this.send(websocketprotomessage.toJson());
-        
+
         var vueWebSocket = this;
         var pubAckPromise = new Promise((resolve) => {
              var timeoutId = setTimeout(() => {
@@ -431,7 +431,7 @@ export default class VueWebSocket {
                  } else {
                     resolve(new FutureResult(ERROR_CODE,""));
                  }
-                 
+
              },10000);
              var resolvePromise = new PromiseResolve(resolve,timeoutId);
              resolvePromise.protoMessageId = protoMessageId;

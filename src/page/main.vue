@@ -46,21 +46,22 @@ export default {
    methods: {
     handleVisiable(e) {
         this.$store.dispatch('visibilityChange',e.target.visibilityState);
-      }  
+      }
    }
-   
-   
+
+
 }
 </script>
 
 <style lang="stylus" scoped>
-
 #app
+//background-color: rgba(0, 0, 0, 0.5)!important /* 白色背景，50% 透明度 */
+  border-radius : 30px
+  overflow: hidden
   &.fullscreen
     width: 100%
     height: 100%
   display: flex
-  border-radius 50px
   width: 75%
   height: 80%
   background-color: #fff

@@ -19,7 +19,7 @@
                 </div>
 
             </div>
-            
+
         </li>
     </ul>
   </div>
@@ -80,7 +80,7 @@ export default {
                         displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
                     }
                 }
-                
+
             }
            return displayContent;
         },
@@ -88,7 +88,7 @@ export default {
             var displayName = from;
             displayName = webSocketClient.getDisplayName(from);
             return displayName;
-        }	
+        }
     },
     filters: {
             // 将日期过滤为 hour:minutes
@@ -126,9 +126,9 @@ export default {
     padding: 12px
     transition: background-color .1s
     font-size: 0
-    &:hover 
+    &:hover
         background-color: rgb(220,220,220)
-    &.active 
+    &.active
         background-color: #c4c4c4
     .avatar
         border-radius: 2px
@@ -158,9 +158,9 @@ export default {
                 vertical-align: center
         .lastmsg-info
             display: flex
-            margin-top: 8px    
+            margin-top: 8px
             .lastmsg
-                flex: 1 1 auto 
+                flex: 1 1 auto
                 font-size: 12px
                 width: 130px
                 height: 15px
@@ -188,5 +188,5 @@ export default {
                    font-size:10px;
                    -webkit-transform:scale(0.8);
                    display:block;
-          
+
 </style>

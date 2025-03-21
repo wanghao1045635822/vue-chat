@@ -47,7 +47,7 @@ const state = {
             remark: "新的朋友",  //备注
             area: "",  //地区
         }
-        
+
     ],
     friendIds: [],
     friendDatas: [],
@@ -190,7 +190,7 @@ const mutations = {
                 file: ['/static/audio/notify.mp3']
             }
         });
-        
+
         state.inCommingNotify =  new Notify({
             audio:{
                 file: ['/static/audio/incoming_call_ring.mp3']
@@ -263,7 +263,7 @@ const mutations = {
                   var friendData = state.friendDatas.find(friend => friend.friendUid == friendUid)
                   if(friendData && friendData.alias && friendData.alias != ""){
                      currentUser.remark = friendData.alias
-                  }  
+                  }
                   var isExist = false;
                   for(var friend of state.friendlist){
                     if(friend.wxid === currentUser.wxid){
@@ -278,7 +278,7 @@ const mutations = {
                     state.friendlist.push(currentUser);
                   }
                 }
-            }  
+            }
         }
         //更新会话信息
         for(var stateConversationInfo of state.conversations){
@@ -419,7 +419,7 @@ const mutations = {
         var message = Message.toMessage(state,sendMessage);
         var protoMessage = ProtoMessage.convertToProtoMessage(message);
         console.log("send protomessage "+JSON.stringify(protoMessage));
-        
+
         // if(MessageConfig.isDisplayableMessage(protoMessage)){
         //     var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
         //     stateConversationInfo.conversationInfo.lastMessage = protoMessage;
@@ -438,7 +438,7 @@ const mutations = {
         //     } else {
         //         stateChatMessage.protoMessages.push(protoMessage);
         //     }
-            
+
         // }
         this.commit("preAddProtoMessage",protoMessage)
 
@@ -448,7 +448,7 @@ const mutations = {
 
     //图片，视频类消息，需要先加入消息，然后上传成功后在更新message content
     preAddProtoMessage(state,protoMessage){
-        
+
         if(MessageConfig.isDisplayableMessage(protoMessage)){
             var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
             stateConversationInfo.conversationInfo.lastMessage = protoMessage;
@@ -471,7 +471,7 @@ const mutations = {
                 }
                 stateChatMessage.protoMessages.push(protoMessage);
             }
-            
+
         }
     },
 
@@ -513,7 +513,7 @@ const mutations = {
             state.conversations.unshift(newStateConversationInfo);
         } else {
             state.selectTarget = stateConversationInfo.conversationInfo.target
-            
+
         }
         router.push({ path: '/conversation'})
     },
@@ -525,7 +525,7 @@ const mutations = {
         var currentConversationInfoIndex;
         for(var index in state.conversations){
             var stateConverstaionInfo = state.conversations[index];
-            if(stateConverstaionInfo.conversationInfo.conversationType == protoConversationInfo.conversationType 
+            if(stateConverstaionInfo.conversationInfo.conversationType == protoConversationInfo.conversationType
                 && stateConverstaionInfo.conversationInfo.target == protoConversationInfo.target){
                 update = true;
                 currentConversationInfoIndex = index;
@@ -594,7 +594,7 @@ const mutations = {
         }
 
 
-       
+
     },
 
     /**
@@ -628,13 +628,13 @@ const mutations = {
                 var isSameProtoMessage = stateChatMessage.protoMessages.find(message => message.messageId === protoMessage.messageId);
                 if(!isSameProtoMessage){
                  stateChatMessage.protoMessages.unshift(protoMessage);
-                } 
+                }
             }
         }
     },
 
     addProtoMessage(state,protoMessage){
-       state.isLoadRemoteMessage = false 
+       state.isLoadRemoteMessage = false
         //更新用户信息
        if(state.waitUserIds.indexOf(protoMessage.from) == -1){
            console.log("waiting for get userId "+protoMessage.from);
@@ -679,7 +679,7 @@ const mutations = {
 
            this.commit('updateConversationInfo',protoConversationInfo);
        }
-       
+
     },
 
 
@@ -691,7 +691,7 @@ const mutations = {
                 protoMessage.messageUid = updateMessage.messageUid;
                 return
             }
-        } 
+        }
         //如果切换聊天，需要全局遍历，暂定
         for(var stateChatMessage of state.messages){
             for(var protoMessage of stateChatMessage.protoMessages){
@@ -840,7 +840,7 @@ const mutations = {
     },
     updateFriendIds(state,friendList){
        if(friendList){
-        state.friendDatas = friendList;   
+        state.friendDatas = friendList;
         var userIds = [];
         for(var i in friendList){
             userIds[i] = friendList[i].friendUid;
@@ -877,7 +877,7 @@ const getters = {
        if(!stateConversation){
           return false;
        }
-       return stateConversation.conversationInfo.conversationType === ConversationType.Single; 
+       return stateConversation.conversationInfo.conversationType === ConversationType.Single;
     },
     // 筛选出含有搜索值的好友列表
     searchedFriendlist () {
@@ -954,7 +954,7 @@ const getters = {
            var conversationName = "";
            var conversationTarget = '';
            if(state.friendlist){
-             var friend = state.friendlist.find(friend => friend.wxid == state.selectTarget) 
+             var friend = state.friendlist.find(friend => friend.wxid == state.selectTarget)
              if(friend){
                  conversationName = friend.nickname;
                  conversationTarget = friend.wxid;

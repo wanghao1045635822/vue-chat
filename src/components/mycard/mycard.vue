@@ -2,7 +2,7 @@
 <template>
 	<div class="mycard" ref="mycardRef">
 	    <header>
-	    	<img :src="user.img" class="avatar" @click="showPersonCard" @dblclick="changeFullScreenMode">
+	    	<img :src="user.img" style="visibility: hidden" class="avatar" @click="showPersonCard" @dblclick="changeFullScreenMode">
 			<personcard v-if="showPersonalCard" v-bind:userId="userId"></personcard>
 	    </header>
 	    <div class="navbar" @click="clearSearch">
@@ -16,17 +16,17 @@
 			<div class="friend-item">
 				<span v-if="newFriendRequestCount > 0" class="unread-friend-request-num">
 				</span>
-				<router-link to="/friend" class="icon iconfont icon-pengyou">	
+				<router-link to="/friend" class="icon iconfont icon-pengyou">
 				</router-link>
 			</div>
-			
+
 			<div class="icon iconfont icon-jiahaoyou" @click="showAddRequestTip = !showAddRequestTip">
 				<addtip v-show="showAddRequestTip"></addtip>
-			</div> 
+			</div>
 	    </div>
-	    <footer>
-	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>
-	    </footer>
+<!--	    <footer>-->
+<!--	        <i title = "退出" class="icon iconfont icon-tuichu" @click="loginOut"></i>-->
+<!--	    </footer>-->
 	</div>
 </template>
 
@@ -69,19 +69,19 @@ export default {
 			this.$store.dispatch('loginOut','');
 		},
 		changeFullScreenMode(){
-			var fullscreen = this.$store.state.changeFullScreenMode;
-			console.log('change screen mode '+fullscreen);
-			var _this = this;
-			_this.$store.state.changeFullScreenMode = !fullscreen;
-			setTimeout(() => {
-				let mycardHeight= _this.$refs.mycardRef.offsetHeight;
-				console.log('resize mycard height '+mycardHeight);
-				_this.$store.state.appHeight = mycardHeight;
-			},200);
-			
+			// var fullscreen = this.$store.state.changeFullScreenMode;
+			// console.log('change screen mode '+fullscreen);
+			// var _this = this;
+			// _this.$store.state.changeFullScreenMode = !fullscreen;
+			// setTimeout(() => {
+			// 	let mycardHeight= _this.$refs.mycardRef.offsetHeight;
+			// 	console.log('resize mycard height '+mycardHeight);
+			// 	_this.$store.state.appHeight = mycardHeight;
+			// },200);
+
 		}
 	},
-	
+
 	mounted(){
 		document.addEventListener("click",e=>{
 			var isString = typeof(e.target.className) == 'string'
@@ -103,6 +103,7 @@ export default {
     position: relative
     width: 100%
     height: 100%
+    background-color: #f0f0f0  // 修改背景颜色
     .avatar
 	    width: 36px
 	    height: 36px
@@ -143,7 +144,7 @@ export default {
 			position:absolute
 			top: 25px
 			right: 17px
-			z-index: 10	
+			z-index: 10
 	.conversation-item
 	    position:relative
 		.unread-num
