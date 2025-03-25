@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+//服务器错误
+message S2COutOffService
+{	
+	int32  errorcode = 1; 		//错误码
+}
+
+message NetTestLink          //链路检测包,服务端定时向客户端发送此消息，客户端收到此消息后，返回TestLink到服务端，如果1分钟内没有收到服务端的TestLink，那么客户端重置与服务器的网络（断开重连)
+{	
+}
+
+message C2SGetServerTimeReq  //获得服务器时间
+{
+}
+message S2CGetServerTimeAck
+{
+  int64  n64ServerTime=1;//服务器时间戳(秒)
+}
+
+//创建充值计费
+message C2SRoleFeeCreateReq
+{
+	int32		  	role_id = 1;			//角色ID
+	int32		  	feeValue = 2;			//充值数量，单位分
+	int32 			paychannel =3;			//支付渠道，1表示微信，2支付宝，3银联
+}
+
+//创建充值返回，返回充值二维码url
+message S2CRoleFeeCreateAck
+{	
+	int32		  	feestatus = 1;			//返回状态值
+	int32 			paychannel =2;			//支付渠道，，1表示微信，2支付宝，3银联
+	int32 			feeValue 	=3;			//充值数量，单位分
+	string			feecode_url = 4;		//充值二维码
+}
+
+//充值结果通知
+message S2CRoleFeeResultNotify
+{	
+	int32		  	role_id = 1;			//角色ID
+	int32		  	feestatus = 2;			//返回状态值
+	int32 			paychannel =3;			//支付渠道，，1表示微信，2支付宝，3银联
+	int32           curklcoins =4;			//本次充值获得的快币数
+	int32           totalklcoins =5;		//当前角色可用总快币数
+	string			resultMsg = 6;			//充值消息，当feestatus非成功时，指示不成功原因.
+}
+
+//保存捏脸数据,
+message C2SSetRoleFaceData
+{	
+	string			custom_facedata=1;		//捏脸数据，就是字符串.
+}
+
+//捏脸数据,处理结果.
+message S2CSetRoleFaceDataAck
+{	
+	int32 			errorcode=1;			//处理结果.
+}
+
+//实名认证
+message C2SRealNameVerifyDataReq
+{		
+	string		  	account = 1;		//账号
+	string 			realname=2;			//真实名字
+	string			idcard_num=3;		//身份证
+}
+
+//实名认证结果
+message S2CRealNameVerifyDataAck
+{			
+	string			account=1;                //角色id
+	int32 			errorcode=2;			//处理结果.0,表示认证成功	
+}
+
+//转账到支付宝账号（提现),提现功能.
+message C2SZFBWithdrawalReq
+{		
+	int32		  	role_id = 1;			//角色ID
+	int32 			payvalue=2;				//提现额度,单位分，最小10,也就是0.1元
+	string			zfb_login_account=3;	//提现到的支付宝账号.目前只有支付宝，填写支付宝登录的账号名.
+	string          idcard_num=4;			//身份证号
+	string 			zfbname=5;				//支付宝账号对应的名称
+}
+
+//转账到支付宝账号（提现)，结果
+message S2CZFBWithdrawalAck
+{		
+	int32		  	role_id = 1;			//角色ID
+	int32 			errorcode=2;			//处理结果.0,表示认证成功，其他表示失败.
+	int64			leftkz=3;				//剩余快赚
+}
+
+//用户货币同步功能
+message S2CUMoneySync
+{		
+	int32		  	role_id = 1;			//角色ID
+	int64			kl_kb=2;				//快币 -1 表示不更新此字段
+	int64			kl_kz=3;				//快赚 -1 表示不更新此字段
+	int64			kl_kd=4;				//快豆 -1 表示不更新此字段
+}
+//用户查询角色的货币信息(客户端主动发起，此消息将以S2CUMoneySync消息应答)
+message C2SGetUMoney_REQ
+{		
+	int32		  	role_id = 1;			//角色ID
+}
+
+//通知客户端断开连接,客户端收到此消息后，断开与服务器网络连接，应该退回到登录界面,
+message S2CNotifyClientToDiscon
+{	
+	int32		   role_id = 1;			//角色ID
+	string 		   reason=2;		//服务器通知客户端断开连接的原因，目前："已经在其他终端登录"
+}

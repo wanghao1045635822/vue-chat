@@ -103,7 +103,6 @@ export default {
     position: relative
     width: 100%
     height: 100%
-    background-color: #f0f0f0  // 修改背景颜色
     .avatar
 	    width: 36px
 	    height: 36px

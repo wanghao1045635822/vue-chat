@@ -1,0 +1,196 @@
+syntax = "proto3";
+
+//账号登录
+message C2SAccountLogin
+{
+	string account = 1;	//账号，注意：当账密为空时，表示是游客登录
+	string pwd = 2;  //密码
+	int32  client_type = 3; //客户端类型:0 pc，1 手机..
+}
+
+//角色信息
+message RoleItem   
+{
+   string   account = 1;     //账号
+   int32	role_id = 2;   //角色id
+   string	role_name = 3; //角色名称
+   int32 	sex = 4;       //性别
+   int32    avatar = 5;		//头像
+   int32    level =6;		//职业
+   string  	knead_face = 7; //捏脸数据
+   int32    last_scene_id = 8; //最后一次所在场景，
+   int32 	last_scene_key = 9; //最后一次所在场景key
+   int64	kl_kb=10;			//快币
+   int64	kl_kz=11;			//快赚
+   int64	kl_kd=12;			//快豆
+   string 	session_id=13;  //用户会话id，角色登录/进入场景时候必须携带，客户端要保存   
+   int32    tem_account=14; //是否为临时角色/账号
+}
+
+//账号登录返回
+message S2CAccountLoginAck
+{
+	string account = 1;   //账号,不为空.
+	int32  errcode=2;     //登录状态，0表示成功，1表示账号密码错误.
+	string phone_num=3;	   //绑定的手机号.
+	RoleItem roleinfo=4;  //登录状态=0时有效，返回角色信息
+}
+
+//账号登出，客户端通知服务器，账号登出
+message C2SAccountLogout
+{
+	string 	session_id=1;  //用户会话id
+}
+
+//账号登出ACK
+message S2CAccountLogoutAck
+{
+	int32  errcode=1;     //错误码
+}
+
+//用户重连，断开重连，用于与网关的断开重连
+message C2SRoleReConnect
+{
+	int32   role_id=1;//角色id
+	int32	scene_id = 2;//场景模板id.//如果仅恢复网络，那么此字段不用恢复,如果是场景服务端down机,那么此字段有效，并返回ds的ip地址等相关字段.
+	uint32	scene_key = 3;//场景实例id.
+	string 	session_id=4;  //用户会话id
+}
+
+//用户重连，返回
+message C2SRoleReConnect_Ack
+{
+	int32  errcode=1;     //错误码
+}
+
+//通知客户端角色强制登出，服务端发送完到此消息后，将主动断开与客户端网络，客户端收到消息后做登出处理（★★★不要发Logout消息，不要做重连处理★★★）
+message S2CNotifyRoleLogout
+{
+	int32 role_id=1;//
+}
+
+//切换账号(已经登录的状态)
+message C2SSwitchAccount
+{
+	string phone_num=1;	 //手机号
+	string session_id=2; //用户会话id
+}
+
+//切换账号返回.
+message S2CSwitchAccountAck
+{
+	string phone_num=1;	 //手机号
+	int32  errcode=2;     //状态 0：登录成功，其他为失败	
+	repeated RoleItem roleItem= 3;  //角色列表，登录成功时有效
+}
+
+//临时账号升级为正式账号,空指令即可.
+message C2SAccountUpGrade
+{
+	string session_id=1; //S2CAccountLoginAck返回
+}
+
+message S2CAccountUpGradeAck
+{
+	string account_pwd=1;//账号的密码
+	int32 errcode =2;    //0 成功 ，其他失败.
+}
+
+//给用户发送验证码
+message C2SSendVCode
+{
+	string phone_num=1;    //手机号
+	int32  op_code=2;	  //操作码  1:绑定手机  2:手机登录 3：重置密码 4:修改账号
+}
+
+message S2CSendVCodeAck      
+{	
+	string phone_num=1;    //手机号
+	int32  errcode=2;     //状态 0：发送成功，其他为失败
+}
+
+
+//绑定手机
+message C2SAcountBindPhone
+{	
+	string phone_num=1;	   //手机号，刚才验证过的
+	string smsvcode=2;   	//手机验证码
+	string session_id=3;   //S2CAccountLoginAck返回
+}
+
+message S2CAcountBindPhoneAck
+{	
+	string account=1;         //绑定的账号.
+	string phone_num=2;	  	//手机号，刚才验证过的			
+	int32  errcode=3;       //状态 0：绑定成功，其他为失败	
+}
+
+//手机号登录[切换身份卡也是这个流程]
+message C2SPhoneLogin
+{
+	string phone_num=1;	  	//手机号，刚才验证过的
+	int32  client_type=2;   //客户端类型:0 pc，1 手机..
+	string smsvcode=3;   	//手机验证码
+}
+
+message S2CPhoneLoginAck
+{
+	string phone_num=1;	 //手机号
+	int32  errcode=2;     //状态 0：登录成功，其他为失败	
+	repeated RoleItem roleItem= 3;  //角色列表，登录成功时有效
+}
+
+//重置密码
+message C2SResetPwd
+{
+	string account=1;     		//账号
+	string newpwd=2;     		//新密码
+	string phone_num=3;	  		//手机号，刚才验证过的	
+	string smsvcode=4;   		//手机验证码
+}
+
+message S2CResetPwdAck
+{
+	string account=1;     		//账号
+	int32  errcode=2;    		//状态 0：验证成功，其他为失败		
+}
+
+//修改密码
+message C2SChangePwd
+{
+	string account=1;           //账号
+	string oldpwd=2;			//原密码
+	string newpwd=3;     		//新密码	
+}
+
+message S2CChangePwdAck
+{
+	int32  errcode=1;    		//状态 0：
+}
+
+//修改角色名称
+message C2SChangeRoleName
+{
+	string newrolename=1;     	//新角色名称		
+	string session_id=2;		//S2CAccountLoginAck返回
+}
+
+message S2CChangeRoleNameAck
+{	
+	int32  errcode=1;    		//状态 0：
+	string newrolename=2;     	//新角色名称		
+}
+
+//发送账号对应手机的验证码，（返回带掩码的手机号）
+message C2SGetAccountPhoneNum
+{
+	string account=1;           //账号
+}
+
+//返回
+message S2CGetAccountPhoneNumAck  
+{
+	int32  errcode=1;    		//状态 0：
+	string account=2;           //账号
+	string mask_phone_num=3;	//手机号掩码,如：138****5678
+}

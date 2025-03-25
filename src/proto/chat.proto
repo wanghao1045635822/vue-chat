@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+//----------系统公告--------------
+
+//系统公告类型
+enum SystemNoticeType
+{
+	SYSTEM_NOTICE_TYPE_MARQUEE = 0;					// 跑马灯
+	SYSTEM_NOTICE_TYPE_SYSTEM = 1;					// 系统频道
+	SYSTEM_NOTICE_TYPE_INFORM = 2;					// 公告
+}
+
+//S2C_SYSTEM_NOTICE = 21000; // 系统公告
+message S2CSystemNotice
+{
+	int32 noticeType = 1;							// 系统公告类型
+	string content = 2;								// 公告内容
+}
+
+
+//----------社交聊天--------------
+
+//聊天渠道类型 
+enum SOCIALIZECHATCHANNELTYPE
+{
+	SOCIALIZE_CHAT_CHANNEL_TYPE_SYSTEM = 0;			// 系统
+	SOCIALIZE_CHAT_CHANNEL_TYPE_WORLD = 1;			// 世界
+	SOCIALIZE_CHAT_CHANNEL_TYPE_AREA = 2;			// 区域
+	SOCIALIZE_CHAT_CHANNEL_TYPE_NEARBY = 3;   		// 附近
+	SOCIALIZE_CHAT_CHANNEL_TYPE_GROUP = 4;			// 群聊
+	SOCIALIZE_CHAT_CHANNEL_TYPE_PRIVATE = 5;		// 私聊
+}
+
+enum SOCIALIZECHATTYPE
+{
+	SOCIALIZE_CHAT_TYPE_TEXT 	= 0;				// 文字
+	SOCIALIZE_CHAT_TYPE_EMOTE 	= 1;				// 表情
+}
+
+
+//C2S_SOCIALIZE_CHAT_REQ = 21025; // 请求社交聊天
+message C2SSocializeChatReq
+{
+	int32 channelType = 1;							// 聊天渠道类型
+	uint64 groupId = 2;								// 群聊的群id
+	int32 targetRoleId = 3;							// 目标角色id
+	string text = 4;								// 文本信息
+	string voiceId = 5;								// 语音id
+	int32 voiceDuration = 6;						// 语音时长
+	int32 chat_type = 7;							// 聊天类型 见SOCIALIZECHATTYPE
+}
+
+//S2C_SOCIALIZE_CHAT_ACK = 21026; // 返回社交聊天结果
+message S2CSocializeChatAck
+{
+	// 0.成功
+	// 1.字数限制 128个字
+	// 2.语音时长限制 120秒
+	// 3.无效的群组id
+	//99.未知的渠道类型
+	int32 errCode = 1;
+	int32 channelType = 2;							// 聊天渠道类型
+	uint64 groupId = 3;								// 群聊的群id
+	MsgSocializeRoleUnit fromRole = 4;				// 发言角色id
+	MsgSocializeRoleUnit targetRole = 5;			// 目标角色id
+	int64 sendTime = 6;								// 发送时间
+	string text = 7;								// 文本信息
+	string voiceId = 8;								// 语音id
+	int32 voiceDuration = 9;						// 语音时长
+	int32 chat_type = 10;							// 聊天类型 见SOCIALIZECHATTYPE
+}
+
+//聊天角色单元
+message MsgSocializeRoleUnit
+{
+	int32 roleId = 1;								// id
+	string roleName = 2;							// 名称
+	int64 icon = 3;									// 头像
+	int32 level = 4;                            	// 等级
+}
+
+//C2S_CHAT_HISTORY_REQ 								= 20809; // 频道聊天记录
+message C2SChatHistoryReq{
+}
+
+
+
+message ChatContent{
+	string 	text 		= 1;						// 聊天内容
+	int64 	sendTime 	= 2;						// 发送时间
+	int32 	chat_type 	= 3;						// 聊天类型 见SOCIALIZECHATTYPE
+	
+}
+
+message ChatHistoryItem{
+	MsgSocializeRoleUnit	fromRole = 1;			//发送消息角色id
+	ChatContent 			content = 2;			//消息内容
+	
+}
+
+
+//S2C_CHAT_HISTORY_ACK 								= 20810; // 频道聊天记录返回
+message S2CChatHistoryACK{
+	int32 errCode = 1;
+	repeated ChatHistoryItem data = 2;				//玩家收收到的离线聊天内容
+	int32 total_num = 3;
+	int32 start_index = 4;
+	int32 count = 5;
+}
+
+message LoadChatHistoryOver{}
+
+

@@ -32,32 +32,32 @@
 
         </transition>
 
-        
+
         <div class="callContent" v-show="showChatBox">
             <div class="">
                 <div class="callercontent callshow" style="">
                     <div class="exchange-content">
                         <div class="playcontent left-big-content">
-                            <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/> 
-                            <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p> 
+                            <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/>
+                            <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p>
                             <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;" v-show="showCallRemoteVideo"></video>
-                        </div> 
+                        </div>
                         <div class="playcontent right-sml-content">
-                            <img id = "wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/> 
+                            <img id = "wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/>
                             <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;" v-show="showCallLocalVideo"></video>
                         </div>
-                    </div> 
+                    </div>
                     <div class="opera-content flexbox">
-                        <img class="calleravatar" :src="callRemoteImg" /> 
-                        <span class="flexauto overell callnick" v-text="callDisplayName"></span> 
+                        <img class="calleravatar" :src="callRemoteImg" />
+                        <span class="flexauto overell callnick" v-text="callDisplayName"></span>
                         <span class="flexbox">
-                            <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span> 
-                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
+                            <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span>
+                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span>
                             <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
-                        </span> 
-                        <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span> 
-                        <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
-                        <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button> 
+                        </span>
+                        <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span>
+                        <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span>
+                        <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button>
                         <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i></button>
                     </div>
                 </div>
@@ -67,26 +67,26 @@
         <div class="audioContent" v-show="showAudioBox">
             <div class="audioBody callshow" style="">
                 <div class="audioBg">
-                    <img class="callavatar" :src="callRemoteImg" /> 
+                    <img class="callavatar" :src="callRemoteImg" />
                     <div class="blackbg"></div>
-                </div> 
+                </div>
                 <div class="audiomain">
-                    <img class="audio-avatar" :src="callRemoteImg" /> 
-                    <p class="callnick" v-text="callDisplayName"></p> 
-                    <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p> 
-                    <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p> 
+                    <img class="audio-avatar" :src="callRemoteImg" />
+                    <p class="callnick" v-text="callDisplayName"></p>
+                    <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p>
+                    <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p>
                     <div class="call-opera flexbox">
-                        <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span> 
+                        <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i class="iconfont icon-guaduan"></i>挂断 </span>
                         <div class="loadingcall flexbox">
-                            <span class="cancleaudio callercanle btnopacity" style="display: none;" v-show="cancelCall" @click="cancel"><i class="iconfont icon-guaduan"></i>取消 </span> 
-                            <span class="cancleaudio btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span> 
+                            <span class="cancleaudio callercanle btnopacity" style="display: none;" v-show="cancelCall" @click="cancel"><i class="iconfont icon-guaduan"></i>取消 </span>
+                            <span class="cancleaudio btnopacity" style="display: none;" v-show="rejectCall" @click="reject">拒绝</span>
                             <span class="upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
                         </div>
                     </div>
-                </div> 
+                </div>
                 <div style="display: none;">
                     <audio id="wxCallRemoteAudio" autoplay="autoplay"></audio>
-                </div> 
+                </div>
                 <div style="display: none;">
                     <audio id="wxCallLocalAudio" autoplay="autoplay" muted="muted"></audio>
                 </div>
@@ -94,7 +94,15 @@
         </div>
 
     </div>
-    <textarea id="sendText" ref="text" v-model="content" @keydown.enter.exact="sendMessage" @keydown.ctrl.enter="newline" @focus="onFocus" @click="showEmoji=false"></textarea>
+    <textarea id="sendText"
+              ref="text"
+              v-model="content"
+              @keydown.enter.exact="sendMessage"
+              @keydown.ctrl.enter="newline"
+              @focus="onFocus"
+              @click="showEmoji=false"
+              style="background-color: transparent;"
+    ></textarea>
     <div class="send" @click="send" ref="sendBtn" v-bind:class="{disable : sendBtnDisabled}">
     	<span>发送</span>
     </div>
@@ -129,7 +137,7 @@ export default {
         return {
             content: '',
             sendBtnDisabled: true,
-            reply: '未找到',  
+            reply: '未找到',
             frequency: 0,
             warn: false,
             showEmoji: false,
@@ -144,8 +152,8 @@ export default {
             showCallRemoteImg: true,
             showCallRemoteVideo: false,
             showCallTips: true,
-            callRemoteImg: 'static/images/vue.jpg',
-            callLocalImg: 'static/images/vue.jpg',
+            callRemoteImg: 'static/images/UserAvatar.jpg',
+            callLocalImg: 'static/images/UserAvatar.jpg',
             callDisplayName: '',
             waitingMsg: false,
             isAudioOnly: false,
@@ -157,7 +165,7 @@ export default {
         };
     },
     computed: {
-        ...mapState([   
+        ...mapState([
             'selectId',
             'emojis',
             'showChatBox',
@@ -191,7 +199,7 @@ export default {
                                     },
                                     error(err){
                                         console.log("upload error "+err.code +" message "+err.message);
-                                    }, 
+                                    },
                                     complete(res){
                                         console.log("upload complete "+res);
                                         var localPath = e.target.value;
@@ -202,10 +210,10 @@ export default {
                                 }
                             observable.subscribe(observer);
                         }
-                        
+
                 },200);
            } else {
-                this.sendImage(file)  
+                this.sendImage(file)
            }
            this.$refs.uploadPic.value = null;
         },
@@ -223,7 +231,7 @@ export default {
                     reader.readAsDataURL(file)
                     reader.onload = (e) => {
                         var result = e.target.result
-                        this.canvasDataURL(result,{   
+                        this.canvasDataURL(result,{
                         },base64Img => {
                             thunmbanilwithoutDesc = base64Img.split(',')[1]
                             //添加缩略消息
@@ -247,10 +255,10 @@ export default {
                             console.error(e);
                         });
                 }
-            }) 
+            })
         },
- 
-        /*** js 图片压缩上传(纯js的质量压缩，非长宽压缩) 
+
+        /*** js 图片压缩上传(纯js的质量压缩，非长宽压缩)
          * https://www.cnblogs.com/xiangsj/p/8932525.html
         */
         canvasDataURL(path, obj, callback){
@@ -327,7 +335,7 @@ export default {
                                 console.error(e);
                             });
                     }
-                }) 
+                })
 
             this.$refs.uploadVideo.value = null;
         },
@@ -379,7 +387,7 @@ export default {
                     var protoMessage = ProtoMessage.convertToProtoMessage(message);
                     messageId = protoMessage.messageId
                     store.dispatch('preAddProtoMessage', protoMessage);
-            
+
 
                     fetch(data.result.url, {
                         method: 'PUT',
@@ -393,7 +401,7 @@ export default {
                             console.error(e);
                         });
                 }
-                }) 
+                })
 
             this.$refs.uploadFile.value = null;
         },
@@ -406,7 +414,7 @@ export default {
               //阻止回车换行
               e.preventDefault();
             }
-            
+
         },
 
         newline(e){
@@ -472,7 +480,7 @@ export default {
                 this.$store.state.groupMemberTracker += 1;
                 this.$store.state.showCreateGroupDialog = true;
             }
-            
+
         },
         initCallUserInfo(target){
             var portrait = this.getUserPortrait(target);
@@ -506,7 +514,8 @@ export default {
            this.voipClient.answerCall(this.isAudioOnly);
         },
         cancel(){
-           this.voipClient.cancelCall();
+           // this.voipClient.cancelCall();
+          this.$store.state.showAudioBox = false;
         },
         sendMessageToStore(sendMessage){
            this.$store.dispatch('sendMessage', sendMessage)
@@ -543,7 +552,7 @@ export default {
                 this.hangUpCall = false;
                 this.initCallUserInfo(session.clientId);
             }
-                    
+
         //取消textarea焦点聚焦
             try {
                 document.getElementById('sendText').blur();
@@ -594,7 +603,7 @@ export default {
         sessionCallback.didReceiveRemoteAudioTrack = stream => {
             document.getElementById("wxCallRemoteAudio").srcObject = stream;
         }
-            
+
         sessionCallback.didCallEndWithReason = callEndReason => {
             if(this.isAudioOnly){
                 this.$store.state.showAudioBox = false;
@@ -645,7 +654,7 @@ export default {
                     }
                     // 插入图片记录
                     _this.sendImage(blob)
-                        
+
                 }
             }
         });
@@ -677,7 +686,7 @@ export default {
 .text
     position: relative
     height: 25%
-    background: #fff
+    //background: #fff
     .emoji
         position: relative
         width: 100%
@@ -703,7 +712,7 @@ export default {
             top: 0;
             z-index: 11;
             font-size: 0;
-            cursor: pointer;        
+            cursor: pointer;
         .emojiBox
             position: absolute
             display: flex
@@ -746,12 +755,12 @@ export default {
                   width: 50px;
                   height: 100px;
                   vertical-align: middle;
-                .video-remote  
+                .video-remote
                   width: 480px;
                   height: 800px;
                   vertical-align: middle;
         .btnopacity:hover
-	        opacity: .8          
+	        opacity: .8
         .callContent
            .callercontent
                 width: 664px;
@@ -908,7 +917,7 @@ export default {
                 color: #fff
             .audioBody .audiomain .audio-avatar
                 width: 73px;
-                height: 73px; 
+                height: 73px;
                 position: relative;
                 border-radius: 50%;
                 overflow: hidden;
@@ -946,7 +955,7 @@ export default {
             .audioBody .loadingcall
                 justify-content: center
             .audioBody .loadingcall .upcall
-                background: #39ba70             
+                background: #39ba70
     textarea
         box-sizing: border-box
         padding: 0 30px
@@ -998,7 +1007,7 @@ export default {
             border: 7px solid transparent
             border-top-color: #fff
             filter:drop-shadow(1px 3px 2px #bdbdbd)
-    
+
     .disable
-        pointer-events: none; 
+        pointer-events: none;
 </style>

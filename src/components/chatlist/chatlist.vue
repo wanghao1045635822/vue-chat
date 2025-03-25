@@ -53,7 +53,8 @@ export default {
             'searchedConversationList'
         ]),
         isEmptyConversation(){
-            return this.searchedConversationList.length == 0 && !this.emptyMessage;
+            // return this.searchedConversationList.length == 0 && !this.emptyMessage;
+            return false;
         }
     },
     methods: {
@@ -118,9 +119,9 @@ export default {
   overflow-y: auto
   overflow-x: hidden
   box-sizing: border-box
-  border-top: 1px solid #e7e7e7
-  border-right: 1px solid #e7e7e7
-  background: #f2f2f2
+  //border-top: 1px solid #e7e7e7
+  //border-right: 1px solid #e7e7e7
+  //background: #f2f2f2
   .sessionlist
     display: flex
     padding: 12px

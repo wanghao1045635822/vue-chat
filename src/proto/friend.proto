@@ -1,0 +1,297 @@
+syntax = "proto3";
+
+
+// 好友简介
+message FriendBrief
+{
+   int32 role_id = 1; // 玩家id
+   string user_name = 2; // 玩家名字
+   int32 sex = 3;
+   bool is_online = 4; // 是否在线
+   
+}
+
+// 黑名单相关
+message Blacklist
+{
+   int32 role_id = 1;
+   string user_name = 2;
+   int32 sex = 3;
+   int32 prof = 4;
+   int32 level = 5;
+   bool is_friend = 6; 
+}
+
+// 好友设置
+message FriendSet
+{
+   bool is_noly_chat = 1;// 仅聊天 0.否 1.是
+   bool is_no_my_info = 2;// 不让TA看我的动态 0.否 1.是
+   bool is_no_his_info = 3;// 不看TA的动态 0.否 1.是
+   bool is_not_disturb = 4;// 消息免打扰 0.否 1.是
+   bool is_top_chat = 5;// 聊天置顶 0.否 1.是
+}
+
+// 申请列表
+message Applylist
+{
+   int32 role_id = 1;
+   string user_name = 2;
+   int32 sex = 3;
+   int32 identity = 4; // 人物身份
+   int64 time = 5; // 申请时间
+   int32 op_type = 6; // 是否处理 0.未处理 1.同意 2.拒绝
+}
+
+// 好友信息
+message FriendInfo
+{
+   int32 role_id = 1;
+   string user_name = 2;
+   int32 sex = 3;
+   int32 identity = 4; // 人物身份
+   int32 is_online = 5;
+   uint32 avatar_timestamp = 6;
+   uint32 last_logout_timestamp = 7;
+   string alias = 8; // 别名
+   FriendSet set = 9; // 设置状态
+}
+
+// 请求获取好友列表
+message C2SFriendListReq
+{
+   
+}
+
+// 返回好友列表
+message S2CFriendListAck
+{
+   repeated FriendInfo friend_info = 1; 
+}
+
+// 请求好友申请列表
+message C2SApplylistReq
+{
+   
+}
+
+// 返回好友申请列表
+message S2CApplylistAck
+{
+   int32 error_id = 1;
+   repeated Applylist applyList = 2;
+}
+
+// 请求加为好友
+message C2SApplyFriendReq
+{
+   int32 role_id = 1;
+}
+
+// 返回请求加为好友
+message S2CApplyFriendAck
+{
+   int32 error_id = 1;
+}
+
+// 服务器询问被添加好友的对象
+message S2CApplyFriendNotify
+{
+   FriendBrief info = 1;
+}
+
+// 同意或拒绝加为好友
+message C2SAgreeFriendReq
+{
+   int32 role_id = 1;
+   bool is_accept = 2;
+   
+}
+
+// 返回同意或拒绝加为好友
+message S2CAgreeFriendAck
+{
+   int32 error_id = 1;
+   optional bool is_accept = 2;
+   optional FriendBrief info = 3;
+}
+
+// 删除好友请求
+message C2SDeleteFriendReq
+{
+   int32 role_id = 1;
+}
+
+// 删除好友返回
+message S2CDeleteFriendAck
+{
+   int32 error_id = 1;
+   optional int32 role_id = 2;
+}
+
+// 服务器向客户端发送好友信息改变通知
+message S2CChangeFriendNotify
+{
+   enum RET_TYPE
+   {
+   FRIEND_UPDATE = 0;
+   FRIEND_DELETE = 1;
+   };
+   
+   int32 change_state = 1; //CHANGE_FRIEND_STATE 0: update 1: delete
+   FriendInfo friend = 2;
+}
+
+// 请求好友黑名单
+message C2SBlacklistReq
+{
+   
+}
+
+// 返回请求好友黑名单
+message S2CBlacklistAck
+{
+   int32 error_id = 1;
+   repeated Blacklist blacklist = 2;
+}
+
+// 添加好友到黑名单
+message C2SBlacklistAddReq
+{
+   int32 role_id = 1;
+}
+
+// 返回添加好友到黑名单
+message S2CBlacklistAddAck
+{
+   int32 error_id = 1;
+}
+
+// 请求删除好友黑名单
+message C2SBlacklistDelReq
+{
+   int32 role_id = 1;
+}
+
+// 返回请求删除好友黑名单
+message S2CBlacklistDelAck
+{
+   int32 error_id = 1;
+}
+
+// 黑名单改变
+message S2CBlacklistChangeNotice
+{
+   int32 change_type = 1; //0 添加； 1 删除
+   Blacklist blacklist = 2;
+   
+}
+
+// 好友推荐
+message C2SFriendRecommendReq
+{
+   
+}
+
+// 返回推荐列表
+message S2CFriendRecommendAck
+{
+   int32 error_id = 1;
+   repeated FriendBrief brief = 2;
+}
+
+// 好友搜索
+message C2SFriendSearchReq
+{
+   string name = 1;
+}
+
+// 返回好友搜索
+message S2CFriendSearchAck
+{
+   int32 error_id = 1;
+   FriendBrief brief = 2;
+}
+
+// 好友设置
+message C2SFriendSetReq
+{
+   int32 role_id = 1; // 被修改者ID
+   FriendSet friend_set = 2;
+}
+
+// 返回好友设置
+message S2CFriendSetAck
+{
+   int32 error_id = 1;
+   int32 role_id = 2; // 被修改者ID
+   FriendSet friend_set = 3;
+}
+
+// 好友别名修改
+message C2SFriendAliasReq
+{
+   int32 role_id = 1; // 被修改者ID
+   string alias = 2;
+}
+
+// 返回好友别名修改
+message S2CFriendAliasAck
+{
+   int32 error_id = 1;
+}
+
+// 请求呼叫好友通话
+message C2SCallFriendReq
+{
+   int32 role_id = 1; // 好友roleId
+   int32 call_type = 2; // 通话类型 0.无 1.语音通话 2.视频通话
+}
+
+// 请求呼叫好友通话结果
+message S2CCallFriendAck
+{
+   int32 error_id = 1; // 0.成功 1.失败
+   int32 call_type = 2; // 通话类型 0.无 1.语音通话 2.视频通话
+   string trtc_room_id = 3; // trtc房间id
+   int32 caller_role_id = 4; // 呼叫者的roleId
+   string caller_name = 5; // 呼叫者的名字
+   int32 be_caller_role_id = 6; // 被呼叫者的roleId
+   string be_caller_name = 7; // 被呼叫者的名字
+}
+
+// 请求回应好友通话
+message C2SAnswerFriendReq
+{
+   int32 is_answer = 1; // 0.拒绝 1.接通
+   int32 caller_role_id = 2; // 呼叫者的roleId
+   int32 call_type = 3; // 通话类型 0.无 1.语音通话 2.视频通话
+   string trtc_room_id = 4; // trtc房间id
+}
+
+// 请求回应好友通话结果
+message S2CAnswerFriendAck
+{
+   int32 error_id = 1; // 0.成功 1.失败
+   int32 is_answer = 2; // 0.拒绝 1.接通
+   int32 call_Type = 3; // 通话类型 0.无 1.语音通话 2.视频通话
+   string trtc_room_id = 4; // trtc房间id
+   int32 caller_role_id = 5; // 呼叫者的roleId
+   int32 be_caller_role_id = 6; // 被呼叫者的roleId
+}
+
+// 请求挂断好友通话
+message C2SHangupFriendReq
+{
+   int32 role_id = 1; // 另一个人的roleId
+}
+
+// 请求挂断好友通话结果
+message S2CHangupFriendAck
+{
+   int32 error_id = 1;
+}
+
+message S2CDisconnectNotifyOther
+{
+}

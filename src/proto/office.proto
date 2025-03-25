@@ -1,0 +1,373 @@
+syntax = "proto3";
+
+
+// 办公室信息
+message MsgOfficeRoomInfo
+{
+   int32 roomId = 1; // 办公室id
+   string roomName = 2; // 办公室名称
+   int32 roomScreenshotsId = 3; // 办公室的截图id
+   int32 sceneId = 4; // 办公室的场景id
+   int32 sceneKey = 5; // 办公室的场景key
+   int32 onlineNum = 6; // 办公室在线人数
+   string trtcRoomId = 7; // 流媒体房间id
+}
+
+// 办公人员信息
+message MsgOfficeWorkerInfo
+{
+   int32 role_id = 1; // 角色id
+   int64 icon = 2; // 头像
+   string role_name = 3; // 角色名字
+   int32 worker_id = 4; // 员工号
+   string real_name = 5; // 员工姓名
+   string phone = 6; // 员工电话
+   string email = 7; // 员工电子邮件
+   int32 department_id = 8; // 部门
+   int32 group = 9; // 小组
+   int32 post = 10; // 职位 0.无 1.策划 2.前端 3.后端 4.大数据 5.AI智能
+   int32 rank = 11; // 职位等级
+   int64 entry_time = 12; // 入职时间
+   int32 contract_limit = 13; // 合同年限
+   int32 work_state = 14; // 工作状态
+   int32 camera_state = 15; // 摄像头开关状态 0.关 1.开
+   int32 voice_state = 16; // 语音开关状态 0.关 1.开
+}
+
+// 获得办公区域列表
+message C2SGetOfficeAreaListReq
+{
+   
+}
+
+// 获得办公区域列表结果
+message S2CGetOfficeAreaListAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeRoomInfo infos = 2; // 办公室列表
+}
+
+// 进入办公区域
+message C2SEnterOfficeAreaReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+}
+
+// 进入办公区域结果
+message S2CEnterOfficeAreaAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 radioRoleId = 2; // 广播者的id
+   string radioRoleName = 3; // 广播者的名字
+   string trtcRoomId = 4; // 流媒体房间id
+}
+
+// 离开办公区域
+message C2SLeaveOfficeAreaReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+}
+
+// 离开办公区域结果
+message S2CLeaveOfficeAreaAck
+{
+   int32 role_id = 1;   //玩家id
+   int32 roleCount = 2; //当前场景人数
+   int32 errCode = 3;  // 0.成功 1.失败
+}
+
+// 获得办公人员列表
+//int32 company_id = 1; // 公司id
+message C2SGetOfficeWorkerListReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+}
+
+// 获得办公人员列表结果
+message S2CGetOfficeWorkerListAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 设置摄像头状态
+message C2SSetCameraStateReq
+{
+   int32 sceneId = 1;// 场景id
+   int32 sceneKey = 2;// 场景key
+   int32 opt = 3;// 0.关 1.开
+}
+
+// 设置摄像头状态结果
+message S2CSetCameraStateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 修改设置的角色id
+   int32 opt = 3; // 0.关 1.开
+}
+
+// 设置语音状态
+message C2SSetVoiceStateReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+   int32 opt = 3; // 0.关 1.开
+}
+
+// 设置语音状态结果
+message S2CSetVoiceStateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 修改设置的角色id
+   int32 opt = 3; // 0.关 1.开
+}
+
+// 查找办公人员
+message C2SFindOfficeWorkerReq
+{
+   int32 company_id = 1; // 公司ID
+   string name = 2; // 待查找人员名字
+}
+
+// 查找办公人员结果
+message S2CFindOfficeWorkerAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 设置工作状态
+message C2SSetWorkStateReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+   int32 state = 3; // 0.无 1.忙 2.闲
+}
+
+// 设置工作状态结果
+message S2CSetWorkStateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 修改设置的角色id
+   int32 state = 3; // 0.无 1.忙 2.闲
+}
+
+// 发起广播
+message C2SStartOfficeRadioReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+   string trtcRoomId = 3; // 流媒体房间id
+}
+
+// 发起广播结果
+message S2CStartOfficeRadioAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 radioRoleId = 2; // 广播者的id
+   string radioRoleName = 3; // 广播者的名字
+   string trtcRoomId = 4; // 流媒体房间id
+}
+
+// 结束广播
+message C2SEndOfficeRadioReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+}
+
+// 结束广播结果
+message S2CEndOfficeRadioAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 发起者的id
+   string roleName = 3; // 发起者的名字
+}
+
+// 办公聊天
+message C2SOfficeChatReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+   int32 roleId = 3; // 目标者的id
+   string text = 4; // 文本
+}
+
+// 办公聊天结果
+message S2COfficeChatAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 发起者的id
+   string roleName = 3; // 发起者的名字
+   string text = 4; // 文本
+}
+
+// 接受广播
+message C2SAcceptOfficeRadioReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+}
+
+// 接受广播结果
+message S2CAcceptOfficeRadioAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 joinRadioNum = 2; // 参与广播的人数
+   int32 acceptRoleId = 3; // 接受广播的角色id
+   int32 cameraState = 4; // 广播者的摄像头开关状态 0.关 1.开
+   int32 voiceState = 5; // 广播者的语音开关状态 0.关 1.开
+}
+
+// 快速共享
+message C2SOfficeFastShareReq
+{
+   int32 role_id = 1; // 人物ID
+   int32 share_type = 2; // 共享类型 0.邀请 1.申请
+}
+
+// 快速共享结果
+message S2COfficeFastShareAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+}
+
+// 快速共享操作
+message C2SOfficeFastShareOperateReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 快速共享操作
+message S2COfficeFastShareOperateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议创建
+message C2SOfficeMeetingCreateReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议创建结果
+message S2COfficeMeetingCreateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议加入
+message C2SOfficeMeetingJoinReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议加入结果
+message S2COfficeMeetingJoinAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议列表
+message C2SOfficeMeetingListReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议列表结果
+message S2COfficeMeetingListAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议列表清除
+message C2SOfficeMeetingClearReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议列表清除结果
+message S2COfficeMeetingClearAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议设置摄像头状态
+message C2SOfficeMeetingCameraStateReq
+{
+   int32 sceneId = 1;// 场景id
+   int32 sceneKey = 2;// 场景key
+   int32 opt = 3;// 0.关 1.开
+}
+
+// 办公会议设置摄像头状态结果
+message S2COfficeMeetingCameraStateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 修改设置的角色id
+   int32 opt = 3; // 0.关 1.开
+}
+
+// 办公会议设置语音状态
+message C2SOfficeMeetingVoiceStateReq
+{
+   int32 sceneId = 1; // 场景id
+   int32 sceneKey = 2; // 场景key
+   int32 opt = 3; // 0.关 1.开
+}
+
+// 办公会议设置语音状态结果
+message S2COfficeMeetingVoiceStateAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   int32 roleId = 2; // 修改设置的角色id
+   int32 opt = 3; // 0.关 1.开
+}
+
+// 办公会议员工移除
+message C2SOfficeMeetingWorkerRomoveReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议员工移除结果
+message S2COfficeMeetingWorkerRomoveAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议员工邀请
+message C2SOfficeMeetingWorkerInviteReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议员工邀请结果
+message S2COfficeMeetingWorkerInviteAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+
+// 办公会议员工退出
+message C2SOfficeMeetingWorkerQuitReq
+{
+   int32 company_id = 1; // 公司ID
+}
+
+// 办公会议员工退出结果
+message S2COfficeMeetingWorkerQuitAck
+{
+   int32 errCode = 1; // 0.成功 1.失败
+   repeated MsgOfficeWorkerInfo infos = 2; // 办公人员列表
+}
+

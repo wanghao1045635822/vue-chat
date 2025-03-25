@@ -1,0 +1,1050 @@
+syntax = "proto3";
+
+// 会议场景规则
+message MsgMeetingSceneRule
+{
+	int32 isRun = 1;								// 是否能跑 0.否 1.是
+	int32 isJump = 2;								// 是否能跳 0.否 1.是
+	int32 isFormalWear = 3;							// 是否正装 0.否 1.是
+	int32 isMask = 4;								// 是否面具 0.否 1.是
+	int32 isAudienceAreaLimit = 5;					// 是否观众区区域限定 0.否 1.是
+	int32 isEnterSpeechArea = 6;					// 是否不能进入演讲区 0.否 1.是
+	int32 isMeetingStartCanMove = 7;				// 是否会议开始不能走动 0.否 1.是
+}
+
+// 会议坐席规则
+message MsgMeetingSeatRule
+{
+	string seatName = 1;							// 坐席名称
+	int32 getType = 2;								// 获取条件 1.邀请 2.申请 3.售卖
+	int32 price = 3;								// 价格
+	int32 snType = 4;								// 坐席编号类型 0.无 1.自由落座 2.随机分配 3.固定分配
+}
+
+// 会议讲演规则
+message MsgMeetingSpeechRule
+{
+	int32 getType = 1;								// 获取条件 1.邀请 2.申请 3.售卖
+	int32 price = 2;								// 价格
+	int32 isSpeakerForScreen = 3;					// 是否演讲者投屏权限 0.否 1.是
+	int32 isSpeakerVote = 4;						// 是否演讲者发起投票权限 0.否 1.是
+	int32 isBanSpeak = 5;							// 是否禁止发言 0.否 1.是
+	int32 isBanTalk = 6;							// 是否禁止聊天 0.否 1.是
+	int32 isBanGift = 7;							// 是否禁止送礼 0.否 1.是
+}
+
+//会议室展示区单元(广告位)
+message MsgMeetingAdvert
+{
+	int32 advertId = 1;								// 单元编号id
+	string advertName = 2;							// 广告资源的文件名
+	string advertUrl = 3;							// 广告资源的Url
+};
+
+// 会议信息
+message MsgMeetingInfo
+{
+	string meetingId = 1;							// 会议id
+	string meetingName = 2;							// 会议名称
+	string meetingIntroduction = 3;					// 会议介绍
+	string meetingSpeaker = 4;						// 会议演讲者
+	string meetingGuest = 5;						// 会议嘉宾
+	string meetingCoverUrl = 6;						// 会议封面url
+	int64 startTime = 7;							// 会议开始时间
+	int64 endTime = 8;								// 会议结束时间
+	int32 creatorRoleId = 9;						// 创建者角色id
+	int32 meetingRoomId = 10;						// 会议室id
+	int32 meetingCenterId = 11;						// 会议中心id
+	int32 meetingCenterKey =12;						// 会议中心key
+	MsgMeetingSceneRule sceneRule = 13;				// 会议场景规则
+	MsgMeetingSeatRule seatRuleA = 14;				// 会议坐席规则A
+	MsgMeetingSeatRule seatRuleB = 15;				// 会议坐席规则B
+	MsgMeetingSeatRule seatRuleC = 16;				// 会议坐席规则C
+	MsgMeetingSeatRule seatRuleD = 17;				// 会议坐席规则D
+	MsgMeetingSeatRule audienceAreaRule = 18;		// 会议观众区规则
+	MsgMeetingSpeechRule speechRule = 19;			// 会议演讲规则
+	repeated int32 meetingSpeakersId = 20;			// 会议演讲者们id
+	string meetingDetails = 21;						// 会议详情文本
+	repeated string meetingDetailsURL = 22;			// 会议详情插图URL
+	int32 meetingRealStart = 23;					// 会议真正开始 0.否 1.是 2.提前结束
+	int32 screenTypeA = 24;							// 会议室A类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeB = 25;							// 会议室B类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeC = 26;							// 会议室C类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeD = 27;							// 会议室D类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	repeated MsgMeetingAdvert adverts = 28;			// 会议室展示区单元(广告位)
+	int32 soldSeatCount = 29;						// 坐席售卖计数
+	int32 requesterIsBuyed = 30;					// 请求者是否购票 1.是 0.否
+	int32 currentIsShareScreen = 31;				// 当前是否分享屏幕 0.否 1.是
+	int32 currentShareScreenRoldId = 32;			// 当前分享屏幕的角色id
+	int32 currentVoteNum = 33;						// 当前发起的投票编号
+	int32 currentIsTospeak = 34;					// 当前是否分享发言 3.是 4.否
+	string currentTospeakerName = 35;				// 当前分享发言人的名字
+	int32 requesterIsEnter = 36;					// 请求者是否进入过当前会议
+}
+
+//C2S_GET_MEETING_LIST_REQ = 2001;
+message C2SGetMeetingListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+}
+
+//S2C_GET_MEETING_LIST_ACK = 2002;
+message S2CGetMeetingListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingInfo infos = 2;				// 会议信息列表
+}
+
+//C2S_CREATE_MEETING_REQ = 2003;
+message C2SCreateMeetingReq
+{
+	MsgMeetingInfo info = 1;						// 会议创建信息
+}
+
+//S2C_CREATE_MEETING_ACK = 2004;
+message S2CCreateMeetingAck
+{
+	//-1.成功但不弹界面不提示
+	// 0.成功
+	// 1.会议中心不存在
+	// 2.会议室不存在
+	// 3.会议室该时间段已被占用
+	// 4.详情的图片数量上限
+	// 5.货币不足
+	// 6.会议开始时间小于当前时间
+	int32 errCode = 1;
+}
+
+//C2S_ATTEND_MEETING_REQ = 2005;
+message C2SAttendMeetingReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_ATTEND_MEETING_ACK = 2006;
+message S2CAttendMeetingAck
+{
+	// 0.成功
+	// 1.会议中心不存在
+	// 2.会议室不存在
+	// 3.会议不存在或已结束
+	// 4.会议还未开始
+	// 5.会议已结束
+	// 6.没购票
+	int32 errCode = 1;
+	int32 meetingRoomSceneId = 2;					// 会议室的场景id
+	int32 meetingRoomSceneKey = 3;					// 会议室的场景key
+}
+
+//C2S_GET_MEETING_CENTER_INFO_REQ = 2007;
+message C2SGetMeetingCenterInfoReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+
+}
+
+//S2C_GET_MEETING_CENTER_INFO_ACK = 2008;
+message S2CGetMeetingCenterInfoAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 meetingCenterId = 2;						// 会议中心id
+	string meetingCenterName = 3;					// 会议中心名称
+	int64 createTime = 4;							// 创建时间
+	int64 dueTime = 5;								// 失效时间
+	int32 defaultMeetingRoomSceneId = 6;			// 默认会议室的场景id
+	int32 ownerId = 7;								// 拥有者的id
+	string ownerName = 8;							// 拥有者的名称
+	int32 ownerIcon = 9;							// 头像
+}
+
+// 会议时间信息单元
+message MsgMeetingRoomTimeInfo
+{
+	string meetingId = 1;							// 会议id
+	int64 startTime = 2;							// 会议开始时间
+	int64 endTime = 3;								// 会议结束时间
+}
+
+// 会议室信息
+message MsgMeetingRoomInfo
+{
+	int32 meetingRoomId = 1;						// 会议室id
+	string meetingRoomName = 2;						// 会议室名称
+	int32 meetingRoomScreenshots = 3;				// 会议室截图
+	int64 createTime = 4;							// 会议室创建时间
+	int32 siteType = 5;								// 会议室场地类型 1.大 2.中 3.小 4.迷你
+	int32 sceneId = 6;								// 会议室的场景id
+	int32 sceneKey = 7;								// 会议室的场景key
+	int32 price = 8;								// 会议室开会的价格
+	repeated MsgMeetingRoomTimeInfo timeInfos = 9;	// 会议室时间信息列表
+	int32 seatSpeakerTotalNum = 10;					// 演讲者的坐席总数
+	int32 seatATotalNum = 11;						// 可出售的坐席总数
+	int32 seatBTotalNum = 12;						// 可出售的坐席总数
+	int32 seatCTotalNum = 13;						// 可出售的坐席总数
+	int32 seatDTotalNum = 14;						// 可出售的坐席总数
+	int32 audienceAreaNum = 15;						// 观众区(-1.表示无数量限制 0.表示没有设立观众区)
+	int32 screenNumA = 16;							// A类屏幕数量
+	int32 screenNumB = 17;							// B类屏幕数量
+	int32 screenNumC = 18;							// C类屏幕数量
+	int32 screenNumD = 19;							// D类屏幕数量
+	int32 advertNum = 20;							// 广告展示位数量
+}
+
+//C2S_GET_MEETING_ROOM_LIST_REQ = 2011;
+message C2SGetMeetingRoomListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+
+}
+
+//S2C_GET_MEETING_ROOM_LIST_ACK = 2012;
+message S2CGetMeetingRoomListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingRoomInfo infos = 2;			// 会议室信息列表
+}
+ 
+//C2S_EXIT_MEETING_REQ = 2013;
+message C2SExitMeetingReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_EXIT_MEETING_ACK = 2014;
+message S2CExitMeetingAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 goSceneId = 2;							// 要去的场景id
+}
+
+//会议门票信息
+message MsgMeetingTicketsInfo
+{
+	string meetingId = 1;							// 会议id
+	int32 ticketsType = 2;							// 门票类型 1.A区 2.B区 3.C区 4.D区 5.观众区
+	int32 seatNum = 3;								// 座位号
+}
+
+//C2S_BUY_MEETING_TICKETS_REQ = 2015;
+message C2SBuyMeetingTicketsReq
+{
+	MsgMeetingTicketsInfo info = 1;					// 购票信息
+}
+
+//S2C_BUY_MEETING_TICKETS_ACK = 2016;
+message S2CBuyMeetingTicketsAck
+{
+	// 0.成功
+	// 1.除观众席外的其他席位编号不可为0
+	// 2.坐席已经被售出
+	// 3.类型相同的重复购买或坐席档位低与当前坐席档位
+	// 4.货币不足
+	int32 errCode = 1;
+}
+
+//C2S_GET_MEETING_TICKETS_INFO_REQ = 2017;  当前购票信息
+message C2SGetMeetingTicketsInfoReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_TICKETS_INFO_ACK = 2018;
+message S2CGetMeetingTicketsInfoAck
+{
+	int32 errCode = 1;								// 0.成功 1.没有购票
+	MsgMeetingTicketsInfo info = 2;					// 门票信息列表
+}
+
+//投票信息
+message MsgMeetingVoteInfo
+{
+	int32 voteNum = 1;								// 投票编号
+	int32 roleId = 2;								// 演讲者id
+	string roleName = 3;							// 演讲者名称
+	int32 selectType = 4;							// 选项类型 1.单选 2.多选
+	string question = 5;							// 问题
+	repeated string options = 6;					// 选项
+	repeated int32 optionsCount = 7;				// 选项计数
+	int32 roleCount = 8;							// 参与投票角色计数
+}
+
+//C2S_GET_MEETING_VOTE_LIST_REQ = 2033;
+message C2SGetMeetingVoteListReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_VOTE_LIST_ACK = 2034;
+message S2CGetMeetingVoteListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingVoteInfo infos = 2;			// 投票信息
+}
+
+//C2S_ADD_MEETING_VOTE_REQ = 2019;
+message C2SAddMeetingVoteReq
+{
+	string meetingId = 1;							// 会议id
+	int32 optType = 2;								// 操作类型 0.添加 1.编辑
+	MsgMeetingVoteInfo info = 3;					// 投票信息
+}
+
+//S2C_ADD_MEETING_VOTE_ACK = 2020;
+message S2CAddMeetingVoteAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 optType = 2;								// 操作类型 0.添加 1.编辑
+}
+
+//C2S_MEETING_VOTE_REQ = 2021;
+message C2SMeetingVoteReq
+{
+	string meetingId = 1;							// 会议id
+	MsgMeetingVoteInfo info = 2;					// 投票信息
+}
+
+//S2C_MEETING_VOTE_ACK = 2022;
+message S2CMeetingVoteAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 roleId = 2;								// 投票者id
+}
+
+//C2S_MEETING_CHAT_REQ = 2023;
+message C2SMeetingChatReq
+{
+	string meetingId = 1;							// 会议id
+	string text = 2;								// 文本
+	int32 isNotice = 3;								// 是否公告 0.否 1.是
+}
+
+//S2C_MEETING_CHAT_ACK = 2024;
+message S2CMeetingChatAck
+{
+	string roleName = 1;							// 角色名字
+	string text = 2;								// 文本
+	int32 isNotice = 3;								// 是否公告 0.否 1.是
+}
+
+//C2S_GET_MEETING_SEAT_INFO_REQ = 2025;
+message C2SGetMeetingSeatInfoReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_SEAT_INFO_ACK = 2026;
+message S2CGetMeetingSeatInfoAck
+{
+	string meetingId = 1;							// 会议id
+	int32 seatATotalNum = 2;						// 可出售的坐席总数
+	int32 seatBTotalNum = 3;						// 可出售的坐席总数
+	int32 seatCTotalNum = 4;						// 可出售的坐席总数
+	int32 seatDTotalNum = 5;						// 可出售的坐席总数
+	int32 audienceAreaNum = 6;						// 观众区(-1.表示无数量限制 0.表示没有设立观众区)
+	repeated int32 soldSeatA = 7;					// 已售的座位号
+	repeated int32 soldSeatB = 8;					// 已售的座位号
+	repeated int32 soldSeatC = 9;					// 已售的座位号
+	repeated int32 soldSeatD = 10;					// 已售的座位号
+	int32 soldAudienceArea = 11;					// 已售的观众区
+}
+
+//C2S_MEETING_FOR_SCREEN_REQ = 2027;
+message C2SMeetingForScreenReq
+{
+	string meetingId = 1;							// 会议id
+	int32 shareType = 2;							// 分享屏幕类型 0.结束投屏 1.开始投屏 3.结束发言 4.开始发言
+}
+
+//S2C_MEETING_FOR_SCREEN_ACK = 2028;
+message S2CMeetingForScreenAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 roleId = 2;								// 投屏者的id
+	string roleName = 3;							// 投屏者的名字
+	int32 shareType = 4;							// 分享屏幕类型 0.结束投屏 1.开始投屏 3.结束发言 4.开始发言
+}
+
+//C2S_START_MEETING_REQ = 2029;
+message C2SStartMeetingReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_START_MEETING_ACK = 2030;
+message S2CStartMeetingAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+}
+
+//C2S_END_MEETING_REQ = 2031;
+message C2SEndMeetingReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_END_MEETING_ACK = 2032;
+message S2CEndMeetingAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 countDown = 2;							// 倒计时N秒退出会议室
+}
+
+//C2S_START_MEETING_VOTE_REQ = 2035;
+message C2SStartMeetingVoteReq
+{
+	string meetingId = 1;							// 会议id
+	int32 voteNum = 2;								// 选项编号
+}
+
+//S2C_START_MEETING_VOTE_ACK = 2036;
+message S2CStartMeetingVoteAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	MsgMeetingVoteInfo info = 2;					// 投票信息
+}
+
+//C2S_MEETING_SET_MGR_REQ = 2037;
+message C2SMeetingSetMgrReq
+{
+	string meetingId = 1;							// 会议id
+	MsgMeetingSpeechRule speechRule = 2;			// 会议演讲规则
+	int32 screenTypeA = 3;							// 会议室A类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeB = 4;							// 会议室B类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeC = 5;							// 会议室C类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeD = 6;							// 会议室D类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+}
+
+//S2C_MEETING_SET_MGR_ACK = 2038;
+message S2CMeetingSetMgrAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	MsgMeetingSpeechRule speechRule = 2;			// 会议演讲规则
+	int32 screenTypeA = 3;							// 会议室A类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeB = 4;							// 会议室B类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeC = 5;							// 会议室C类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+	int32 screenTypeD = 6;							// 会议室D类屏幕类型 0.无该类屏幕 1.投屏 2.投票 3.发言人
+}
+
+//申请发言信息
+message MsgTospeakInfo
+{
+	int32 roleId = 1;
+	int64 icon = 2;
+	string roleName = 3;							// 角色名字
+	int64 applyTime = 4;							// 申请时间
+	int32 isOpened = 5;								// 是否已开启发言 0.未开启 1.已开启
+}
+
+//C2S_GET_MEETING_TOSPEAK_LIST_REQ = 2039;
+message C2SGetMeetingTospeakListReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_TOSPEAK_LIST_ACK = 2040;
+message S2CGetMeetingTospeakListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgTospeakInfo infos = 2;				// 申请发言信息列表
+}
+
+//C2S_APPLY_MEETING_TOSPEAK_REQ = 2041;
+message C2SApplyMeetingTospeakReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_APPLY_MEETING_TOSPEAK_ACK = 2042;
+message S2CApplyMeetingTospeakAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败 2.已申请 3.规则禁止发言
+	MsgTospeakInfo info = 2;						// 申请发言信息
+}
+
+//C2S_OPEN_MEETING_TOSPEAK_REQ = 2043;
+message C2SOpenMeetingTospeakReq
+{
+	string meetingId = 1;							// 会议id
+	int32 roleId = 2;								// 开启哪个人的roleid
+}
+
+//S2C_OPEN_MEETING_TOSPEAK_ACK = 2044;
+message S2COpenMeetingTospeakAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 roleId = 2;								// 开启哪个人的roleid
+	string creatorName = 3;							// 谁开启了哪个人的发言(创建者的名字)
+}
+
+//C2S_CLOSE_MEETING_TOSPEAK_REQ = 2045;
+message C2SCloseMeetingTospeakReq
+{
+	string meetingId = 1;							// 会议id
+	int32 roleId = 2;								// 关闭哪个人的roleid
+}
+
+//S2C_CLOSE_MEETING_TOSPEAK_ACK = 2046;
+message S2CCloseMeetingTospeakAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	int32 roleId = 2;								// 关闭哪个人的roleid
+	string creatorName = 3;							// 谁关闭了哪个人的发言(创建者的名字)
+}
+
+//C2S_REFUSED_MEETING_TOSPEAK_REQ = 2047;
+message C2SRefusedMeetingTospeakReq
+{
+	string meetingId = 1;							// 会议id
+	int32 roleId = 2;								// 拒绝申请发言人roleid 0：全部
+
+}
+
+//S2C_REFUSED_MEETING_TOSPEAK_ACK = 2048;
+message S2CRefusedMeetingTospeakAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+}
+
+//C2S_MEETING_INVITE_REQ = 2049;
+message C2SMeetingInviteReq
+{
+	string meetingId = 1;							// 会议id
+	int32 inviteRoleId = 2;							// 被邀请的角色id
+	int32 inviteType = 3;							// 邀请的类型 0.演讲者 1.坐席A 2.坐席B 3.坐席C 4.坐席D 5.观众区
+	int32 seatNum = 4;								// 给被邀请人分配的座位号(观众区座位号为0)
+	string describe = 5; 							// 邀请人写的描述
+}
+
+//S2C_MEETING_INVITE_ACK = 2050;
+message S2CMeetingInviteAck
+{
+	// 0.成功
+	// 1.会议演讲者数量上限
+	// 2.坐席已经被售出
+	// 3.已邀请过了
+	int32 errCode = 1;
+}
+
+//会议被邀请单元
+message MsgMeetingBeInviteInfo
+{
+	int32 roleId = 1;								// 邀请人id
+	string roleName = 2;							// 邀请人名称
+	string meetingId = 3;							// 会议id
+	string meetingName = 4;							// 会议名称
+	string meetingIntroduction = 5;					// 会议介绍
+	string describe = 6;							// 邀请人写的描述
+	int32 isAgree = 7;								// 是否同意 0.无 1.同意 2.拒绝
+}
+
+//C2S_GET_MEETING_BE_INVITED_REQ = 2051;
+message C2SGetMeetingBeInvitedReq
+{
+}
+
+//S2C_GET_MEETING_BE_INVITED_ACK = 2052;
+message S2CGetMeetingBeInvitedAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingBeInviteInfo infos = 2;		// 被邀请信息列表
+}
+
+//C2S_AGREE_MEETING_INVITE_REQ = 2053;
+message C2SAgreeMeetingInviteReq
+{
+	int32 roleId = 1;								// 邀请人id
+	string meetingId = 2;							// 会议id
+}
+
+//S2C_AGREE_MEETING_INVITE_ACK = 2054;
+message S2CAgreeMeetingInviteAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+}
+
+//C2S_REFUSED_MEETING_INVITE_REQ = 2055;
+message C2SRefusedMeetingInviteReq
+{
+	int32 roleId = 1;								// 邀请人id
+	string meetingId = 2;							// 会议id
+}
+
+//S2C_REFUSED_MEETING_INVITE_ACK = 2056;
+message S2CRefusedMeetingInviteAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+}
+
+//演讲者信息
+message MsgSpeakerInfo
+{
+	int32 roleId = 1;
+	int64 icon = 2;
+	string roleName = 3;							// 角色名字
+	int32 isSpeaking = 4;							// 是否演讲中 0.否 1.是
+}
+
+//C2S_GET_MEETING_SPEAKER_LIST_REQ = 2057;
+message C2SGetMeetingSpeakerListReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_SPEAKER_LIST_ACK = 2058;
+message S2CGetMeetingSpeakerListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgSpeakerInfo infos = 2;				// 演讲者信息列表
+}
+
+//C2S_BEGAN_TO_MEETING_SPEAK_REQ = 2059;
+message C2SBeganToMeetingSpeakReq
+{
+	string meetingId = 1;							// 会议id
+	int32 roleId = 2;								// 演讲者id
+}
+
+//S2C_BEGAN_TO_MEETING_SPEAK_ACK = 2060;
+message S2CBeganToMeetingSpeakAck
+{
+	int32 errCode = 1;								// 0.创建者操作成功 1.演讲被创建者开启 2.演讲被创建者结束
+	int32 roleId = 2;								// 演讲者id
+}
+
+//C2S_PROMPT_MEETING_SPEAKER_REQ = 2061;
+message C2SPromptMeetingSpeakerReq
+{
+	string meetingId = 1;							// 会议id
+	int32 roleId = 2;								// 演讲者id
+	int64 promptTime = 3;							// 提示时间
+}
+
+//S2C_PROMPT_MEETING_SPEAKER_ACK = 2062;
+message S2CPromptMeetingSpeakerAck
+{
+	int32 errCode = 1;								// 0.创建者提示成功 1.演讲者演讲时间快到了
+	int32 roleId = 2;								// 演讲者id
+	int64 promptTime = 3;							// 提示时间
+}
+
+//出席者信息
+message MsgAttendeeInfo
+{
+	int32 roleId = 1;								// id
+	int64 icon = 2;									// 头像
+	string roleName = 3;							// 角色名字
+	bool isBanned = 4;								// 是否禁言
+	int32 actionType = 5;							// 动作状态类型
+}
+
+//C2S_GET_MEETING_ATTENDEE_LIST_REQ = 2063;
+message C2SGetMeetingAttendeeListReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_ATTENDEE_LIST_ACK = 2064;
+message S2CGetMeetingAttendeeListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgAttendeeInfo infos = 2;				// 出席者信息列表
+}
+
+//C2S_MEETING_ATTENDEE_BANNED_REQ = 2065;
+message C2SMeetingAttendeeBannedReq
+{
+	string meetingId = 1;							// 会议id
+	int32 roleId = 2;								// 出席者id
+	int32 optType = 3;								// 操作 1.禁言 2.解禁
+}
+
+//S2C_MEETING_ATTENDEE_BANNED_ACK = 2066;
+message S2CMeetingAttendeeBannedAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+	int32 roleId = 3;								// 出席者id
+	int32 optType = 4;								// 操作 1.禁言 2.解禁
+}
+
+//会议评分人数统计
+message MsgMeetingScoreRoleNum
+{
+	int32 Star1RoleNum = 1;
+	int32 Star2RoleNum = 2;
+	int32 Star3RoleNum = 3;
+	int32 Star4RoleNum = 4;
+	int32 Star5RoleNum = 5;
+	int32 totalRoleNum = 6;
+}
+
+//C2S_MEETING_SCORE_REQ = 2067;
+message C2SMeetingScoreReq
+{
+	string meetingId = 1;							// 会议id
+	int32 star = 2;									// 星
+}
+
+//S2C_MEETING_SCORE_ACK = 2068;
+message S2CMeetingScoreAck
+{
+	// 0.成功
+	// 1.会议未结束
+	// 2.未参与会议无法评分
+	int32 errCode = 1;
+	string meetingId = 2;							// 会议id
+	int32 star = 3;									// 星
+	int32 score = 4;								// 评分
+	MsgMeetingScoreRoleNum roleNum = 5;				// 人数统计
+}
+
+//C2S_GET_MEETING_SCORE_INFO_REQ = 2069;
+message C2SGetMeetingScoreInfoReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_SCORE_INFO_ACK = 2070;
+message S2CGetMeetingScoreInfoAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+	int32 star = 3;									// 星
+	int32 score = 4;								// 评分
+	int32 already_star=5;							//是否已经评分	0：未评价，1：已评价	
+	MsgMeetingScoreRoleNum roleNum = 6;				// 人数统计
+}
+
+//C2S_GET_MEETING_INFO_REQ = 2071;
+message C2SGetMeetingInfoReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_INFO_ACK = 2072;
+message S2CGetMeetingInfoAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	MsgMeetingInfo info = 2;						// 会议信息
+}
+
+//C2S_EXTEND_MEETING_TIME_REQ = 2073;
+message C2SExtendMeetingTimeReq
+{
+	string meetingId = 1;							// 会议id
+	int64 endTime = 2;								// 会议结束时间
+}
+
+//S2C_EXTEND_MEETING_TIME_ACK = 2074;
+message S2CExtendMeetingTimeAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+}
+
+//会议(会前统计)信息
+message MsgMeetingStatisticBefore
+{
+	message MsgBeforeUnit
+	{
+		int32 invite0 = 1;							// 0.邀请未回应
+		int32 invite1 = 2;							// 1.邀请同意
+		int32 invite2 = 3;							// 2.邀请拒绝
+		int32 apply0 = 4;							// 0.申请未审核
+		int32 apply1 = 5;							// 1.申请已通过
+		int32 apply2 = 6;							// 2.申请已拒绝
+		int32 ticket = 7;							// 购票的
+	}
+
+	MsgBeforeUnit speaker = 1;						// 演讲者
+	MsgBeforeUnit seatA = 2;						// A等坐
+	MsgBeforeUnit seatB = 3;						// B等坐
+	MsgBeforeUnit seatC = 4;						// C等坐
+	MsgBeforeUnit seatD = 5;						// D等坐
+	MsgBeforeUnit audience = 6;						// 观众e
+}
+
+//C2S_GET_MEETING_STATISTIC_BEFORE_REQ = 2075;
+message C2SGetMeetingStatisticBeforeReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_STATISTIC_BEFORE_ACK = 2076;
+message S2CGetMeetingStatisticBeforeAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+	MsgMeetingStatisticBefore statistic = 3;		// 统计数据
+}
+
+//会议(会后统计)信息
+message MsgMeetingStatisticAfter
+{
+	message MsgAfterUnit
+	{
+		int32 total = 1;							// 总数
+		int32 actual = 2;							// 实际
+		int32 onlineMax = 3;						// 在线峰值
+	}
+
+	MsgAfterUnit speaker = 1;						// 演讲者
+	MsgAfterUnit seatA = 2;							// A等坐
+	MsgAfterUnit seatB = 3;							// B等坐
+	MsgAfterUnit seatC = 4;							// C等坐
+	MsgAfterUnit seatD = 5;							// D等坐
+	MsgAfterUnit audience = 6;						// 观众
+}
+
+//C2S_GET_MEETING_STATISTIC_AFTER_REQ = 2077;
+message C2SGetMeetingStatisticAfterReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_STATISTIC_AFTER_ACK = 2078;
+message S2CGetMeetingStatisticAfterAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+	MsgMeetingStatisticAfter statistic = 3;			// 统计数据
+}
+
+//会议(收入统计)信息
+message MsgMeetingEarning
+{
+	int32 speaker = 1;								// 演讲者收入
+	int32 seatA = 2;								// A等坐收入
+	int32 seatB = 3;								// B等坐收入
+	int32 seatC = 4;								// C等坐收入
+	int32 seatD = 5;								// D等坐收入
+	int32 audience = 6;								// 观众收入
+}
+
+//会议(支出统计)信息
+message MsgMeetingSpending
+{
+	int32 place = 1;								// 场地费用
+	int32 extend = 2;								// 会议延时
+	int32 save = 3;									// 会议保存(暂无)
+	int32 video = 4;								// 生成视频(暂无)
+}
+
+//C2S_GET_MEETING_IO_STATISTIC_REQ = 2079;
+message C2SGetMeetingIoStatisticReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_IO_STATISTIC_ACK = 2080;
+message S2CGetMeetingIoStatisticAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	MsgMeetingEarning earning = 2;					// 会议收入
+	MsgMeetingSpending spending = 3;				// 会议支出
+}
+
+//C2S_MODIFY_MEETING_TIME_REQ = 2081;
+message C2SModifyMeetingTimeReq
+{
+	string meetingId = 1;							// 会议id
+	int64 startTime = 2;							// 会议开始时间
+	int64 endTime = 3;								// 会议结束时间
+}
+
+//S2C_MODIFY_MEETING_TIME_ACK = 2082;
+message S2CModifyMeetingTimeAck
+{
+	// 0.成功
+	// 1.未找到会议
+	// 2.会议开始时间临近无法修改会议时间
+	// 3.货币不足
+	// 5.会议室该时间段已被占用
+	int32 errCode = 1;
+}
+
+//会议评论信息
+message MsgMeetingCommentInfo
+{
+	string meetingId = 1;							// 会议id
+	int32 commentId = 2;							// 评论id
+	int32 commentRoleId = 3;						// 评论者id
+	int64 commentRoleIcon = 4;						// 评论者icon
+	string commentRoleName = 5;						// 评论者名字
+	int64 commentTime = 6;							// 评论时间
+	string text = 7;								// 文本
+	int32 identityId = 8;							// 身份枚举 <0-5.与门票类型保持一直> 6.创建者
+}
+
+//会议评论回复信息
+message MsgMeetingCommentReplyInfo
+{
+	string meetingId = 1;							// 会议id
+	int32 commentId = 2;							// 评论id
+	int32 replyId = 3;								// 回复id
+	int32 replyRoleId = 4;							// 回复者id
+	string replyRoleName = 5;						// 回复者名字
+	string text = 6;								// 文本
+};
+
+//C2S_GET_MEETING_COMMENT_LIST_REQ = 2083;
+message C2SGetMeetingCommentListReq
+{
+	string meetingId = 1;							// 会议id
+}
+
+//S2C_GET_MEETING_COMMENT_LIST_ACK = 2084;
+message S2CGetMeetingCommentListAck
+{
+	// 0.成功
+	// 1.未找到会议
+	int32 errCode = 1;
+	string meetingId = 2;							// 会议id
+	repeated MsgMeetingCommentInfo comments = 3;	// 评论
+	repeated MsgMeetingCommentReplyInfo replys = 4;	// 回复
+}
+
+//C2S_MEETING_COMMENT_REQ = 2085;
+message C2SMeetingCommentReq
+{
+	string meetingId = 1;							// 会议id
+	string text = 2;								// 文本
+}
+
+//S2C_MEETING_COMMENT_ACK = 2086;
+message S2CMeetingCommentAck
+{
+	// 0.成功
+	// 1.未找到会议
+	// 2.会议未结束
+	// 3.未参与会议无法评论
+	int32 errCode = 1;
+	string meetingId = 2;							// 会议id
+}
+
+//C2S_MEETING_COMMENT_REPLY_REQ = 2087;
+message C2SMeetingCommentReplyReq
+{
+	string meetingId = 1;							// 会议id
+	int32 commentId = 2;							// 评论id
+	string text = 3;								// 文本
+}
+
+//S2C_MEETING_COMMENT_REPLY_ACK = 2088;
+message S2CMeetingCommentReplyAck
+{
+	// 0.成功
+	// 1.未找到会议
+	// 2.会议未结束
+	// 3.未参与会议无法评论
+	// 4.未找到该评论
+	// 5.该会议没有任何评论
+	int32 errCode = 1;
+	string meetingId = 2;							// 会议id
+}
+
+//C2S_MEETING_GIFT_GIVING_REQ = 2089; // 请求会议送礼
+message C2SMeetingGiftGivingReq
+{
+	string meetingId = 1;							// 会议id
+	int32 targetRoleId = 2;							// 收礼人的角色id
+	string giftId = 3;								// 礼物的描述id
+}
+
+//S2C_MEETING_GIFT_GIVING_ACK = 2090; // 返回会议送礼结果
+message S2CMeetingGiftGivingAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	string meetingId = 2;							// 会议id
+	int32 whoRoleId = 3;							// 送礼人的角色id
+	string whoRoleName = 4;							// 送礼人的角色名称
+	int32 targetRoleId = 5;							// 收礼人的角色id
+	string targetRoleName = 6;						// 收礼人的角色名称
+	string giftId = 7;								// 礼物的描述id
+}
+
+//C2S_GET_TODAY_MEETING_LIST_REQ = 2097;
+message C2SGetTodayMeetingListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+}
+
+//S2C_GET_TODAY_MEETING_LIST_ACK = 2098;
+message S2CGetTodayMeetingListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingInfo infos = 2;				// 会议信息列表
+}
+
+//C2S_GET_OPEN_MEETING_LIST_REQ = 2099;
+message C2SGetOpenMeetingListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+}
+
+//S2C_GET_OPEN_MEETING_LIST_ACK = 2100;
+message S2CGetOpenMeetingListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingInfo infos = 2;				// 会议信息列表
+}
+
+//C2S_GET_FREE_MEETING_LIST_REQ = 2101;
+message C2SGetFreenMeetingListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+}
+
+//S2C_GET_FREE_MEETING_LIST_ACK = 2102;
+message S2CGetFreeMeetingListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingInfo infos = 2;				// 会议信息列表
+}
+
+//C2S_GET_HISTORY_MEETING_LIST_REQ = 2103;
+message C2SGetHistoryMeetingListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+}
+
+//S2C_GET_HISTORY_MEETING_LIST_ACK = 2104;
+message S2CGetHistoryMeetingListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingInfo infos = 2;				// 会议信息列表
+}
+
+//C2S_GET_MY_MEETING_LIST_REQ = 2105;
+message C2SGetMyMeetingListReq
+{
+	int32 meetingCenterId = 1;						// 会议中心id
+	int32 meetingCenterKey =2;						// 会议中心key
+}
+
+//S2C_GET_MY_MEETING_LIST_ACK = 2106;
+message S2CGetMyMeetingListAck
+{
+	int32 errCode = 1;								// 0.成功 1.失败
+	repeated MsgMeetingInfo infos = 2;				// 会议信息列表
+}
+
+//S2C_MEETING_RULER_NOTIFY = 2107;	
+message S2CMeetingRulerNotify
+{
+	int32 roleId = 1;								// 当前会议权限持有人
+}
+
+//S2C_RECON_MEETING_ID_NOTIFY = 2108				// 断线重连通知其会议id
+message S2CReconMeetingIdNotify
+{
+	string meetingId = 1;							// 会议id
+}

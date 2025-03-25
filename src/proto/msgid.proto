@@ -1,0 +1,286 @@
+syntax = "proto3";
+
+enum MsgId
+{
+	SCENE_START = 0;	
+	NETTESTLINK								= 100;   //网络链路检测包.
+	C2S_GETSERVERTIME						=982;	//获得服务器时间
+	S2C_GETSERVERTIME_ACK					=983;   //获得服务器时间返回_
+	S2C_NOTIFYCLIENTTODISCON				= 984;  //服务器通知客户端断开连接.
+	C2S_GETUMONEY_REQ						= 985;  //客户端请求同步用户货币
+	S2C_UMONEYSYNC							= 986;  //用户货币同步功能
+	S2C_ZFBWITHDRAWAL_ACK					= 987;  //单笔提现结果
+	C2S_ZFBWITHDRAWAL_REQ					= 988;  //单笔提现请求	
+	
+	S2C_REALNAMEVERIFYDATA_ACK				= 989;  //实名认证结果
+	C2S_REALNAMEVERIFYDATA_REQ				= 990;  //实名认证请求	
+	
+	S2C_SETROLEFACEDATA_ACK				    = 991;  //处理结果返回
+	C2S_SETROLEFACEDATA					    = 992;  //设置角色捏脸数据
+	//创建充值计费
+	C2S_FEECREATE							=993;  //创建计费订单，发起充值
+	S2C_FEECREATE_ACK						=994;  //返回充值结果
+	S2C_FEERESULT_NOTIFY					=995;  //通知充值结构.
+
+	//这里传减定义
+	S2C_OUTOFFSERVICE						= 996; // 通知客户端，服务器异常。	
+	C2S_HEART_BEAT_REQ						= 997; // 客户端心跳请求
+	S2C_HEART_BEAT_ACK						= 998; // 客户端心跳返回
+	C2S_GM_COMMAND_REQ 						= 999; // gm
+	
+	//--------角色登录相关------
+	S2C_LOGINMSGID_BEGIN					= 1000;	  //登录消息开始
+	C2S_ACCOUNT_LOGIN						= 1001;   //账号(角色)等登录，保持这个是在登录模块消息的第一个
+	S2C_ACCOUNT_LOGIN_ACK					= 1002;   //账号(角色)等登录返回
+	C2S_ACCOUNT_UPGRADE						= 1003;   //临时账号升级为正式账号
+	S2C_ACCOUNT_UPGRADE_ACK					= 1004;   //返回账号升级结果.
+	C2S_SENDVCODE				    		= 1005;   //向用户发送验证码
+	S2C_SENDVCODE_ACK		    			= 1006;   //向用户发送验证码，仅提示验证码的发送状态
+	//C2S_VERIFYVCODE							= 1007;   //验证验证码的有效性
+	//S2C_VERIFYVCODE_ACK						= 1008;   //返回手机验证码是否合法
+	C2S_ABINDPHONE							= 1009;   //账号绑定手机号.
+	S2C_ABINDPHONE_ACK						= 1010;   //账号绑定手机的返回值.
+	C2S_PHONE_LOGIN							= 1011;   //手机号登录
+	S2C_PHONE_LOGIN_ACK						= 1012;   //手机号登录返回，登录成功返回账号角色列表
+	C2S_RESET_PWD							= 1013;   //重置密码
+	S2C_RESET_PWD_ACK						= 1014;   //重置密码的结果
+	C2S_CHANGE_PWD							= 1015;   //修改密码
+	S2C_CHANGE_PWD_ACK						= 1016;   //修改密码的结果
+	C2S_CHANGE_CNAME						= 1017;   //修改角色名
+	S2C_CHANGE_CNAME_ACK					= 1018;   //修改角色名结果通知.
+	C2S_ACCOUNTLOGOUT						= 1019;   //客户端登出
+	S2C_ACCOUNTLOGOUTACK					= 1020;   //客户端登出，ACK
+	S2C_NOTIFYROLELOGOUT					= 1021;   //通知客户端，角色强制登出
+	C2S_SWITCHACCOUNT						= 1022;   //切换账号
+	S2C_SWITCHACCOUNTACK					= 1023;   //切换账号，ACK
+	C2S_ROLERECONNECT						= 1024;	  //角色重连
+	S2C_ROLERECONNECTACK					= 1025;	  //角色重连,ACK
+	C2S_GETACCOUNTPHONENUM					= 1026;	  //查询账号的手机号（返回带掩码的手机号）
+	S2C_GETACCOUNTPHONENUM_ACK				= 1027;	  //返回账号的手机号，带掩码的手机号
+	S2C_LOGINMSGID_END					    = 1028;   //消息ID结束，保持这个是最后一个
+	//--------角色登录相关------	
+ 
+	
+	//场景1201-1400
+	C2S_ENTER_SCENE_REQ						= 1201;
+	S2C_ENTER_SCENE_ACK						= 1202;	
+	S2C_ENTER_SCENE_DS_INFO					= 1203;
+
+	C2S_CHANGE_SCENE_REQ					= 1204;
+	S2C_CHANGE_SCENE_ACK					= 1205;
+	
+	C2S_SCENE_ROLE_MOVE_REQ 				= 1206; // 场景人物移动记录
+	S2C_SCENE_ROLE_MOVE_ACK 				= 1207; // 
+
+	S2C_FORCE_CHANGE_SCENE_NOTIFY			= 1208;
+
+	
+
+	//好友 1401-1600
+	C2S_FRIEND_LIST_REQ									= 1401; // 请求获取好友列表
+	S2C_FRIEND_LIST_ACK									= 1402; // 返回好友列表
+
+	C2S_APPLY_LIST_REQ									= 1403; // 请求获取好友列表
+	S2C_APPLY_LIST_ACK									= 1404; // 返回好友列表
+	C2S_APPLY_FRIEND_REQ 								= 1405; // 请求加为好友
+	S2C_APPLY_FRIEND_ACK                                = 1406; // 返回请求加为好友
+	S2C_APPLY_FRIEND_NOTIFY 							= 1407; // 服务器询问被添加好友的对象
+																 
+	C2S_AGREE_FRIEND_REQ 								= 1408; // 同意或拒绝加为好友
+	S2C_AGREE_FRIEND_ACK                                = 1409; // 返回同意或拒绝加为好友
+																 
+	C2S_DELETE_FRIEND_REQ 								= 1410; // 删除好友请求
+	S2C_DELETE_FRIEND_RES 								= 1411; // 删除好友返回
+																 
+	S2C_CHANGE_FRIEND_NOTIFY 							= 1412; // 服务器向客户端发送好友信息改变通知
+																 
+	C2S_BLACKLIST_REQ 									= 1413; // 请求黑名单列表
+	S2C_BLACKLIST_ACK 									= 1414; // 返回请求黑名单列表
+	C2S_BLACKLIST_ADD_REQ 								= 1415; // 添加黑名单 	
+	S2C_BLACKLIST_ADD_ACK 								= 1416; // 添加黑名单 	
+	C2S_BLACKLIST_DEL_REQ 								= 1417; // 删除黑名单
+	S2C_BLACKLIST_DEL_ACK 								= 1418; // 删除黑名单
+
+	S2C_BLACKLIST_CHANGE_NOTICE 						= 1419; // 黑名单变化通知
+
+	C2S_FRIEND_RECOMMEND_REQ							= 1420; // 推荐好友
+	S2C_FRIEND_RECOMMEND_AKC                            = 1421; // 推荐好友
+
+	C2S_FRIEND_SEARCH_REQ                               = 1422; // 搜索好友
+	S2C_FRIEND_SEARCH_AKC                               = 1423; // 搜索好友
+
+	C2S_FRIEND_SET_REQ									= 1424; // 好友设置
+	S2C_FRIEND_SET_AKC									= 1425; // 
+
+	C2S_FRIEND_ALIAS_REQ                                = 1426; // 好友别名
+	S2C_FRIEND_ALIAS_AKC                                = 1427; // 
+
+	C2S_CALL_FRIEND_REQ 								= 1428; // 请求呼叫好友通话
+	S2C_CALL_FRIEND_ACK 								= 1429; // 请求呼叫好友通话结果
+	C2S_ANSWER_FRIEND_REQ 								= 1430; // 请求回应好友通话
+	S2C_ANSWER_FRIEND_ACK 								= 1431; // 请求回应好友通话结果
+	C2S_HANGUP_FRIEND_REQ 								= 1432; // 请求挂断好友通话
+	S2C_HANGUP_FRIEND_ACK 								= 1433; // 请求挂断好友通话结果	
+	S2C_DISCONNECT_NOTIFY_OTHER 						= 1434; // 通话掉线通知另一方	
+		
+	//聊天1601-1800
+	C2S_CHAT_REQ 										= 1601; // 请求聊天
+	S2C_CHAT_ACK 										= 1602; // 返回聊天结果
+	C2S_CHAT_HISTORY_REQ 								= 1603; // 频道聊天记录
+	S2C_CHAT_HISTORY_ACK 								= 1604; // 频道聊天记录返回
+	C2S_LOAD_HISTORY_OVER_REQ 							= 1605; // 频道聊天记录加载完毕
+
+	
+	// 群相关 1801-2000
+	C2S_GROUP_BEGIN										= 1800;
+	C2S_GROUP_CREATE_REQ 								= 1801; // 创建群
+	S2C_GROUP_CREATE_ACK 								= 1802; //
+
+	C2S_GROUP_INVITE_REQ 								= 1803; // 邀请进群
+	S2C_GROUP_INVITE_ACK 								= 1804; // 邀请进群
+	S2C_GROUP_INVITE_NOTIFY 							= 1805; //
+
+	C2S_GROUP_INVITE_AGREE_REQ 							= 1806; // 同意进群
+	S2C_GROUP_INVITE_AGREE_ACK 							= 1807; 
+
+	C2S_GROUP_QUIT_REQ 									= 1808; // 退群
+	S2C_GROUP_QUIT_ACK 									= 1809; // 退群
+	S2C_GROUP_CHANGE_NOTIFY 							= 1810; // 群变更通知
+
+	C2S_GROUP_INFO_REQ 									= 1811; // 请求自己的群
+	S2C_GROUP_INFO_ACK 									= 1812; // 自己的群
+
+	C2S_GROUP_DISMISS_REQ 								= 1813; // 解散群
+	S2C_GROUP_DISMISS_ACK 								= 1814; // 解散群
+
+	C2S_GROUP_SET_REQ									= 1815; // 群设置
+	S2C_GROUP_SET_AKC									= 1816; // 
+
+	C2S_GROUP_NICKNAME_REQ                              = 1817; // 群名
+	S2C_GROUP_NICKNAME_AKC                              = 1818; // 
+	
+
+	C2S_GROUP_CHAT_HISTORY_REQ 							= 1819; // 频道群组聊天记录
+	S2C_GROUP_CHAT_HISTORY_ACK 							= 1820; // 频道群组聊天记录返回
+	C2S_CLEAR_GROUP_CHAT_HISTORY_REQ 					= 1821; // 玩家清空自己的组聊天记录
+	S2C_CLEAR_GROUP_CHAT_HISTORY_ACK 					= 1822; // 玩家清空自己的组聊天记录返回
+	S2C_GROUP_END										= 1823;
+	
+	//会议相关 2000-2200
+	C2S_MEETING_BEGIN									= 2000;	// 会议开始
+	C2S_GET_MEETING_LIST_REQ 							= 2001; // 请求会议信息列表
+	S2C_GET_MEETING_LIST_ACK 							= 2002; // 返回会议信息列表
+	C2S_CREATE_MEETING_REQ 								= 2003; // 请求创建会议
+	S2C_CREATE_MEETING_ACK 								= 2004; // 返回创建会议结果
+	C2S_ATTEND_MEETING_REQ 								= 2005; // 请求出席会议
+	S2C_ATTEND_MEETING_ACK 								= 2006; // 返回出席会议结果
+	C2S_GET_MEETING_CENTER_INFO_REQ 					= 2007; // 请求会议中心信息
+	S2C_GET_MEETING_CENTER_INFO_ACK 					= 2008; // 返回会议中心信息
+	C2S_GET_MEETING_ROOM_LIST_REQ 						= 2011; // 请求会议室信息列表
+	S2C_GET_MEETING_ROOM_LIST_ACK 						= 2012; // 返回会议室信息列表
+	C2S_EXIT_MEETING_REQ 								= 2013; // 请求退出会议
+	S2C_EXIT_MEETING_ACK 								= 2014; // 返回退出会议结果
+	C2S_BUY_MEETING_TICKETS_REQ 						= 2015; // 请求购买会议门票
+	S2C_BUY_MEETING_TICKETS_ACK 						= 2016; // 返回购买会议门票结果
+	C2S_GET_MEETING_TICKETS_INFO_REQ 					= 2017; // 请求会议门票信息
+	S2C_GET_MEETING_TICKETS_INFO_ACK 					= 2018; // 返回会议门票信息
+	C2S_ADD_MEETING_VOTE_REQ 							= 2019; // 请求添加会议投票
+	S2C_ADD_MEETING_VOTE_ACK 							= 2020; // 返回添加会议投票结果
+	C2S_MEETING_VOTE_REQ 								= 2021; // 请求会议投票
+	S2C_MEETING_VOTE_ACK 								= 2022; // 返回会议投票结果
+	C2S_MEETING_CHAT_REQ 								= 2023; // 请求会议聊天
+	S2C_MEETING_CHAT_ACK 								= 2024; // 返回会议聊天结果
+	C2S_GET_MEETING_SEAT_INFO_REQ 						= 2025; // 请求会议室座位信息
+	S2C_GET_MEETING_SEAT_INFO_ACK 						= 2026; // 返回会议室座位信息
+	C2S_MEETING_FOR_SCREEN_REQ 							= 2027; // 请求会议投屏
+	S2C_MEETING_FOR_SCREEN_ACK 							= 2028; // 返回会议投屏结果
+	C2S_START_MEETING_REQ 								= 2029; // 请求开始会议
+	S2C_START_MEETING_ACK 								= 2030; // 返回开始会议结果
+	C2S_END_MEETING_REQ 								= 2031; // 请求结束会议
+	S2C_END_MEETING_ACK 								= 2032; // 返回结束会议结果
+	C2S_GET_MEETING_VOTE_LIST_REQ 						= 2033; // 请求会议投票列表
+	S2C_GET_MEETING_VOTE_LIST_ACK 						= 2034; // 返回会议投票列表结果
+	C2S_START_MEETING_VOTE_REQ 							= 2035; // 请求发起会议投票
+	S2C_START_MEETING_VOTE_ACK 							= 2036; // 返回发起会议投票结果
+	C2S_MEETING_SET_MGR_REQ 							= 2037; // 请求发起会议设置管理
+	S2C_MEETING_SET_MGR_ACK 							= 2038; // 返回发起会议设置管理
+	C2S_GET_MEETING_TOSPEAK_LIST_REQ 					= 2039; // 请求会议发言列表
+	S2C_GET_MEETING_TOSPEAK_LIST_ACK 					= 2040; // 返回会议发言列表结果
+	C2S_APPLY_MEETING_TOSPEAK_REQ 						= 2041; // 请求申请会议发言
+	S2C_APPLY_MEETING_TOSPEAK_ACK 						= 2042; // 返回申请会议发言结果
+	C2S_OPEN_MEETING_TOSPEAK_REQ 						= 2043; // 请求开启会议发言
+	S2C_OPEN_MEETING_TOSPEAK_ACK 						= 2044; // 返回开启会议发言结果
+	C2S_CLOSE_MEETING_TOSPEAK_REQ 						= 2045; // 请求关闭会议发言
+	S2C_CLOSE_MEETING_TOSPEAK_ACK 						= 2046; // 返回关闭会议发言结果
+	C2S_REFUSED_MEETING_TOSPEAK_REQ 					= 2047; // 请求拒绝会议发言
+	S2C_REFUSED_MEETING_TOSPEAK_ACK 					= 2048; // 返回拒绝会议发言结果
+	C2S_MEETING_INVITE_REQ 								= 2049; // 请求发送会议邀请
+	S2C_MEETING_INVITE_ACK 								= 2050; // 返回发送会议邀请结果
+	C2S_GET_MEETING_BE_INVITED_REQ 						= 2051; // 请求会议被邀请列表
+	S2C_GET_MEETING_BE_INVITED_ACK 						= 2052; // 返回会议被邀请列表结果
+	C2S_AGREE_MEETING_INVITE_REQ 						= 2053; // 请求同意会议邀请
+	S2C_AGREE_MEETING_INVITE_ACK 						= 2054; // 返回同意会议邀请结果
+	C2S_REFUSED_MEETING_INVITE_REQ 						= 2055; // 请求拒绝会议邀请
+	S2C_REFUSED_MEETING_INVITE_ACK 						= 2056; // 返回拒绝会议邀请结果
+	C2S_GET_MEETING_SPEAKER_LIST_REQ 					= 2057; // 请求会议演讲者列表
+	S2C_GET_MEETING_SPEAKER_LIST_ACK 					= 2058; // 返回会议演讲者列表结果
+	C2S_BEGAN_TO_MEETING_SPEAK_REQ 						= 2059; // 请求开始会议演讲
+	S2C_BEGAN_TO_MEETING_SPEAK_ACK 						= 2060; // 返回开始会议演讲结果
+	C2S_PROMPT_MEETING_SPEAKER_REQ 						= 2061; // 请求提示会议演讲者
+	S2C_PROMPT_MEETING_SPEAKER_ACK 						= 2062; // 返回提示会议演讲者结果
+	C2S_GET_MEETING_ATTENDEE_LIST_REQ 					= 2063; // 请求会议出席者列表
+	S2C_GET_MEETING_ATTENDEE_LIST_ACK 					= 2064; // 返回会议出席者列表结果
+	C2S_MEETING_ATTENDEE_BANNED_REQ 					= 2065; // 请求会议出席者禁言
+	S2C_MEETING_ATTENDEE_BANNED_ACK 					= 2066; // 返回会议出席者禁言结果
+	C2S_MEETING_SCORE_REQ 								= 2067; // 请求会议打分
+	S2C_MEETING_SCORE_ACK 								= 2068; // 返回会议打分结果
+	C2S_GET_MEETING_SCORE_INFO_REQ 						= 2069; // 请求会议评分信息
+	S2C_GET_MEETING_SCORE_INFO_ACK 						= 2070; // 返回会议评分信息结果
+	C2S_GET_MEETING_INFO_REQ 							= 2071; // 请求会议信息
+	S2C_GET_MEETING_INFO_ACK 							= 2072; // 返回会议信息
+	C2S_EXTEND_MEETING_TIME_REQ 						= 2073; // 请求延长会议时间
+	S2C_EXTEND_MEETING_TIME_ACK 						= 2074; // 返回延长会议时间结果
+	C2S_GET_MEETING_STATISTIC_BEFORE_REQ 				= 2075; // 请求会前统计
+	S2C_GET_MEETING_STATISTIC_BEFORE_ACK 				= 2076; // 返回会前统计结果
+	C2S_GET_MEETING_STATISTIC_AFTER_REQ 				= 2077; // 请求会后统计
+	S2C_GET_MEETING_STATISTIC_AFTER_ACK 				= 2078; // 返回会后统计结果
+	C2S_GET_MEETING_IO_STATISTIC_REQ 					= 2079; // 请求会议收支统计
+	S2C_GET_MEETING_IO_STATISTIC_ACK 					= 2080; // 返回会议收支统计结果
+	C2S_MODIFY_MEETING_TIME_REQ 						= 2081; // 请求修改会议时间
+	S2C_MODIFY_MEETING_TIME_ACK 						= 2082; // 返回修改会议时间结果
+	C2S_GET_MEETING_COMMENT_LIST_REQ 					= 2083; // 请求获取会议评论列表
+	S2C_GET_MEETING_COMMENT_LIST_ACK 					= 2084; // 返回获取会议评论列表结果
+	C2S_MEETING_COMMENT_REQ 							= 2085; // 请求发表会议评论
+	S2C_MEETING_COMMENT_ACK 							= 2086; // 返回发表会议评论结果
+	C2S_MEETING_COMMENT_REPLY_REQ 						= 2087; // 请求回复会议评论
+	S2C_MEETING_COMMENT_REPLY_ACK 						= 2088; // 返回回复会议评论结果
+	C2S_MEETING_GIFT_GIVING_REQ 						= 2089; // 请求会议送礼
+	S2C_MEETING_GIFT_GIVING_ACK 						= 2090; // 返回会议送礼结果
+
+	C2S_GET_TODAY_MEETING_LIST_REQ 						= 2097; // 请求今日会议信息列表
+	S2C_GET_TODAY_MEETING_LIST_ACK 						= 2098; // 返回今日会议信息列表
+	C2S_GET_OPEN_MEETING_LIST_REQ 						= 2099; // 请求开放会议信息列表
+	S2C_GET_OPEN_MEETING_LIST_ACK 						= 2100; // 返回开放会议信息列表
+	C2S_GET_FREE_MEETING_LIST_REQ 						= 2101; // 请求免费会议信息列表
+	S2C_GET_FREE_MEETING_LIST_ACK 						= 2102; // 返回免费会议信息列表
+	C2S_GET_HISTORY_MEETING_LIST_REQ 					= 2103; // 请求过往会议信息列表
+	S2C_GET_HISTORY_MEETING_LIST_ACK 					= 2104; // 返回过往会议信息列表
+	C2S_GET_MY_MEETING_LIST_REQ 						= 2105; // 请求我的会议信息列表
+	S2C_GET_MY_MEETING_LIST_ACK 						= 2106; // 返回我的会议信息列表
+	S2C_MEETING_RULER_NOTIFY 							= 2107;	// 当前会议权限持有人
+	S2C_RECON_MEETING_ID_NOTIFY							= 2108;  // 断线重连通知其会议id
+	S2C_MEETING_END										= 2140;	// 会议结束
+	
+	//办公2201-2400
+	C2S_OFFICE_BEGIN									= 2201;	// 办公开始
+	C2S_GET_OFFICE_AREA_LIST_REQ 						= 2202;	// 获得办公区域列表
+	S2C_GET_OFFICE_AREA_LIST_ACK 						= 2203; // 获得办公区域列表结果
+	C2S_ENTER_OFFICE_AREA_REQ 							= 2204;	// 进入办公区域
+	S2C_ENTER_OFFICE_AREA_ACK 							= 2205; // 进入办公区域结果
+	C2S_LEAVE_OFFICE_AREA_REQ 							= 2206;	// 离开办公区域
+	S2C_LEAVE_OFFICE_AREA_ACK 							= 2207; // 离开办公区域结果
+	C2S_GET_OFFICE_WORKER_LIST_REQ						= 2208;	// 获得办公人员列表
+	S2C_GET_OFFICE_WORKER_LIST_ACK						= 2209;	// 获得办公人员列表结果
+	C2S_OFFICE_END										= 2210;	// 办公结束
+
+}

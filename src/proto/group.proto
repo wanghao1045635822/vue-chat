@@ -1,0 +1,180 @@
+syntax = "proto3";
+import "chat.proto";
+
+// 群友信息
+message GroupItem
+{
+   int32 role_id = 1;
+   string name = 2;
+   int32 level = 3;
+   GroupSet group_set = 4;
+   int32 icon = 5;
+}
+
+// 群信息
+message GroupInfo
+{
+   int64 group_id = 1;
+   string group_name = 2;
+   int32 mgr = 3; //群主
+   repeated GroupItem members = 4;
+}
+
+// 好友设置
+message GroupSet
+{
+   bool is_show_nickname = 1;// 显示昵称 0.否 1.是
+   bool is_not_disturb = 2;// 消息免打扰 0.否 1.是
+   bool is_top_chat = 3;// 聊天置顶 0.否 1.是
+}
+
+// 请求创建群组
+message C2SGroupCreateReq
+{
+   repeated int32 members = 1;
+}
+
+// 返回创建群组信息
+message S2CGroupCreateAck
+{
+   int32 error_id = 1;
+   GroupInfo group_info = 2;
+}
+
+// 邀请进群
+message C2SGroupInviteReq
+{
+   int64 group_id = 1;
+   repeated int32 invitee = 2; //被邀请者id
+}
+
+// 返回邀请状态信息
+message S2CGroupInviteAck
+{
+   int32 error_id = 1;
+}
+
+// 返回信息信息
+message S2CGroupInviteNotify
+{
+   int64 group_id = 1;
+   int32 inviter = 2; //邀请者
+}
+
+// 同意或拒绝邀请
+message C2SGroupInviteAgreeReq
+{
+   int64 group_id = 1; //群id
+}
+
+// 
+message S2CGroupInviteAgreeAck
+{
+   GroupInfo group_info = 1;
+}
+
+// 退出群组
+message C2SGroupQuitReq
+{
+   int64 group_id = 1;
+}
+
+// 退出状态
+message S2CGroupQuitAck
+{
+   int32 error_id = 1;
+}
+
+// 删除好友请求
+message S2CGroupChangeNotify
+{
+   int32 op_type = 1; //0 解散 ; 1 增加成员 2 删除成员
+   int64 group_id = 2;
+   repeated GroupItem members = 3;
+}
+
+// 请求群组信息
+message C2SGroupInfoReq
+{
+   
+}
+
+// 返回群列表
+message S2CGroupInfoAck
+{
+   repeated GroupInfo group_list = 1;
+}
+
+// 请求解散群组
+message C2SGroupDismissReq
+{
+   int64 group_id = 1;
+}
+
+// 返回解散群
+message S2CGroupDismissAck
+{
+   int32 error_id = 1;
+}
+
+// 群设置
+message C2SGroupSetReq
+{
+   int64 group_id = 1; // 修改者群ID
+   GroupSet group_set = 2;
+}
+
+// 返回群设置
+message S2CGroupSetAck
+{
+   int32 error_id = 1;
+   int64 group_id = 2; // 修改者群ID
+   int32 role_id = 3; // 被修改者ID
+   GroupSet group_set = 4; // 修改内容
+}
+
+// 群名修改
+message C2SGroupNicknameReq
+{
+   int64 group_id = 1; // 修改者群ID
+   string nickname = 2;
+}
+
+// 返回群名修改
+message S2CGroupNicknameAck
+{
+   int32 error_id = 1;
+   int64 group_id = 2; // 修改者群ID
+   string nickname = 3; // 修改的昵称
+}
+
+
+
+//C2S_GROUP_CHAT_HISTORY_REQ 						// 频道群组聊天记录
+message C2SChatGroupHistoryReqData{
+	int64 start_time		= 1;
+	int64 group_id			= 2;
+}
+
+message C2SChatGroupHistoryReq{
+	repeated C2SChatGroupHistoryReqData data = 1;
+}
+
+//S2C_GROUP_CHAT_HISTORY_ACK
+message S2CGroupChatHistoryACK{
+	int32 code 			= 1;
+	int64 group_id 		= 2;
+	repeated S2CSocializeChatAck data = 3;				
+	int32 total_num 	= 4;
+	int32 start_index 	= 5;
+	int32 count 		= 6;
+}
+
+
+message C2SClearChatGroupHistoryReq{
+	int64 group_id		= 1;
+}
+
+message S2CClearChatGroupHistoryACK{
+	int32 code		= 1;
+}

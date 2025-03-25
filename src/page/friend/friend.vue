@@ -32,7 +32,8 @@ export default {
 
   .friend-wrapper {
     width: 250px;
-    background: #fff;
+    //background: #fff
+    background-color: rgba(0, 0, 0, 0.3)
   }
   .friendinfo {
     flex: 1

@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="content-message" @contextmenu.prevent="messageRigthClick(item.messageId)">
                                     <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
-                                    <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>    
+                                    <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>
                                     <div v-if="item.content.type === 2">
                                         [语音消息]
                                     </div>
@@ -41,13 +41,13 @@
                                         [位置消息]
                                     </div>
                                     <div v-if="item.content.type === 5">
-                                        <div class="attachment"> 
-                                            <div class="flexbox flex-alignc"> 
-                                                <i class="ico-bg"></i> 
-                                                    <div class="file-info flex1"> 
+                                        <div class="attachment">
+                                            <div class="flexbox flex-alignc">
+                                                <i class="ico-bg"></i>
+                                                    <div class="file-info flex1">
                                                         <p class="name">{{fileMessageConfig(item).name}}</p>
                                                         <p class="size">{{fileMessageConfig(item).size}}</p>
-                                                    </div> 
+                                                    </div>
                                                 <a class="btn-down" :href="fileMessageConfig(item).remotePath" target="_blank"></a>
                                             </div>
                                         </div>
@@ -67,9 +67,9 @@
                                 </div>
                                 <rightMenu v-if="isShowMessageMenu(item)" v-bind:message="item"></rightMenu>
                             </div>
-                            
+
                         </div>
-                        
+
                     </div>
 		    	</li>
 		    </ul>
@@ -117,7 +117,7 @@ export default {
             loadingDes: '数据载入中...'
         }
     },
-    
+
     computed: {
         ...mapGetters([
             'selectedChat',
@@ -143,7 +143,7 @@ export default {
                 this.$store.state.showGroupInfo = value
            }
         },
-        
+
     },
     mounted() {
          //  在页面加载时让信息滚动到最下面
@@ -156,7 +156,7 @@ export default {
         //         this.showGroupFriendInfo = false;
         //     }
         // });
-        
+
     },
     watch: {
         // 发送信息后,让信息滚动到最下面
@@ -198,7 +198,7 @@ export default {
                                 isGroupMember = true;
                                 break;
                             }
-                            
+
                         }
 
                         if(!isGroupMember){
@@ -211,7 +211,7 @@ export default {
                             }
                         }
                     }
-                    
+
                 }
             })
         },
@@ -219,19 +219,19 @@ export default {
             this.showGroupInfo = !this.showGroupInfo;
         },
         avatarSrc(item){
-            var avarimgUrl = 'static/images/vue.jpg';
-            if(item.direction == 0){
-                avarimgUrl = this.user.img;
-            } else {
-                var user = this.userInfoList.find(user => user.uid == item.from);
-                if(user){
-                   avarimgUrl = user.portrait;
-                }
-            }
+            var avarimgUrl = 'static/images/UserAvatar.jpg';
+            // if(item.direction == 0){
+            //     avarimgUrl = this.user.img;
+            // } else {
+            //     var user = this.userInfoList.find(user => user.uid == item.from);
+            //     if(user){
+            //        avarimgUrl = user.portrait;
+            //     }
+            // }
             return avarimgUrl;
         },
         showUserName(from){
-            var displayName = webSocketClient.getDisplayName(from);;
+            var displayName = webSocketClient.getDisplayName(from);
             return displayName;
         },
         //  在发送信息之后，将输入的内容中属于表情的部分替换成emoji图片标签
@@ -241,7 +241,7 @@ export default {
                 var emojis=this.emojis;
                 for(var i=0;i<emojis.length;i++){
                     con = con.replace(emojis[i].reg, '<img src="static/emoji/' + emojis[i].file +'"  alt="" style="vertical-align: middle; width: 24px; height: 24px" />');
-                }   
+                }
                 return con;
             }
             return con;
@@ -343,7 +343,7 @@ export default {
         },
 
         isNotification(type){
-            return type >= 80 && type <= 117 
+            return type >= 80 && type <= 117
         },
 
         isSending(protoMessage){
@@ -374,7 +374,7 @@ export default {
             } else {
                 return false;
             }
-           
+
         },
         imageThumnailSrc(item){
             var thumbnail = item.content.binaryContent;
@@ -383,7 +383,7 @@ export default {
             } else {
                 thumbnail = ''
             }
-            return thumbnail 
+            return thumbnail
         },
     },
     filters: {
@@ -417,7 +417,7 @@ export default {
       max-height : 330px;
       text-align: center
       border-radius: 3px
-      
+
    .message
       position: relative
       width: 100%
@@ -425,7 +425,7 @@ export default {
       .header
         height: 14%
         max-height: 60px
-        min-height: 60px 
+        min-height: 60px
         padding: 0px 0 0 30px
         box-sizing: border-box
         display:flex
@@ -440,15 +440,16 @@ export default {
             margin-left : auto
             .icon
                 font-size: 24px
-                cursor: pointer 
+                cursor: pointer
       .message-wrapper
         height: 86%
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
-        border-top: 1px solid #e7e7e7
-        border-bottom: 1px solid #e7e7e7
-        background: #f2f2f2
+        //border-top: 1px solid #e7e7e7
+        //border-bottom: 1px solid #e7e7e7
+        //background: #f2f2f2
+        background-color: rgba(0, 0, 0, 0.3)
         .loading
             color: #9ea0a3;
             font-size: 12px;
@@ -475,20 +476,20 @@ export default {
                 background-color: #dcdcdc
         .main
             margin-top: 10px
-            .avatar 
+            .avatar
                 float: left
                 margin-left: 15px
                 border-radius: 3px
-            .content 
+            .content
                 display:inline-block
-                width: 65%   
+                width: 65%
                 .display-name
                     margin-left: 10px
                     margin-bottom: 5px
                     font-size: 8px
                     color: #999
                 .content-message-right-menu
-                    position: relative    
+                    position: relative
                     .content-message
                         display: inline-block
                         margin-left: 10px
@@ -508,10 +509,10 @@ export default {
                             max-width: 350px
                             .ico-bg
                                 background: url(/static/images/icon__attachment-white.png) no-repeat center #3aa4dd;
-                                background-size: 20px; 
-                                display: inline-block; 
-                                vertical-align: top; 
-                                height: 40px; 
+                                background-size: 20px;
+                                display: inline-block;
+                                vertical-align: top;
+                                height: 40px;
                                 width: 40px;
                             .file-info
                                 font-size: 14px;
@@ -519,19 +520,19 @@ export default {
                                 margin-left: 10px;
                             .name
                                 overflow: hidden;
-                                white-space: nowrap; 
-                                text-overflow: ellipsis; 
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
                                 max-width: 248px;
                             .size
                                 color: #666;
                                 font-size: 12px;
                             .btn-down
-                                background: url(/static/images/icon__download.png) no-repeat center; 
-                                background-size: 15px; 
-                                display: inline-block; 
-                                vertical-align: top; 
-                                height: 30px; 
-                                width: 20px;                
+                                background: url(/static/images/icon__download.png) no-repeat center;
+                                background-size: 15px;
+                                display: inline-block;
+                                vertical-align: top;
+                                height: 30px;
+                                width: 20px;
                         .text
                             white-space: pre-wrap;
                         &:before
@@ -552,25 +553,25 @@ export default {
                     display: inline-block
                     .icon
                         display: block
-                        font-size: 16px 
+                        font-size: 16px
                     .icon-fasongshibai
                         color: red
                     .icon-loading-solid
                         animation: changeright 1s linear infinite
-                .content-message-right-menu            
-                    .content-message 
+                .content-message-right-menu
+                    .content-message
                         background-color: #b2e281
-                        &:before 
+                        &:before
                             right: -12px
                             vertical-align: middle
                             border-right-color: transparent
                             border-left-color: #b2e281
-    @keyframes changeright     
-    0% 
+    @keyframes changeright
+    0%
         -webkit-transform:rotate(0deg)
     50%
         -webkit-transform:rotate(180deg)
     100%
-        -webkit-transform:rotate(360deg)                      
-                    
+        -webkit-transform:rotate(360deg)
+
 </style>

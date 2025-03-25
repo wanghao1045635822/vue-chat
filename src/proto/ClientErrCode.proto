@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+//客户端错误代码
+enum ERRORCODE
+{
+	//[0-100] 通用错误码
+	EC_SUCCESS = 0;	//成功
+	EC_SERVER_INTERNAL_ERROR = 1;	//服务器内部错误
+	EC_SERVER_SESSIONID_INVALID = 2;	//无效的sessionid
+
+	//[101 - 120]	
+	//C2S_ENTER_SCENE_REQ请求错误码
+	EC_ENTER_SCENE_NOT_EXIST = 101;
+
+	//[201 - 220]	Login
+	E_LOGIN_ACCOUNT_NOTEXISTS = 201;//账号不存在
+	E_LOGIN_DBERROR = 202;//数据库错误
+	E_LOGIN_PWDERROR = 203;//账号密码不匹配
+	E_LOGIN_EXIST = 204;//已经存在，已经登录
+	E_LOGIN_SESSIONID = 205;//sessionID无效;或者账号没有登录
+	E_LOGIN_SMSINTEVAL = 206;//短信发送过于频繁
+	E_LOGIN_SENDVCODE = 207;//短信验证码发送失败
+	E_LOGIN_VCODE = 208;//短信验证码无效
+	E_LOGIN_PHONENUM = 209;//手机号错误.
+	E_LOGIN_OPCODE = 210;//操作码无效
+	E_FEE_NOT_ENOUGH = 211;//快币，快豆，快赚不够了.
+	E_FEE_HTTPSNET = 212;//Http网络错误
+	E_FEE_OTHERERR = 213;//其他错误，参考其他地方描述
+	E_LOGIN_ACCOUNT_NOTEXIST = 214; //账号不存在
+	E_LOGIN_ACCOUNT_NOPHONENUM = 215; //账号未绑定手机号
+	E_LOGIN_ONOTHER = 216; //账号已经在其他地方登录
+	E_LOGIN_SAMEPWD = 217;//修改账号错误，新旧密码一样
+
+	
+	//C2S_APPLY_FRIEND_REQ [221-230]
+	E_APPLY_FRIEND_INTERNAL_ERR					= 221; //已申请过
+	E_APPLY_FRIEND_FRIEND_EXIST					= 222; //好友存在
+	E_APPLY_FRIEND_IN_BLACKLIST					= 223; //在黑名单
+	E_APPLY_FRIEND_NUM_MAX						= 224; //好友上限
+	E_APPLY_FRIEND_TARGET_NUM_MAX				= 225; //对方好友上限
+
+
+	//C2S_BLACKLIST_ADD_REQ [231-240]
+	EC_BLACKLISTS_NUM_MAX						= 231;		//黑名单已满
+	EC_IN_BLACKLIST								= 232;		//已经在黑名单
+	//C2S_AGREE_FRIEND_REQ [241-250]
+	EC_FRIEND_EXIST								= 241;		//好友已经存在
+	EC_FRIEND_NUM_MAX							= 242;		//好友数据达到上限
+
+	//C2S_BLACKLIST_DEL_REQ [251-260]
+	EC_NOT_IN_BLACKLIST							= 251;		//不在在黑名单
+
+	//C2S_FRIEND_SEARCH_REQ [261-270]
+	EC_FRIEND_SEARCH_NOT_EXIST					= 261;		//搜索的用户不存在
+	EC_FRIEND_SEARCH_FRIEND						= 262;		//已经是好友
+
+
+	//C2S_FRIEND_SET_REQ [271-280]
+	EC_FRIEND_SET_NOT_FRIEND					= 271;		//不是好友
+
+	//C2S_CALL_FRIEND_REQ [281-290]
+	EC_CALL_TARGET_NOT_ONLINE					= 281;		//对方不在线
+	EC_CALL_TARGET_BUSY							= 282;		//对方正在通话
+	EC_IN_TARGET_BLACKLIST_LIST					= 283;		//在对方黑名单中
+
+	//C2S_ANSWER_FRIEND_REQ [291-300]
+	EC_ANSWER_FRIEND_NOT_ONLINE					= 291;		//对方不在线
+	EC_ANSWER_FRIEND_BUSY						= 292;		//对方正在通话
+
+	//C2S_CHANNEL_CHAT_REQ [301-320]
+	EC_CHAT_TEXT_LENGTH_LIMIT					= 301;		//字数限制
+	EC_CHAT_VOICE_TIME_LIMIT					= 302;		//语音时长限制
+	EC_CHAT_INVALID_GROUP_ID					= 303;		//无效的群组id 0	
+
+	//C2SGroupCreateReq[321-330]
+	EC_CREATEGROUP_ROLENUM_LIMIT				= 321;		//人数限制
+	
+	//C2S_GROUP_DISMISS_REQ[331-340]
+	EC_GROUP_DISMISS_PERMISSION_DENIED			= 331;		//没有权限
+	
+	//Outof service error code [500,600]
+	EC_SCENESERVER_OFFLINE						= 500;//场景服务器离线
+	EC_SCENESERVER_FULL							= 501;//场景服务器满
+	EC_LOGINSERVER_OFFLINE						= 502;//登录服务器离线
+	EC_CENTERSERVER_OFFLINE						= 503;//中心服务器离线
+	EC_MEETINGSERVER_OFFLINE					= 504;//会议服务器离线
+	EC_GROUPSERVER_OFFLINE						= 505;//群组服务器离线
+	EC_DSCENTER_FULL							= 506;//DScenter模块成员已满
+	EC_SCENESERVER_DOWN							= 507;//场景服务器donw机,建议客户端重新进入场景(服务端重新分配场景服务器资源)不是重新登录而是重新进入场景.	
+	EC_MEETINGSVR_NOTASSIGN = 508; //会议服务器未指定
+	EC_GROUP_SERVER_NOT_AVAILABLE				= 509;//没有可用的group server，目前群组服务器以爆满，需要添加新的群组服务器
+	EC_GROUP_SERVER_OFFLINE						= 510;//群组服务器离线
+	EC_OFFICE_SERVER_OFFLINE					= 511;//办公服务器离线
+
+};
+
+
+//短信验证操作码 1:绑定手机  2:手机登录 ，3：重置密码 ;客户端用户后续操作.
+enum SMS_VERIFY_OP
+{
+	OP_NONE = 0;
+	OP_BIND_PHONE = 1;  //绑定手机
+	OP_PHONE_LOGIN = 2;  //手机登录
+	OP_RESET_PWD = 3;  //重置密码	
+};
+
+enum PAY_CHANNEL
+{
+	PAY_CHANNEL_NONE=0;
+	PAY_CHANNEL_WX = 1;   //支付通道，微信
+	PAY_CHANNEL_ZFB = 2;   //支付通道，支付宝
+	PAY_CHANNEL_UNI = 3;   //支付通道，银联
+};

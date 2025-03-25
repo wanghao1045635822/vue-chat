@@ -56,7 +56,7 @@ export default {
 <style lang="stylus" scoped>
 #app
 //background-color: rgba(0, 0, 0, 0.5)!important /* 白色背景，50% 透明度 */
-  border-radius : 30px
+  border-radius : 16px
   overflow: hidden
   &.fullscreen
     width: 100%
@@ -64,13 +64,15 @@ export default {
   display: flex
   width: 75%
   height: 80%
-  background-color: #fff
+  //background-color: #fff
   .sidebar
     width: 60px
     height: 100%
-    background: #2b2c2f
+    //background: #2b2c2f
+    background-color: rgba(0, 0, 0, 0.3)
   .main
     flex: 1
     height: 100%
-    background: #ffffff
+    //background: #ffffff
+    background-color: rgba(0, 0, 0, 0.3)
 </style>

@@ -35,7 +35,7 @@ export default {
     methods: {
         ...mapActions([
              'selectFriend',
-        ])  
+        ])
     }
 }
 </script>
@@ -44,9 +44,9 @@ export default {
 .friendlist
     height: 87%
     overflow-y: auto
-    border-top: 1px solid #e7e7e7
-    border-right: 1px solid #e7e7e7
-    background: #f2f2f2
+    //border-top: 1px solid #e7e7e7
+    //border-right: 1px solid #e7e7e7
+    //background: #f2f2f2
     .frienditem
         border-top: 1px solid #dadada
         &:first-child,&.noborder
@@ -62,9 +62,9 @@ export default {
             padding: 12px
             transition: background-color .1s
             font-size: 0
-            &:hover 
+            &:hover
                 background-color: rgb(220,220,220)
-            &.active 
+            &.active
                 background-color: #c4c4c4
             .avatar
                 border-radius: 2px
@@ -91,7 +91,7 @@ export default {
                     .unread-num-show
                         font-size:10px;
                         -webkit-transform:scale(0.8);
-                        display:block;	
+                        display:block;
 
 
 </style>

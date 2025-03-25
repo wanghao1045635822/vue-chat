@@ -12,7 +12,7 @@
                     <div class="search-input">
                         <el-input clearable v-model="friendInput" prefix-icon="el-icon-search" placeholder="搜索" @keydown.enter.native="searchUser"></el-input>
                     </div>
-                    <div class="friendlist" :style="{height: (appHeight-170) + 'px'}">
+                    <div class="friendlist" :style="{height: (appHeight-270) + 'px'}">
                         <ul>
                             <li v-bind:key = index v-for="(item, index) in waitCheckedFriendList" class="frienditem"  :class="{ noborder: !item.initial}">
                                 <div class="list_title" v-if="item.initial">{{item.initial}}</div>
@@ -23,18 +23,18 @@
                                         <el-checkbox :true-label="item.id+':1'" :false-label="item.id+':0'" @change="friendChangeChange"  @click.stop.native="" v-model="item.checked" :disabled="item.disabled"></el-checkbox>
                                     </div>
                                 </div>
-                                
+
                             </li>
                         </ul>
                     </div>
-                    
+
                 </div>
                 <div class="checkedlist">
                     <div class="checked-title">
                         <div class="create-group-title">{{groupDialogTitle}}</div>
                         <div class="check-statu-title">{{checkFriendTips}}</div>
                     </div>
-                    <div class="friendlist" :style="{height: (appHeight-200) + 'px'}">
+                    <div class="friendlist" :style="{height: (appHeight-300) + 'px'}">
                         <ul>
                             <li v-bind:key = index v-for="(item, index) in selectedFriends" class="frienditem">
                                 <div class="friend-info" >
@@ -48,18 +48,18 @@
                     <div class="check-operate">
                         <div class="check-btns">
                             <el-button class="cancel-btn" size="medium" type="info" plain round @click="cancel">取 消</el-button>
-                            <el-button class="confirm-btn"  size="medium" type="success" plain round 
-                                @click="confirm" 
-                                :disabled="confirmEnable" 
+                            <el-button class="confirm-btn"  size="medium" type="success" plain round
+                                @click="confirm"
+                                :disabled="confirmEnable"
                                 v-loading.fullscreen.lock="fullscreenLoading">确 定</el-button>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
        </el-dialog>
    </div>
-    
+
 </template>
 
 <script>
@@ -149,7 +149,7 @@ export default {
                             }
                         })
                     }
-                    
+
                 }
                 Logger.log("friend nickname "+friend.remark+" ischecked "+isChecked)
                 if(isShow){
@@ -163,7 +163,7 @@ export default {
                         disabled: isDisabled
                     });
                 }
-                
+
             }
             return listunCheckedFriends;
         },
@@ -201,7 +201,7 @@ export default {
                     if(friend){
                         this.removeCheckedFriend(friend.id);
                     }
-                }    
+                }
            }
        },
        selectFriend(friendId){
@@ -218,7 +218,7 @@ export default {
                this.selectedFriends.push(friend);
            }
        },
-       cancel(){ 
+       cancel(){
             this.exit();
        },
        confirm(){
@@ -232,7 +232,7 @@ export default {
                     }
                     memberIds.push(this.selectedFriends[index].wxid);
                 }
-            
+
                 switch (this.groupOperateState) {
                     case 0:
                         //将自己加入到群组中
@@ -296,14 +296,14 @@ export default {
                         console.log("group call members "+memberIds)
                         this.fullscreenLoading = false;
                         this.exit();
-                        break;                
+                        break;
                     default:
                         break
 
                 }
 
            }
-           
+
        },
        handleClose(){
             this.exit();
@@ -335,7 +335,7 @@ export default {
                 if(!friend.disabled){
                     friend.checked = false;
                 }
-           }           
+           }
        },
    },
    watch: {
@@ -395,12 +395,12 @@ export default {
                 padding: 5px
                 transition: background-color .1s
                 font-size: 0
-                &:hover 
+                &:hover
                     background-color: rgb(220,220,220)
-                &.active 
-                    background-color: #c4c4c4 
+                &.active
+                    background-color: #c4c4c4
                 .disable
-                    pointer-events: none;     
+                    pointer-events: none;
                 .avatar
                     border-radius: 2px
                     margin-right: 12px
@@ -410,9 +410,9 @@ export default {
                     font-size: 14px
                     line-height: 26px
                     display: flex
-                    align-items: center 
+                    align-items: center
                 .friend-check
-                    margin-left : auto 
+                    margin-left : auto
                     display: flex
                     padding-right: 5px
                     align-items: center
@@ -428,7 +428,7 @@ export default {
         height: 30px
         .create-group-title
             font-size: 14px
-            color: black 
+            color: black
         .check-statu-title
             font-size: 10px
             color: #999
@@ -439,7 +439,7 @@ export default {
         align-self: flex-end
         .check-btns
             width: 164px
-            margin-left : auto 
+            margin-left : auto
             display: flex
     .friendlist
         overflow-y: auto
@@ -455,7 +455,7 @@ export default {
                     width: 35px
                     height: 35px
                 .delete
-                    margin-left : auto 
+                    margin-left : auto
                     outline: none
                     width: 35px
                     height: 35px

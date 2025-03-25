@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+message C2SEnterScene
+{
+	int32				scene_id 		= 1;	//场景模板id
+	uint32				scene_key 		= 2;	//场景实例id
+	int32				role_id 		= 3;	//场景role id
+	string				session_id 		= 4;	//会话session id
+}
+
+message S2CEnterScene
+{
+	int32				code 			= 1;	//错误码
+	RoleData			role_data		= 2;	//角色数据
+}
+
+
+message RoleData
+{
+	int32				role_id 		= 1;	//角色id
+	int64 				total_kb		= 2;	//快币
+	int32 				avatar 			= 3;	//头像
+	int32 				sex				= 4;	//性别
+	
+}
+
+
+message S2CEnterSceneDsInfo
+{
+	int32		code 	= 1;
+	string		ip 		= 2;
+	int32		port 	= 3;
+}
+
+message C2SChangeScene
+{
+	int32				scene_id 		= 1;	//场景模板id
+	uint32				scene_key 		= 2;	//场景实例id
+	string				session_id 		= 3;	//会话session id
+}
+
+message S2CChangeScene
+{
+	int32				code 			= 1;
+	int32				scene_id 		= 2;	//场景模板id
+	uint32				scene_key 		= 3;	//场景实例id
+}
+
+
+// 用于记录人物位置信息，只记录不记库
+message C2SRoleMoveReq
+{
+	float pos_x = 1;
+	float pos_y = 2;
+	float pos_z = 3;
+}
+
+message S2CRoleMoveAck
+{
+	int32 error_id = 1;
+}
+
+message S2CForceChangeSceneNotify
+{
+	int32				scene_id 		= 1;	//场景模板id
+	uint32				scene_key 		= 2;	//场景实例id
+}
