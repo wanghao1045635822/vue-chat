@@ -48,7 +48,7 @@ export default {
     //border-right: 1px solid #e7e7e7
     //background: #f2f2f2
     .frienditem
-        border-top: 1px solid #dadada
+        border-top: 1px solid #555
         &:first-child,&.noborder
             border-top: none
         .list_title
@@ -63,9 +63,9 @@ export default {
             transition: background-color .1s
             font-size: 0
             &:hover
-                background-color: rgb(220,220,220)
+                background-color: #000000
             &.active
-                background-color: #c4c4c4
+                background-color: #000000
             .avatar
                 border-radius: 2px
                 margin-right: 12px

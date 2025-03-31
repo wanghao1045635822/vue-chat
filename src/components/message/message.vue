@@ -24,10 +24,10 @@
                             <div class="display-name" v-if="!isSingleConversation && item.direction != 0">{{showUserName(item.from)}}</div>
 
                             <div class="content-message-right-menu">
-                                <div class="send-status" v-if="item.direction == 0">
-                                    <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>
-                                    <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>
-                                </div>
+<!--                                <div class="send-status" v-if="item.direction == 0">-->
+<!--                                    <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>-->
+<!--                                    <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>-->
+<!--                                </div>-->
                                 <div class="content-message" @contextmenu.prevent="messageRigthClick(item.messageId)">
                                     <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
                                     <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>
@@ -295,22 +295,25 @@ export default {
                      beforeUid = this.selectedChat.protoMessages[0].messageId
                      console.log("beforeUid "+beforeUid)
                  }
-                 webSocketClient.getRemoteMessages(conversation,beforeUid,20).then(data => {
-                     this.isLoading = false;
-                     //console.log('code '+data.code+' result '+data.result)
-                     if(data.result){
-                        var remoteMessage = JSON.parse(data.result)
-                        var count = remoteMessage.count
-                        console.log("message count "+count)
-                        if(count > 0){
-                           var messageList = remoteMessage.messageResponseList;
-                           for(var originProtoMessage of messageList ){
-                               var protoMessage = ProtoMessage.toProtoMessage(originProtoMessage);
-                               this.addOldMessage(protoMessage)
-                           }
-                        }
-                     }
-                 })
+                 setTimeout(()=>{
+                   this.isLoading = false;
+                 },2000)
+                 // webSocketClient.getRemoteMessages(conversation,beforeUid,20).then(data => {
+                 //     this.isLoading = false;
+                 //     //console.log('code '+data.code+' result '+data.result)
+                 //     if(data.result){
+                 //        var remoteMessage = JSON.parse(data.result)
+                 //        var count = remoteMessage.count
+                 //        console.log("message count "+count)
+                 //        if(count > 0){
+                 //           var messageList = remoteMessage.messageResponseList;
+                 //           for(var originProtoMessage of messageList ){
+                 //               var protoMessage = ProtoMessage.toProtoMessage(originProtoMessage);
+                 //               this.addOldMessage(protoMessage)
+                 //           }
+                 //        }
+                 //     }
+                 // })
              }
         },
 
@@ -429,6 +432,7 @@ export default {
         padding: 0px 0 0 30px
         box-sizing: border-box
         display:flex
+        background-color: rgba(0, 0, 0, 0.5)
         .friendname
             display: flex
             align-items: center
@@ -446,10 +450,9 @@ export default {
         padding: 10px 15px
         box-sizing: border-box
         overflow-y: auto
-        //border-top: 1px solid #e7e7e7
-        //border-bottom: 1px solid #e7e7e7
+        //border-top: 1px solid #555
+        border-bottom: 1px solid #555
         //background: #f2f2f2
-        background-color: rgba(0, 0, 0, 0.3)
         .loading
             color: #9ea0a3;
             font-size: 12px;
@@ -471,7 +474,7 @@ export default {
             span
                 display: inline-block
                 padding: 4px 6px
-                color: #fff
+                color: #000
                 border-radius: 3px
                 background-color: #dcdcdc
         .main
@@ -504,6 +507,7 @@ export default {
                         word-break: break-all
                         background-color: #fafafa
                         border-radius: 4px
+                        color: #333
                         .attachment
                             min-width: 200px
                             max-width: 350px

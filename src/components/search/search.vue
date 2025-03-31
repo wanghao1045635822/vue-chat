@@ -57,17 +57,18 @@ export default {
 			height: 100%
 			max-height: 26px
 			width: 100%
-			background-color: #e5e3e2
-			border: 1px solid #d9d7d6
+			background-color: #4e4b4b
+      //background-color: rgba(0, 0, 0, 0.5)
+			//border: 1px solid #d9d7d6
 			border-radius: 2px
 			.searchInput
 				flex: 1
 				font-size: 12px
 				padding: 6px
-				background-color: #e5e3e2
+				background-color: #4e4b4b
 				outline: none
 				&:focus
-					background-color: #f2efee
+					background-color: #bab7b7
 			.icon-sousuo
 				display: inline-block
 				width: 24px

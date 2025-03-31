@@ -69,10 +69,10 @@ export default {
     width: 60px
     height: 100%
     //background: #2b2c2f
-    background-color: rgba(0, 0, 0, 0.3)
+    background-color: rgba(0, 0, 0, 0.1)
   .main
     flex: 1
     height: 100%
     //background: #ffffff
-    background-color: rgba(0, 0, 0, 0.3)
+    background-color: rgba(0, 0, 0, 0.2)
 </style>

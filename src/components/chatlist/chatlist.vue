@@ -128,9 +128,9 @@ export default {
     transition: background-color .1s
     font-size: 0
     &:hover
-        background-color: rgb(220,220,220)
+        background-color: #000000
     &.active
-        background-color: #c4c4c4
+        background-color: #000000
     .avatar
         border-radius: 2px
         margin-right: 12px

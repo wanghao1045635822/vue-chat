@@ -66,7 +66,7 @@ export default class VueWebSocket {
         this.binaryType = BINTRAY_TYPE;
         this.url = WS_PROTOCOL + '://' + WS_IP ;
         this.initHandlerList();
-        this.connect(true);
+        // this.connect(true);
     }
 
     // constructor(ws_protocol,ip,port,heartbeatTimeout,reconnectInterval,binaryType){
@@ -108,7 +108,7 @@ export default class VueWebSocket {
             // clearInterval(websocketObj.pingIntervalId);
             if(!websocketObj.userDisconnect){
                 console.log("reconnect websocket");
-                websocketObj.reconnect(event);
+                // websocketObj.reconnect(event);
             }
         }
         this.ws.onerror = function(event) {

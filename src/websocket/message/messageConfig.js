@@ -50,12 +50,13 @@ export default class MessageConfig{
            }catch(error){
                console.log("decode message content error "+protoMessageContent);
            }
-        } 
+        }
         return messageContent;
     }
 
 
     static getMessageContentPersitFlag(type) {
+        //判断内容类型，返回对应的持久化标志
         for (const content of MessageConfig.MessageContents) {
             if (content.type === type) {
                 return content.flag;
@@ -65,7 +66,7 @@ export default class MessageConfig{
     }
 
     static isDisplayableMessage(protomessage){
-        var messageContent =  protomessage.content;
+        var messageContent =  protomessage.content;//内容赋值
         if(MessageConfig.getMessageContentPersitFlag(messageContent.type) == PersistFlag.Persist ||
              MessageConfig.getMessageContentPersitFlag(messageContent.type) == PersistFlag.Persist_And_Count){
            return true;

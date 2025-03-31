@@ -183,7 +183,7 @@ export default {
   height: 60px
   padding: 28px 0 0 30px
   box-sizing: border-box
-  background-color: rgba(0, 0, 0, 0.3)
+  background-color: rgba(0, 0, 0, 0.5)
   .nickname
     font-size: 18px
     color:#ffffff
@@ -231,8 +231,8 @@ export default {
 
 .detInfo
   padding: 40px 0
-  border-top: 1px solid #e7e7e7
-  border-bottom: 1px solid #e7e7e7
+  border-top: 1px solid #555
+  border-bottom: 1px solid #555
 
   .remark, .area, .wxid
     font-size: 14px

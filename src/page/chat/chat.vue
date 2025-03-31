@@ -40,7 +40,7 @@ export default {
   .msglist{
     width: 250px;
     //background: #fff
-    background-color: rgba(0, 0, 0, 0.3)
+    background-color: rgba(0, 0, 0, 0.5)
   }
   .chatbox{
     flex: 1;

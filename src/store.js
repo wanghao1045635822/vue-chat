@@ -57,17 +57,17 @@ const state = {
       remark: "新的朋友",  //备注
       area: "",  //地区
     },
-    {
-      id: 1,
-      wxid: "new1", //微信号
-      initial: '', //姓名首字母
-      img: 'static/images/newfriend.jpg', //头像
-      signature: "", //个性签名
-      nickname: "我的申请",  //昵称
-      sex: 0,   //性别 1为男，0为女
-      remark: "我的申请",  //备注
-      area: "",  //地区
-    },
+    // {
+    //   id: 1,
+    //   wxid: "new1", //微信号
+    //   initial: '', //姓名首字母
+    //   img: 'static/images/newfriend.jpg', //头像
+    //   signature: "", //个性签名
+    //   nickname: "我的申请",  //昵称
+    //   sex: 0,   //性别 1为男，0为女
+    //   remark: "我的申请",  //备注
+    //   area: "",  //地区
+    // },
     {
       id: 2,
       wxid: "new2", //微信号
@@ -483,22 +483,50 @@ const mutations = {
     //     }
 
     // }
+    // 封装的发送消息对象protoMessage，封装当前数据对应的消息对象，替换对象中lastMessage
+    // {
+    //   "from": "",
+    //   "content": {
+    //   "mentionedType": 0,
+    //     "mentionedTargets": [
+    //
+    //   ],
+    //     "type": 1,
+    //     "searchableContent": "该多大"
+    // },
+    //   "messageId": 1743061074232,
+    //   "direction": 0,
+    //   "status": 0,
+    //   "messageUid": 0,
+    //   "timestamp": 1743061074232,
+    //   "tos": "",
+    //   "conversationType": 0,
+    //   "target": "new2",
+    //   "line": 0
+    // }
+
     this.commit("preAddProtoMessage", protoMessage)
 
     //发送消息到对端
-    state.vueSocket.sendMessage(protoMessage);
+    // state.vueSocket.sendMessage(protoMessage);
   },
 
   //图片，视频类消息，需要先加入消息，然后上传成功后在更新message content
   preAddProtoMessage(state, protoMessage) {
-
+    // 判断内容格式是1或者3返回布尔值(内容类型判断)
     if (MessageConfig.isDisplayableMessage(protoMessage)) {
+      // 从 state.conversations 数组中查找一个对象，该对象的 conversationInfo.target 属性值与 protoMessage.target 相等，并将找到的对象赋值给变量 stateConversationInfo。如果未找到匹配项，则返回 undefined。
       var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
-      stateConversationInfo.conversationInfo.lastMessage = protoMessage;
-      stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;
-
+      console.log("%c[会话列表:]", "color: yellow; font-bold: 600; font-size: 16px;",JSON.stringify(state.conversations));
+      console.log("%c[会话对象:]", "color: yellow; font-bold: 600; font-size: 16px;",JSON.stringify(stateConversationInfo));
+      stateConversationInfo.conversationInfo.lastMessage = protoMessage;//替换会话对象信息
+      stateConversationInfo.conversationInfo.timestamp = protoMessage.timestamp;//替换当前时间戳
+      console.log("%c[消息列表:]", "color: yellow; font-bold: 600; font-size: 16px;",JSON.stringify(state.messages));
+      console.log("%c[好友列表:]", "color: yellow; font-bold: 600; font-size: 16px;",JSON.stringify(state.friendlist));
+      //从消息列表中查找一个对象，该对象的 target 属性值与 protoMessage.target 相等，并将找到的对象赋值给变量 stateChatMessage。如果未找到匹配项，则返回 undefined。
       var stateChatMessage = state.messages.find(chatmessage => chatmessage.target === protoMessage.target);
       if (!stateChatMessage) {
+        //如果stateChatMessage为空，则创建一个新对象，并将其添加到 state.messages 数组中。
         stateChatMessage = new StateSelectChateMessage();
         stateChatMessage.target = protoMessage.target;
         var friend = state.friendlist.find(friend => friend.wxid === protoMessage.target);
@@ -507,12 +535,14 @@ const mutations = {
         }
         stateChatMessage.protoMessages.push(protoMessage);
         state.messages.push(stateChatMessage);
+        console.log("%c[创建新的消息对象:]", "color: yellow; font-bold: 600; font-size: 16px;",stateChatMessage);
       } else {
         //限制单个会话最大消息存储总数
         if (stateChatMessage.protoMessages.length > CONVERSATION_MAX_MESSAGE_SIZE) {
           stateChatMessage.protoMessages.splice(0, stateChatMessage.protoMessages.length - CONVERSATION_MAX_MESSAGE_SIZE);
         }
         stateChatMessage.protoMessages.push(protoMessage);
+        console.log("%c[消息对象:]", "color: yellow; font-bold: 600; font-size: 16px;",stateChatMessage);
       }
 
     }
