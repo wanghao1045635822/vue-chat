@@ -2178,6 +2178,11 @@ error-stack-parser@^2.0.0:
   dependencies:
     stackframe "^1.1.0"
 
+eruda@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.npmjs.org/eruda/-/eruda-3.4.1.tgz"
+  integrity sha512-RmaO5yD97URY/9Q0lye3cmmNPoXNKreeePIw7c/zllbscR92CjGFZFuQ70+0fLIvLcKW3Xha8DS8NFhmeNbEBQ==
+
 es-define-property@^1.0.0, es-define-property@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npmjs.org/es-define-property/-/es-define-property-1.0.1.tgz"
