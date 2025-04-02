@@ -2,13 +2,12 @@
  * create 2024-11-11 18:23:42 By wanghao
  * 全局方法封装
  * */
-import EventBus from "@/utils/EventBus";
+import EventBus from "../utils/EventBus.js";
 //使用bus调用页面方法
-// EventBus.emit('queryMeetingCenterList', JSON.parse(data));
-import {useMeetingCenterStore, useFriendStore} from "@/store";
-import {nextTick, reactive} from "vue";
+// EventBus.$emit('queryMeetingCenterList', JSON.parse(data));
 import MsgId from "../proto/msgid_pb.js";
 import * as Proto from "../proto/chat_pb";
+import store from "../store";
 
 // 数据转化：Uint8Array 转换为 JavaScript 字符串（FsString）
 export const toFsString = (data) => {
@@ -78,56 +77,6 @@ window.uemsgack = function (id, data) {
                 meetingCenterStore.updateMeetingCenterInfo(S2CGetMeetingCenterInfoAckData.toObject());
             }
             break;
-        // 返回今日会议信息列表
-        case MsgId.S2C_GET_TODAY_MEETING_LIST_ACK:
-            const S2CGetTodayMeetingListAckData = Proto.default.S2CGetTodayMeetingListAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GET_TODAY_MEETING_LIST_ACK}返回参数:`, "color: #52d10a;", S2CGetTodayMeetingListAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetTodayMeetingListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateTodayMeetingListInfo(S2CGetTodayMeetingListAckData.toObject());
-            }
-            break;
-        // 返回开放会议信息列表
-        case MsgId.S2C_GET_OPEN_MEETING_LIST_ACK:
-            const S2CGetOpenMeetingListAckData = Proto.default.S2CGetOpenMeetingListAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GET_OPEN_MEETING_LIST_ACK}返回参数:`, "color: #52d10a;", S2CGetOpenMeetingListAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetOpenMeetingListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateOpenMeetingListInfo(S2CGetOpenMeetingListAckData.toObject());
-            }
-            break;
-        // 返回免费会议信息列表
-        case MsgId.S2C_GET_FREE_MEETING_LIST_ACK:
-            const S2CGetFreeMeetingListAckData = Proto.default.S2CGetFreeMeetingListAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GET_FREE_MEETING_LIST_ACK}返回参数:`, "color: #52d10a;", S2CGetFreeMeetingListAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetFreeMeetingListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateFreenMeetingListInfo(S2CGetFreeMeetingListAckData.toObject());
-            }
-            break;
-        // 返回过往会议信息列表
-        case MsgId.S2C_GET_HISTORY_MEETING_LIST_ACK:
-            const S2CGetHistoryMeetingListAckData = Proto.default.S2CGetHistoryMeetingListAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GET_HISTORY_MEETING_LIST_ACK}返回参数:`, "color: #52d10a;", S2CGetHistoryMeetingListAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetHistoryMeetingListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateHistoryMeetingListInfo(S2CGetHistoryMeetingListAckData.toObject());
-            }
-            break;
-        // 返回我的会议信息列表
-        case MsgId.S2C_GET_MY_MEETING_LIST_ACK:
-            const S2CGetMyMeetingListAckData = Proto.default.S2CGetMyMeetingListAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GET_MY_MEETING_LIST_ACK}返回参数:`, "color: #52d10a;", S2CGetMyMeetingListAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetMyMeetingListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateMyMeetingListInfo(S2CGetMyMeetingListAckData.toObject());
-            }
-            break;
         // 获得服务器时间返回
         case MsgId.S2C_GETSERVERTIME_ACK:
             const S2CGetServerTimeAckData = Proto.default.S2CGetServerTimeAck.deserializeBinary(hexToBuffer(data));
@@ -144,25 +93,6 @@ window.uemsgack = function (id, data) {
             console.log(`%c ${MsgId.S2C_ATTEND_MEETING_ACK}返回参数:`, "color: #52d10a;", S2CAttendMeetingAckData.toObject());
             meetingCenterStore.updateAttendMeeting(S2CAttendMeetingAckData.toObject());
             break;
-        // 返回会议室信息列表
-        case MsgId.S2C_GET_MEETING_ROOM_LIST_ACK:
-            const S2CGetMeetingRoomListAckData = Proto.default.S2CGetMeetingRoomListAck.deserializeBinary(hexToBuffer(data));
-            console.log("%c 2012返回参数:", "color: #52d10a;", S2CGetMeetingRoomListAckData.toObject());
-            // 获取会议中心会议室列表数据
-            if (S2CGetMeetingRoomListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateMeetingRoomListInfo(S2CGetMeetingRoomListAckData.toObject());
-            }
-            break;
-        //   返回会议信息列表
-        case MsgId.S2C_GET_MEETING_LIST_ACK:
-            const S2CGetMeetingListAckData = Proto.default.S2CGetMeetingListAck.deserializeBinary(hexToBuffer(data));
-            console.log("%c 2002返回参数:", "color: #52d10a;", S2CGetMeetingListAckData.toObject());
-            if (S2CGetMeetingListAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateMeetingListInfo(S2CGetMeetingListAckData.toObject());
-            }
-            break;
         //   返回创建会议结果
         case MsgId.S2C_CREATE_MEETING_ACK:
             const S2CCreateMeetingAckData = Proto.default.S2CCreateMeetingAck.deserializeBinary(hexToBuffer(data));
@@ -174,18 +104,6 @@ window.uemsgack = function (id, data) {
             const S2CGetMeetingTicketsInfoAckData = Proto.default.S2CGetMeetingTicketsInfoAck.deserializeBinary(hexToBuffer(data));
             console.log("%c 2018返回参数:", "color: #52d10a;", S2CGetMeetingTicketsInfoAckData.toObject());
             meetingCenterStore.updateMeetingTicketsListInfo(S2CGetMeetingTicketsInfoAckData.toObject());
-            break;
-        //   返回会议可出售的坐席总数列表
-        case MsgId.S2C_GET_MEETING_SEAT_INFO_ACK:
-            const S2CGetMeetingSeatInfoAckData = Proto.default.S2CGetMeetingSeatInfoAck.deserializeBinary(hexToBuffer(data));
-            console.log("%c 2026返回参数:", "color: #52d10a;", JSON.stringify(S2CGetMeetingSeatInfoAckData.toObject()));
-            meetingCenterStore.updateMeetingSeatInfoListInfo(S2CGetMeetingSeatInfoAckData.toObject());
-            break;
-        //   返回购买会议门票结果
-        case MsgId.S2C_BUY_MEETING_TICKETS_ACK:
-            const S2CBuyMeetingTicketsAckData = Proto.default.S2CBuyMeetingTicketsAck.deserializeBinary(hexToBuffer(data));
-            console.log("%c 2016返回参数:", "color: #52d10a;", JSON.stringify(S2CBuyMeetingTicketsAckData.toObject()));
-            meetingCenterStore.updateMeetingTicketsInfo(S2CBuyMeetingTicketsAckData.toObject());
             break;
         default:
             console.error("未定义的返回信息");
@@ -210,9 +128,8 @@ export const webGetRoleId = () => {
 
 // ue返回的会议角色id
 window.uesetroleid = function (id) {
-    const meetingCenterStore = useMeetingCenterStore();
     console.log("%c ================ue返回的会议角色id====================:", "color: #52d10a;", id);
-    meetingCenterStore.updateRoleId(id);
+    store.state.userId = id;
 };
 
 
@@ -277,9 +194,10 @@ export const webgetaccountinfo = () => {
 };
 // ue返回的角色信息
 window.uesetroleInfo = function (data) {
-    const meetingCenterStore = useMeetingCenterStore();
     console.log("%c ================ue返回的角色信息====================:", "color: #52d10a;", data);
-    meetingCenterStore.updateRoleInfo(data);
+    // store.state.user = {...data};
+    store.state.user.name = data.role_name;
+    store.state.user.userId = data.role_id;
 };
 
 
@@ -312,13 +230,12 @@ export const webattendmeeting = (meetingid) => {
 
 // ue返回的进入会议信息
 window.ueattendmeeting = function (data) {
-    const meetingCenterStore = useMeetingCenterStore();
     console.log("%c ================ue返回的进入会议信息====================:", "color: #52d10a;", data);
-    meetingCenterStore.updateAttendMeeting(data);
+
 };
 
 
-// 调用UE的webcloseui退出会议方法
+// 调用UE的webcloseui退出方法
 export const webcloseui = () => {
     try {
         // alert("调用UE里的 webuploadfile 函数");

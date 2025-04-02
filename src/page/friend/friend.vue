@@ -20,6 +20,10 @@ export default {
     search,
     friendlist,
     info
+  },
+  mounted(){
+    //获取好友列表
+    // this.$store.dispatch('getFriend',0);
   }
 }
 </script>

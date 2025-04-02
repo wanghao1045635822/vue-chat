@@ -6,6 +6,7 @@
             <div class="friend-group-info">
                 <i title="用户信息" class="icon iconfont icon-pengyou1 show-group-info" v-if="isSingleConversation" @click="changeShowCreateGroup"></i>
                 <i title="群组信息" class="icon iconfont icon-pengyou show-group-info" v-if="!isSingleConversation" @click="changeShowGroupInfo"></i>
+                <i title="关闭" class="icon iconfont el-icon-close show-group-info"  @click="closeChat"></i>
                 <groupInfo v-bind:targetId="selectedChat.target" v-if="showGroupInfo"></groupInfo>
             </div>
 		</header>
@@ -99,6 +100,7 @@ import LocalStore from '../../websocket/store/localstore';
 import Conversation from '../../websocket/model/conversation';
 import ConversationType from '../../websocket/model/conversationType';
 import ProtoMessage from '../../websocket/message/protomessage'
+import { webcloseui } from '../../utils/UEmethod'
 export default {
     components:{
         Xgplayer,
@@ -217,6 +219,9 @@ export default {
         },
         changeShowCreateGroup(){
             this.showGroupInfo = !this.showGroupInfo;
+        },
+        closeChat(){
+          webcloseui();
         },
         avatarSrc(item){
             var avarimgUrl = 'static/images/UserAvatar.jpg';

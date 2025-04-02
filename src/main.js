@@ -16,6 +16,7 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 // import 'quill/dist/quill.snow.css'  // 主题样式（可选）
 // import 'quill/dist/quill.bubble.css' // 气泡主题（可选）
+import './utils/UEmethod'
 import eruda from 'eruda';
 eruda.init();
 Vue.use(VueQuillEditor)

@@ -41,8 +41,9 @@ const state = {
   searchText: '',
   // 当前登录用户
   user: {
+    userId:'',
     name: 'ratel',
-    img: 'static/images/vue.jpg'
+    img: 'static/images/UserAvatar.jpg'
   },
   // 好友列表
   friendlist: [
@@ -74,7 +75,7 @@ const state = {
       initial: ' ', //姓名首字母
       img: 'static/images/Guai.jpg', //头像
       signature: "", //个性签名
-      nickname: "我爱的人",  //昵称
+      nickname: "王浩",  //昵称
       sex: 0,   //性别 1为男，0为女
       remark: "王浩",  //备注
       area: "",  //地区
@@ -85,7 +86,7 @@ const state = {
       initial: ' ', //姓名首字母
       img: 'static/images/新之助.jpg', //头像
       signature: "", //个性签名
-      nickname: "张雨来那个",  //昵称
+      nickname: "仉玉良",  //昵称
       sex: 0,   //性别 1为男，0为女
       remark: "仉玉良",  //备注
       area: "",  //地区
@@ -165,7 +166,7 @@ const state = {
   friendRequests: [],
   newFriendRequestCount: 0,
   deviceId: '',
-  userId: '',
+  userId: '',//用户id
   token: '',
   userInfoList: [],
   groupInfoList: [],
