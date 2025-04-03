@@ -14,6 +14,9 @@
 import search from '../../components/search/search'
 import friendlist from '../../components/friendlist/friendlist'
 import info from '../../components/info/info'
+import {jsCallUE} from '../../utils/UEmethod'
+import MsgId from '../../proto/msgid_pb'
+import * as Proto from '../../proto/friend_pb'
 
 export default {
   components: {
@@ -21,9 +24,32 @@ export default {
     friendlist,
     info
   },
-  mounted(){
-    //获取好友列表
-    // this.$store.dispatch('getFriend',0);
+  mounted() {
+    this.init();
+  },
+  methods: {
+// 初始化
+    init() {
+      // 获取好友列表
+      this.getMsgFriendList();
+
+    },
+// 请求获取好友列表
+    getMsgFriendList(data) {
+      console.log(MsgId.C2S_FRIEND_LIST_REQ,'请求获取好友列表Id');
+      // 请求好友信息
+      let InfoReq = new Proto.default.C2SFriendListReq();
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // console.log("请求好友列表 data:", bytes);
+
+      // 反序列化
+      const userDeserialized = Proto.default.C2SFriendListReq.deserializeBinary(bytes);
+      console.log("请求好友列表 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
+    }
   }
 }
 </script>
@@ -39,6 +65,7 @@ export default {
     //background: #fff
     background-color: rgba(0, 0, 0, 0.5)
   }
+
   .friendinfo {
     flex: 1
   }

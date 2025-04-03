@@ -44,7 +44,6 @@ function hexToBuffer(hex) {
 export const jsCallUE = (id, data) => {
     try {
         // alert("调用UE里的函数");
-        // console.log('================请求ue的id====================:',id);
         console.log("%c ================请求ue的id====================:", "color: #FFA500;", id);
         ue.ueobj.webreqmsg(id.toString(), bufferToHex(data)).then(() => {
             // alert('调用了UE里的函数!');
@@ -58,53 +57,135 @@ export const jsCallUE = (id, data) => {
 // 提供给UE的方法
 window.uemsgack = function (id, data) {
 
-    const meetingCenterStore = useMeetingCenterStore();
-    const friendStore = useFriendStore();
-
-    // console.log('=========================ue返回的参数id====================:',id);
     console.log("%c ================ue返回的参数id====================:", "color: #52d10a;", id);
     switch (id) {
-        //   返回会议信息列表
-        case MsgId.S2C_GET_MEETING_CENTER_INFO_ACK:
+        //   返回好友列表
+        case MsgId.S2C_FRIEND_LIST_ACK:
             // data是json字符串
             // console.log('2008：',data);
             // console.log("2008返回参数:", hexToBuffer(data));
-            const S2CGetMeetingCenterInfoAckData = Proto.default.S2CGetMeetingCenterInfoAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GET_MEETING_CENTER_INFO_ACK}返回参数:`, "color: #52d10a;", S2CGetMeetingCenterInfoAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetMeetingCenterInfoAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateMeetingCenterInfo(S2CGetMeetingCenterInfoAckData.toObject());
+            try {
+              // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+              const S2CFriendListAckData = Proto.default.S2CFriendListAck.deserializeBinary(hexToBuffer(data));
+              console.log(`%c ${MsgId.S2C_FRIEND_LIST_ACK}返回参数:`, "color: #52d10a;", S2CFriendListAckData.toObject());
+              // if (S2CFriendListAckData.toObject().errcode == 0) {
+              //   S2CFriendListAckData.updateMeetingCenterInfo(S2CGetMeetingCenterInfoAckData.toObject());
+              // }
+            } catch (e) {
+              console.error("反序列化失败:", e);
             }
             break;
-        // 获得服务器时间返回
-        case MsgId.S2C_GETSERVERTIME_ACK:
-            const S2CGetServerTimeAckData = Proto.default.S2CGetServerTimeAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_GETSERVERTIME_ACK}返回参数:`, "color: #52d10a;", S2CGetServerTimeAckData.toObject());
-            // 获取会议中心信息
-            if (S2CGetServerTimeAckData.toObject().errcode == 0) {
-                // 获取会议列表数据
-                meetingCenterStore.updateServerTime(S2CGetServerTimeAckData.toObject());
-            }
-            break;
-        // 返回出席会议结果
-        case MsgId.S2C_ATTEND_MEETING_ACK:
-            const S2CAttendMeetingAckData = Proto.default.S2CAttendMeetingAck.deserializeBinary(hexToBuffer(data));
-            console.log(`%c ${MsgId.S2C_ATTEND_MEETING_ACK}返回参数:`, "color: #52d10a;", S2CAttendMeetingAckData.toObject());
-            meetingCenterStore.updateAttendMeeting(S2CAttendMeetingAckData.toObject());
-            break;
-        //   返回创建会议结果
-        case MsgId.S2C_CREATE_MEETING_ACK:
-            const S2CCreateMeetingAckData = Proto.default.S2CCreateMeetingAck.deserializeBinary(hexToBuffer(data));
-            console.log("%c 2004返回参数:", "color: #52d10a;", S2CCreateMeetingAckData.toObject());
-            meetingCenterStore.updateCreateMeetingInfo(S2CCreateMeetingAckData.toObject());
-            break;
-        //   返回会议门票信息
-        case MsgId.S2C_GET_MEETING_TICKETS_INFO_ACK:
-            const S2CGetMeetingTicketsInfoAckData = Proto.default.S2CGetMeetingTicketsInfoAck.deserializeBinary(hexToBuffer(data));
-            console.log("%c 2018返回参数:", "color: #52d10a;", S2CGetMeetingTicketsInfoAckData.toObject());
-            meetingCenterStore.updateMeetingTicketsListInfo(S2CGetMeetingTicketsInfoAckData.toObject());
-            break;
+      //   返回好友申请列表
+      case MsgId.S2C_APPLY_LIST_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CApplylistAckData = Proto.default.S2CApplylistAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_APPLY_LIST_ACK}返回参数:`, "color: #52d10a;", S2CApplylistAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   返回请求加为好友
+      case MsgId.S2C_APPLY_FRIEND_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CApplyFriendAckData = Proto.default.S2CApplyFriendAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_APPLY_FRIEND_ACK}返回参数:`, "color: #52d10a;", S2CApplyFriendAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   返回同意或拒绝加为好友
+      case MsgId.S2C_AGREE_FRIEND_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CAgreeFriendAckData = Proto.default.S2CAgreeFriendAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_AGREE_FRIEND_ACK}返回参数:`, "color: #52d10a;", S2CAgreeFriendAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   删除好友返回
+      case MsgId.S2C_DELETE_FRIEND_RES:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   返回请求好友黑名单
+      case MsgId.S2C_BLACKLIST_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CBlacklistAckData = Proto.default.S2CBlacklistAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_BLACKLIST_ACK}返回参数:`, "color: #52d10a;", S2CBlacklistAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   删除好友返回
+      case MsgId.S2C_DELETE_FRIEND_RES:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   返回添加好友到黑名单
+      case MsgId.S2C_BLACKLIST_ADD_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CBlacklistAddAckData = Proto.default.S2CBlacklistAddAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_BLACKLIST_ADD_ACK}返回参数:`, "color: #52d10a;", S2CBlacklistAddAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   返回请求删除好友黑名单
+      case MsgId.S2C_BLACKLIST_DEL_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CBlacklistDelAckData = Proto.default.S2CBlacklistDelAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_BLACKLIST_DEL_ACK}返回参数:`, "color: #52d10a;", S2CBlacklistDelAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   返回好友推荐列表
+      case MsgId.S2C_FRIEND_RECOMMEND_AKC:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CFriendRecommendAckData = Proto.default.S2CFriendRecommendAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_FRIEND_RECOMMEND_AKC}返回参数:`, "color: #52d10a;", S2CFriendRecommendAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+      //   删除好友返回
+      case MsgId.S2C_DELETE_FRIEND_RES:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
+
         default:
             console.error("未定义的返回信息");
             break;
