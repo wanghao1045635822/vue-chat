@@ -6,6 +6,7 @@
       width="30%"
       :show-close="true"
       @close="handleClose"
+      custom-class="dialogDiv"
       center>
 
       <el-dialog
@@ -31,7 +32,7 @@
         :fit="true"
         :highlight-current-row="false"
         max-height="300"
-        style="width: 100%;margin-top:10px">
+        style="width: 100%;margin-top:10px;">
         <el-table-column
           prop="image"
           label="头像"
@@ -48,7 +49,7 @@
           <template slot-scope="scope">
             <div>
               <p>{{ scope.row.displayName }}</p>
-              <p>{{ scope.row.mobile }}</p>
+              <p>{{ scope.row.signature }}</p>
             </div>
           </template>
         </el-table-column>
@@ -56,7 +57,7 @@
           label="加好友"
           align="right">
           <template slot-scope="scope">
-            <i class="icon iconfont icon-jiahaoyou" @click="showFriendRequestDialog(scope.row)"></i>
+            <i style="cursor: pointer;" class="icon iconfont icon-jiahaoyou" @click="showFriendRequestDialog(scope.row)"></i>
           </template>
         </el-table-column>
       </el-table>
@@ -70,6 +71,9 @@
 
 <script>
 import {mapGetters, mapState} from 'vuex'
+import {jsCallUE} from '../../utils/UEmethod'
+import MsgId from '../../proto/msgid_pb'
+import * as Proto from '../../proto/friend_pb'
 
 export default {
   data() {
@@ -80,26 +84,69 @@ export default {
       innerVisible: false
     }
   },
+  mounted() {
+    this.init();
+  },
   methods: {
+    // 初始化
+    init() {
+      // 获取好友推荐列表
+      this.getFriendRecommendList();
+
+    },
+    // 请求获取好友推荐列表
+    getFriendRecommendList(data) {
+      console.log(MsgId.C2S_FRIEND_RECOMMEND_REQ,'请求获取好友推荐列表Id');
+      // 请求好友信息
+      let InfoReq = new Proto.default.C2SFriendRecommendReq();
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // console.log("请求好友推荐列表 data:", bytes);
+
+      // 反序列化
+      const userDeserialized = Proto.default.C2SFriendRecommendReq.deserializeBinary(bytes);
+      console.log("请求好友推荐列表 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_FRIEND_RECOMMEND_REQ, bytes);
+    },
     changeSearchFriendDialog() {
       this.$store.state.showSearchFriendDialog = false;
     },
     searchUser(e) {
       console.log("search user ");
       if (e.keyCode === 13 && this.friendInput != "") {
-        this.$store.dispatch('searchUser', this.friendInput);
+        // this.$store.dispatch('searchUser', this.friendInput);
         this.friendInput = '';
       }
     },
     handleClose() {
-      this.$store.dispatch('updateSearchUser', []);
+      // this.$store.dispatch('updateSearchUser', []);
     },
+    // 添加好友请求
     sendFriendRequest() {
       this.innerVisible = false;
-      this.$store.dispatch("sendFriendAddRequest", {
-        reason: this.friendRequest,
-        targetUserId: this.currentSearchUser.uid
-      });
+      // this.$store.dispatch("sendFriendAddRequest", {
+      //   reason: this.friendRequest,
+      //   targetUserId: this.currentSearchUser.uid
+      // });
+      console.log(MsgId.C2S_APPLY_FRIEND_REQ,'请求添加好友Id');
+      // 请求好友信息
+      let InfoReq = new Proto.default.C2SApplyFriendReq();
+      InfoReq.setRoleId(this.currentSearchUser.id);
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // console.log("请求好友申请列表 data:", bytes);
+
+      // 反序列化
+      const userDeserialized = Proto.default.C2SApplyFriendReq.deserializeBinary(bytes);
+      console.log("请求添加好友 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_APPLY_FRIEND_REQ, bytes);
+
+
+
     },
     showFriendRequestDialog(currentSearchUser) {
       this.innerVisible = true;
@@ -151,4 +198,8 @@ export default {
   height: 35px;
 }
 
+.el-table::before{
+  height: 0;
+}
 </style>
+

@@ -5,48 +5,74 @@
       <div class="nickname">{{ selectedFriend.nickname }}</div>
     </div>
     <div class="friendrequest" v-show="selectedFriend.id === 0" :style="{height: (appHeight -60) + 'px'}">
-<!--      <el-table-->
-<!--        :data="friendRequests"-->
-<!--        :show-header="false"-->
-<!--        :max-height="appHeight - 61"-->
-<!--        style="width: 100%;height:100%;">-->
-<!--        <el-table-column-->
-<!--          prop="image"-->
-<!--          label="头像"-->
-<!--          width="50">-->
-<!--          <template slot-scope="scope">-->
-<!--            <el-avatar :src="friendPortrait(scope.row.from)"></el-avatar>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--          prop="name"-->
-<!--          label="姓名"-->
-<!--          width="280">-->
-<!--          <template slot-scope="scope">-->
-<!--            <div>-->
+      <el-table
+        :data="friendRequests"
+        :show-header="false"
+        :max-height="appHeight - 61"
+        style="width: 100%;height:100%;background: transparent;">
+        <el-table-column
+          prop="image"
+          label="头像"
+          width="50">
+          <template slot-scope="scope">
+            <el-avatar :src="friendPortrait(scope.row.from)"></el-avatar>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="姓名"
+          width="">
+          <template slot-scope="scope">
+            <div>
 <!--              <p>{{ friendName(scope.row.from) }}</p>-->
-<!--              <p>{{ scope.row.reason }}</p>-->
+              <p>{{ scope.row.reason }}</p>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="time"
+          label=""
+          width="">
+          <template slot-scope="scope">
+            {{ TimeUtils.getTimeStringAutoShort2(scope.row.time) }}
+<!--            <div>-->
+<!--              &lt;!&ndash;              <p>{{ friendName(scope.row.from) }}</p>&ndash;&gt;-->
+<!--              <p>{{ scope.row.time }}</p>-->
 <!--            </div>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--        <el-table-column-->
-<!--          label="加好友"-->
-<!--          align="right"-->
-<!--        >-->
-<!--          <template slot-scope="scope">-->
-<!--            &lt;!&ndash; <el-button-->
-<!--                size="mini"-->
-<!--                type="info"-->
-<!--                @click="handleEdit(scope.$index, scope.row)">拒绝</el-button> &ndash;&gt;-->
-<!--            <el-button-->
-<!--              size="mini"-->
-<!--              type="success"-->
-<!--              :disabled="scope.row.status === 1"-->
-<!--              @click="handleFriendRequest(scope.row)">{{ requestBtnMessage(scope.row) }}-->
-<!--            </el-button>-->
-<!--          </template>-->
-<!--        </el-table-column>-->
-<!--      </el-table>-->
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="加好友"
+          align="right"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="success"
+              v-if="scope.row.status === 0"
+              @click="handleFriendRequest(scope.row)">接受
+            </el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              v-if="scope.row.status === 0"
+              @click="handleNoFriendRequest(scope.row)">拒绝
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              v-if="scope.row.status === 1"
+              >已同意
+            </el-button>
+            <el-button
+              size="mini"
+              type="text"
+              v-if="scope.row.status === 2"
+            >已拒绝
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
     </div>
     <div class="friendInfo" v-show="selectedFriend.id > 0">
       <div class="esInfo">
@@ -70,8 +96,13 @@
         <div class="area"><span>地&nbsp&nbsp&nbsp区</span>{{ selectedFriend.area }}</div>
         <div class="wxid"><span>微信号</span>{{ selectedFriend.wxid }}</div>
       </div>
-      <div class="send" @click="send">
-        <span>发消息</span>
+      <div class="btn">
+        <div class="send" @click="send">
+          <span>发消息</span>
+        </div>
+        <div class="delete" @click="deleteFriend">
+          <span>删除</span>
+        </div>
       </div>
     </div>
   </div>
@@ -83,13 +114,21 @@ import {mapGetters, mapState} from 'vuex'
 import LocalStore from '../../websocket/store/localstore'
 import webSocketCli from '../../websocket/websocketcli'
 import {SUCCESS_CODE} from '../../constant'
+import {jsCallUE} from '../../utils/UEmethod'
+import MsgId from '../../proto/msgid_pb'
+import * as Proto from '../../proto/friend_pb'
+import TimeUtils from "../../websocket/utils/timeUtils";
 
 export default {
   computed: {
+    TimeUtils() {
+      return TimeUtils
+    },
     ...mapGetters([
       'selectedFriend'
     ]),
     ...mapState([
+      'isDeleteFriend',
       'friendRequests',
       'appHeight',
       'userInfoList'
@@ -106,10 +145,76 @@ export default {
     //     }
     // }
   },
+  watch: {
+    isDeleteFriend(val) {
+      console.log("删除好友状态变化。。。", val);
+      // console.log(val);
+      this.$message({
+        type: 'success',
+        message: '删除好友成功!'
+      });
+    }
+  },
+  mounted() {
+    this.init();
+  },
   methods: {
+// 初始化
+    init() {
+      // 获取好友申请列表
+      this.getApplyFriendList();
+
+    },
+// 请求获取好友申请列表
+    getApplyFriendList(data) {
+      console.log(MsgId.C2S_APPLY_LIST_REQ,'请求获取好友列表Id');
+      // 请求好友信息
+      let InfoReq = new Proto.default.C2SApplylistReq();
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // console.log("请求好友申请列表 data:", bytes);
+
+      // 反序列化
+      const userDeserialized = Proto.default.C2SApplylistReq.deserializeBinary(bytes);
+      console.log("请求好友申请列表 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_APPLY_LIST_REQ, bytes);
+    },
     send() {
       this.$store.dispatch('send')
       this.$store.dispatch('search', '')
+    },
+    deleteFriend() {
+      // 添加一个删除提示框
+      this.$confirm('是否继续删除好友?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(MsgId.C2S_DELETE_FRIEND_REQ,'删除好友请求Id');
+        // 请求好友信息
+        let InfoReq = new Proto.default.C2SDeleteFriendReq();
+        InfoReq.setRoleId(this.selectedFriend.id);
+        // 序列化
+        const bytes = InfoReq.serializeBinary();
+
+        // 反序列化
+        const userDeserialized = Proto.default.C2SDeleteFriendReq.deserializeBinary(bytes);
+        console.log("删除好友请求 data:", JSON.stringify(userDeserialized.toObject()));
+
+        jsCallUE(MsgId.C2S_DELETE_FRIEND_REQ, bytes);
+        // setTimeout(() => {
+        //   this.$store.commit('deleteFriend', true);
+        // },1000)
+
+
+
+
+      }).catch(() => {
+
+      });
+
     },
     requestBtnMessage(request) {
       if (request.status === 1) {
@@ -121,10 +226,49 @@ export default {
       }
     },
     handleFriendRequest(request) {
-      this.$store.dispatch('handleFriendRequest', {
-        targetUid: request.from,
-        status: 1
-      })
+      // this.$store.dispatch('handleFriendRequest', {
+      //   targetUid: request.from,
+      //   status: 1
+      // })
+      // console.log(request)
+      console.log(MsgId.C2S_AGREE_FRIEND_REQ,'同意或拒绝加为好友Id');
+
+      let InfoReq = new Proto.default.C2SAgreeFriendReq();
+      InfoReq.setRoleId(request.id);
+      InfoReq.setIsAccept(true);
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // 反序列化
+      const userDeserialized = Proto.default.C2SAgreeFriendReq.deserializeBinary(bytes);
+      console.log("同意或拒绝加为好友 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_AGREE_FRIEND_REQ, bytes);
+
+      setTimeout(() => {
+        request.status = 1;
+      },1000)
+
+
+    },
+    handleNoFriendRequest(request) {
+      console.log(MsgId.C2S_AGREE_FRIEND_REQ,'同意或拒绝加为好友Id');
+
+      let InfoReq = new Proto.default.C2SAgreeFriendReq();
+      InfoReq.setRoleId(request.id);
+      InfoReq.setIsAccept(false);
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // 反序列化
+      const userDeserialized = Proto.default.C2SAgreeFriendReq.deserializeBinary(bytes);
+      console.log("同意或拒绝加为好友 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_AGREE_FRIEND_REQ, bytes);
+
+      setTimeout(() => {
+        request.status = 2;
+      },1000)
     },
     friendName(target) {
       var user = this.userInfoList.find(user => user.uid == target);
@@ -145,7 +289,7 @@ export default {
       }
 
       if (!portrait) {
-        portrait = "static/images/vue.jpg";
+        portrait = "static/images/mother.jpg";
       }
       return portrait;
     },
@@ -262,14 +406,34 @@ export default {
       padding-left: 5px;
       padding-right: 5px;
   margin-top: 0
-
-.send
-  position: relative
+.btn
+  width : 100%
+  display : flex
+  justify-content: space-around
+  margin-top: 30px
+.delete
+//position: relative
   text-align: center
   width: 140px
   height: 36px
-  left: 115px
-  top: 50px
+  //left: 115px
+  //top: 50px
+  line-height: 36px
+  font-size: 14px
+  color: #fff
+  background-color: #d33523
+  cursor: pointer
+  border-radius: 2px
+
+  &:hover
+    background: #e34533
+.send
+  //position: relative
+  text-align: center
+  width: 140px
+  height: 36px
+  //left: 115px
+  //top: 50px
   line-height: 36px
   font-size: 14px
   color: #fff
@@ -279,5 +443,29 @@ export default {
 
   &:hover
     background: rgb(18, 150, 17)
+
+
+.el-table::before{
+  height: 0;
+}
+</style>
+
+<style>
+.el-table tr{
+  background-color: #333333!important;
+  color: #fff;
+  border: none!important;
+}
+.el-dialog__title{
+  color: #FFFFFF!important;
+}
+.el-table tr td{
+  border: none!important;
+  background-color: #333333!important;
+}
+.el-table--enable-row-hover .el-table__body tr:hover > td {
+  background-color: #666666 !important;
+  /* 其他样式 */
+}
 </style>
 

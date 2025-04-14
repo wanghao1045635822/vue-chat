@@ -69,28 +69,28 @@ const state = {
     //   remark: "我的申请",  //备注
     //   area: "",  //地区
     // },
-    {
-      id: 2,
-      wxid: "new2", //微信号
-      initial: ' ', //姓名首字母
-      img: 'static/images/Guai.jpg', //头像
-      signature: "", //个性签名
-      nickname: "王浩",  //昵称
-      sex: 0,   //性别 1为男，0为女
-      remark: "王浩",  //备注
-      area: "",  //地区
-    },
-    {
-      id: 3,
-      wxid: "new3", //微信号
-      initial: ' ', //姓名首字母
-      img: 'static/images/新之助.jpg', //头像
-      signature: "", //个性签名
-      nickname: "仉玉良",  //昵称
-      sex: 0,   //性别 1为男，0为女
-      remark: "仉玉良",  //备注
-      area: "",  //地区
-    },
+    // {
+    //   id: 2,
+    //   wxid: "new2", //微信号
+    //   initial: ' ', //姓名首字母
+    //   img: 'static/images/Guai.jpg', //头像
+    //   signature: "", //个性签名
+    //   nickname: "王浩",  //昵称
+    //   sex: 0,   //性别 1为男，0为女
+    //   remark: "王浩",  //备注
+    //   area: "",  //地区
+    // },
+    // {
+    //   id: 3,
+    //   wxid: "new3", //微信号
+    //   initial: ' ', //姓名首字母
+    //   img: 'static/images/新之助.jpg', //头像
+    //   signature: "", //个性签名
+    //   nickname: "仉玉良",  //昵称
+    //   sex: 0,   //性别 1为男，0为女
+    //   remark: "仉玉良",  //备注
+    //   area: "",  //地区
+    // },
 
   ],
   friendIds: [],
@@ -162,8 +162,38 @@ const state = {
   //消息列表
   messages: [],
   //搜索用户列表
-  searchUsers: [],
-  friendRequests: [],
+  searchUsers: [
+    {
+      id: 2,
+      wxid: "new2", //微信号
+      status: 0, // 是否处理 0.未处理 1.同意 2.拒绝
+      time: '2025-4-10 18:31:35', // 申请时间
+      reason: '王浩',  //昵称
+      initial: ' ', //姓名首字母
+      img: 'static/images/Guai.jpg', //头像
+      signature: "", //个性签名
+      nickname: "王浩",  //昵称
+      sex: 0,   //性别 1为男，0为女
+      remark: "王浩",  //备注
+      area: "",  //地区
+    },
+  ],
+  friendRequests: [
+    // {
+    //   id: 2,
+    //   wxid: "new2", //微信号
+    //   status: 0, // 是否处理 0.未处理 1.同意 2.拒绝
+    //   time: '2025-4-10 18:31:35', // 申请时间
+    //   reason: '王浩',  //昵称
+    //   initial: ' ', //姓名首字母
+    //   img: 'static/images/Guai.jpg', //头像
+    //   signature: "", //个性签名
+    //   nickname: "王浩",  //昵称
+    //   sex: 0,   //性别 1为男，0为女
+    //   remark: "王浩",  //备注
+    //   area: "",  //地区
+    // },
+  ],
   newFriendRequestCount: 0,
   deviceId: '',
   userId: '',//用户id
@@ -197,7 +227,8 @@ const state = {
   groupOperateState: 0,
   groupMemberMap: new Map(),
   groupMemberTracker: 0,
-  isLoadRemoteMessage: false
+  isLoadRemoteMessage: false,
+  isDeleteFriend: false,//删除好友状态
 }
 
 const mutations = {
@@ -286,60 +317,72 @@ const mutations = {
 
   //更新朋友列表
   updateFriendList(state, value) {
-    if (state.friendlist.length === 0) {
-      state.friendlist.push({
-        id: 0,
-        wxid: "new", //微信号
-        initial: '新的朋友', //姓名首字母
-        img: 'static/images/newfriend.jpg', //头像
-        signature: "", //个性签名
-        nickname: "新的朋友",  //昵称
-        sex: 0,   //性别 1为男，0为女
-        remark: "新的朋友",  //备注
-        area: "",  //地区
-      });
-    }
-    for (var i in value) {
-      var currentUser = value[i];
-      if (currentUser.wxid != state.userId) {
-        var friendUid = state.friendIds.find(friendUid => friendUid === currentUser.wxid);
-        if (friendUid) {
-          var friendData = state.friendDatas.find(friend => friend.friendUid == friendUid)
-          if (friendData && friendData.alias && friendData.alias != "") {
-            currentUser.remark = friendData.alias
-          }
-          var isExist = false;
-          for (var friend of state.friendlist) {
-            if (friend.wxid === currentUser.wxid) {
-              isExist = true;
-              friend.nickname = currentUser.nickname;
-              friend.img = currentUser.img;
-              friend.remark = currentUser.remark;
-            }
-          }
-          if (!isExist) {
-            currentUser.id = state.friendlist.length
-            state.friendlist.push(currentUser);
-          }
-        }
-      }
-    }
-    //更新会话信息
-    for (var stateConversationInfo of state.conversations) {
-      var friend = state.friendlist.find(friend => friend.wxid === stateConversationInfo.conversationInfo.target);
-      if (friend) {
-        stateConversationInfo.name = friend.remark ? friend.remark : friend.nickname;
-        stateConversationInfo.img = friend.img;
-      }
-    }
-
-    //更新消息列表信息
-    for (var stateChatMessage of state.messages) {
-      var friend = state.friendlist.find(friend => friend.wxid === stateChatMessage.target);
-      if (friend) {
-        stateChatMessage.name = friend.remark ? friend.remark : friend.nickname;
-      }
-    }
+    state.friendlist = [{
+      id: 0,
+      wxid: "new", //微信号
+      initial: '新的朋友', //姓名首字母
+      img: 'static/images/newfriend.jpg', //头像
+      signature: "", //个性签名
+      nickname: "新的朋友",  //昵称
+      sex: 0,   //性别 1为男，0为女
+      remark: "新的朋友",  //备注
+      area: "",  //地区
+    }].concat(value);
+    console.log(state.friendlist,'封装的好友列表数据')
+    // if (state.friendlist.length === 0) {
+    //   state.friendlist.push({
+    //     id: 0,
+    //     wxid: "new", //微信号
+    //     initial: '新的朋友', //姓名首字母
+    //     img: 'static/images/newfriend.jpg', //头像
+    //     signature: "", //个性签名
+    //     nickname: "新的朋友",  //昵称
+    //     sex: 0,   //性别 1为男，0为女
+    //     remark: "新的朋友",  //备注
+    //     area: "",  //地区
+    //   });
+    // }
+    // for (var i in value) {
+    //   var currentUser = value[i];
+    //   if (currentUser.wxid != state.userId) {
+    //     var friendUid = state.friendIds.find(friendUid => friendUid === currentUser.wxid);
+    //     if (friendUid) {
+    //       var friendData = state.friendDatas.find(friend => friend.friendUid == friendUid)
+    //       if (friendData && friendData.alias && friendData.alias != "") {
+    //         currentUser.remark = friendData.alias
+    //       }
+    //       var isExist = false;
+    //       for (var friend of state.friendlist) {
+    //         if (friend.wxid === currentUser.wxid) {
+    //           isExist = true;
+    //           friend.nickname = currentUser.nickname;
+    //           friend.img = currentUser.img;
+    //           friend.remark = currentUser.remark;
+    //         }
+    //       }
+    //       if (!isExist) {
+    //         currentUser.id = state.friendlist.length
+    //         state.friendlist.push(currentUser);
+    //       }
+    //     }
+    //   }
+    // }
+    // //更新会话信息
+    // for (var stateConversationInfo of state.conversations) {
+    //   var friend = state.friendlist.find(friend => friend.wxid === stateConversationInfo.conversationInfo.target);
+    //   if (friend) {
+    //     stateConversationInfo.name = friend.remark ? friend.remark : friend.nickname;
+    //     stateConversationInfo.img = friend.img;
+    //   }
+    // }
+    //
+    // //更新消息列表信息
+    // for (var stateChatMessage of state.messages) {
+    //   var friend = state.friendlist.find(friend => friend.wxid === stateChatMessage.target);
+    //   if (friend) {
+    //     stateChatMessage.name = friend.remark ? friend.remark : friend.nickname;
+    //   }
+    // }
   },
 
   updateConversationBrief(state) {
@@ -929,6 +972,9 @@ const mutations = {
   },
   changeEmptyMessageState(state, value) {
     state.emptyMessage = value;
+  },
+  deleteFriend(state, value) {
+    state.isDeleteFriend = value;
   }
 
 }
@@ -1119,6 +1165,7 @@ const actions = {
   preAddProtoMessage: ({commit}, value) => commit('preAddProtoMessage', value),
   updateSendMessage: ({commit}, value) => commit('updateSendMessage', value),
   addOldMessage: ({commit}, value) => commit('addOldMessage', value),
+  deleteFriend: ({commit}, value) => commit('deleteFriend', value),
 }
 const store = new Vuex.Store({
   state,

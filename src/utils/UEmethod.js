@@ -68,9 +68,23 @@ window.uemsgack = function (id, data) {
               // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
               const S2CFriendListAckData = Proto.default.S2CFriendListAck.deserializeBinary(hexToBuffer(data));
               console.log(`%c ${MsgId.S2C_FRIEND_LIST_ACK}返回参数:`, "color: #52d10a;", S2CFriendListAckData.toObject());
-              // if (S2CFriendListAckData.toObject().errcode == 0) {
-              //   S2CFriendListAckData.updateMeetingCenterInfo(S2CGetMeetingCenterInfoAckData.toObject());
-              // }
+              let newFriendList = S2CFriendListAckData.toObject().friendInfoList.map((item,index) => {
+                return {
+                  id: item.roleId,
+                  wxid: item.roleId, //微信号
+                  displayName: item.userName, //姓名首字母
+                  reason: item.userName,  //昵称
+                  img: 'static/images/newfriend.jpg', //头像
+                  portrait: 'static/images/newfriend.jpg', //头像
+                  signature: "", //个性签名
+                  nickname: item.userName,  //昵称
+                  sex: item.sex,   //性别 1为男，0为女
+                  remark: item.userName,  //备注
+                  area: "",  //地区,
+                };
+              });
+              console.log(newFriendList)
+              store.commit('updateFriendList', newFriendList)
             } catch (e) {
               console.error("反序列化失败:", e);
             }
@@ -81,6 +95,29 @@ window.uemsgack = function (id, data) {
           // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
           const S2CApplylistAckData = Proto.default.S2CApplylistAck.deserializeBinary(hexToBuffer(data));
           console.log(`%c ${MsgId.S2C_APPLY_LIST_ACK}返回参数:`, "color: #52d10a;", S2CApplylistAckData.toObject());
+          if (S2CApplylistAckData.toObject().errorId == 0) {
+            console.log(S2CApplylistAckData.toObject().applylistList)
+            let newApplyFriendList = S2CApplylistAckData.toObject().applylistList.map((item,index) => {
+              return {
+                id: item.roleId,
+                wxid: item.roleId, //微信号
+                displayName: item.userName, //姓名首字母
+                status: item.opType, // 是否处理 0.未处理 1.同意 2.拒绝
+                time: item.time, // 申请时间
+                reason: item.userName,  //昵称
+                initial: item.userName, //姓名首字母
+                img: 'static/images/newfriend.jpg', //头像
+                portrait: 'static/images/newfriend.jpg', //头像
+                signature: "", //个性签名
+                nickname: item.userName,  //昵称
+                sex: item.sex,   //性别 1为男，0为女
+                remark: "新的朋友",  //备注
+                area: "",  //地区
+              };
+            });
+            console.log(newApplyFriendList)
+            store.commit('updateFriendRequest', newApplyFriendList)
+          }
 
         } catch (e) {
           console.error("反序列化失败:", e);
@@ -115,6 +152,9 @@ window.uemsgack = function (id, data) {
           const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
           console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
 
+          store.commit('deleteFriend', true);
+
+
         } catch (e) {
           console.error("反序列化失败:", e);
         }
@@ -125,17 +165,6 @@ window.uemsgack = function (id, data) {
           // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
           const S2CBlacklistAckData = Proto.default.S2CBlacklistAck.deserializeBinary(hexToBuffer(data));
           console.log(`%c ${MsgId.S2C_BLACKLIST_ACK}返回参数:`, "color: #52d10a;", S2CBlacklistAckData.toObject());
-
-        } catch (e) {
-          console.error("反序列化失败:", e);
-        }
-        break;
-      //   删除好友返回
-      case MsgId.S2C_DELETE_FRIEND_RES:
-        try {
-          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
-          const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
-          console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
 
         } catch (e) {
           console.error("反序列化失败:", e);
@@ -168,18 +197,28 @@ window.uemsgack = function (id, data) {
         try {
           // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
           const S2CFriendRecommendAckData = Proto.default.S2CFriendRecommendAck.deserializeBinary(hexToBuffer(data));
-          console.log(`%c ${MsgId.S2C_FRIEND_RECOMMEND_AKC}返回参数:`, "color: #52d10a;", S2CFriendRecommendAckData.toObject());
-
-        } catch (e) {
-          console.error("反序列化失败:", e);
-        }
-        break;
-      //   删除好友返回
-      case MsgId.S2C_DELETE_FRIEND_RES:
-        try {
-          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
-          const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
-          console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
+          let recommendData = S2CFriendRecommendAckData.toObject();
+          console.log(`%c ${MsgId.S2C_FRIEND_RECOMMEND_AKC}返回参数:`, "color: #52d10a;", recommendData);
+          if (recommendData.errorId == 0) {
+            console.log(recommendData.briefList)
+           let newFriendList = recommendData.briefList.map((item,index) => {
+              return {
+                id: item.roleId,
+                wxid: item.roleId, //微信号
+                displayName: item.userName, //姓名首字母
+                initial: item.userName, //姓名首字母
+                img: 'static/images/newfriend.jpg', //头像
+                portrait: 'static/images/newfriend.jpg', //头像
+                signature: "", //个性签名
+                nickname: item.userName,  //昵称
+                sex: item.sex,   //性别 1为男，0为女
+                remark: "新的朋友",  //备注
+                area: "",  //地区
+              };
+            });
+            console.log(newFriendList)
+            store.commit('updateSearchUser', newFriendList)
+          }
 
         } catch (e) {
           console.error("反序列化失败:", e);
@@ -207,9 +246,9 @@ export const webGetRoleId = () => {
 };
 
 
-// ue返回的会议角色id
+// ue返回的角色id
 window.uesetroleid = function (id) {
-    console.log("%c ================ue返回的会议角色id====================:", "color: #52d10a;", id);
+    console.log("%c ================ue返回的角色id====================:", "color: #52d10a;", id);
     store.state.userId = id;
 };
 
