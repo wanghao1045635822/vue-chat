@@ -140,6 +140,8 @@ window.uemsgack = function (id, data) {
           // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
           const S2CAgreeFriendAckData = Proto.default.S2CAgreeFriendAck.deserializeBinary(hexToBuffer(data));
           console.log(`%c ${MsgId.S2C_AGREE_FRIEND_ACK}返回参数:`, "color: #52d10a;", S2CAgreeFriendAckData.toObject());
+          // 查询添加好友列表
+          store.commit('getFriendList', true)
 
         } catch (e) {
           console.error("反序列化失败:", e);
@@ -151,10 +153,18 @@ window.uemsgack = function (id, data) {
           // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
           const S2CDeleteFriendAckData = Proto.default.S2CDeleteFriendAck.deserializeBinary(hexToBuffer(data));
           console.log(`%c ${MsgId.S2C_DELETE_FRIEND_RES}返回参数:`, "color: #52d10a;", S2CDeleteFriendAckData.toObject());
-
-          store.commit('deleteFriend', true);
-
-
+          if(S2CDeleteFriendAckData.toObject().errorId == 0){
+            store.commit('deleteFriend', true);
+            //查询好友列表或者主动删除好友
+            // store.state.friendlist.forEach((item,index) => {
+            //   if(item.id == S2CDeleteFriendAckData.toObject().roleId){
+            //     store.state.friendlist.splice(index,1);
+            //   }
+            // });
+            //通过过滤来进行筛选
+            // store.state.friendlist = store.state.friendlist.filter(item => item.id !== S2CDeleteFriendAckData.toObject().roleId);
+            store.commit('getFriendList', true)
+          }
         } catch (e) {
           console.error("反序列化失败:", e);
         }
@@ -212,7 +222,7 @@ window.uemsgack = function (id, data) {
                 signature: "", //个性签名
                 nickname: item.userName,  //昵称
                 sex: item.sex,   //性别 1为男，0为女
-                remark: "新的朋友",  //备注
+                remark: "新的朋友",  //备
                 area: "",  //地区
               };
             });

@@ -10,15 +10,15 @@
             <div class="content" >
                 <div class="friendlist-area">
                     <div class="search-input">
-                        <el-input clearable v-model="friendInput" prefix-icon="el-icon-search" placeholder="搜索" @keydown.enter.native="searchUser"></el-input>
+                        <el-input clearable v-model="friendInput" class="custom-input" prefix-icon="el-icon-search" placeholder="搜索" @keydown.enter.native="searchUser"></el-input>
                     </div>
-                    <div class="friendlist" :style="{height: (appHeight-270) + 'px'}">
+                    <div class="friendlist" :style="{height: (appHeight-300) + 'px'}">
                         <ul>
                             <li v-bind:key = index v-for="(item, index) in waitCheckedFriendList" class="frienditem"  :class="{ noborder: !item.initial}">
                                 <div class="list_title" v-if="item.initial">{{item.initial}}</div>
                                 <div class="friend-info" :class="{ active: item.id === selectFriendId && !item.disabled,disable: item.disabled }" @click.stop="selectFriend(item.id)">
                                     <img class="avatar" :src="item.img" onerror="this.src='static/images/vue.jpg'">
-                                    <div class="remark">{{item.remark}}</div>
+                                    <div class="remark" style="color: #FFFFFF">{{item.remark}}</div>
                                     <div class="friend-check">
                                         <el-checkbox :true-label="item.id+':1'" :false-label="item.id+':0'" @change="friendChangeChange"  @click.stop.native="" v-model="item.checked" :disabled="item.disabled"></el-checkbox>
                                     </div>
@@ -34,12 +34,12 @@
                         <div class="create-group-title">{{groupDialogTitle}}</div>
                         <div class="check-statu-title">{{checkFriendTips}}</div>
                     </div>
-                    <div class="friendlist" :style="{height: (appHeight-300) + 'px'}">
+                    <div class="friendlist" :style="{height: (appHeight-330) + 'px'}">
                         <ul>
                             <li v-bind:key = index v-for="(item, index) in selectedFriends" class="frienditem">
                                 <div class="friend-info" >
                                     <img class="avatar" :src="item.img" onerror="this.src='static/images/vue.jpg'">
-                                    <div class="remark">{{item.remark}}</div>
+                                    <div class="remark" style="color: #FFFFFF">{{item.remark}}</div>
                                     <div class="delete" @click="delfriend(item.id)"></div>
                                 </div>
                             </li>
@@ -47,8 +47,8 @@
                     </div>
                     <div class="check-operate">
                         <div class="check-btns">
-                            <el-button class="cancel-btn" size="medium" type="info" plain round @click="cancel">取 消</el-button>
-                            <el-button class="confirm-btn"  size="medium" type="success" plain round
+                            <el-button class="cancel-btn" size="mini" type="info" plain round @click="cancel">取 消</el-button>
+                            <el-button class="confirm-btn"  size="mini" type="success" plain round
                                 @click="confirm"
                                 :disabled="confirmEnable"
                                 v-loading.fullscreen.lock="fullscreenLoading">确 定</el-button>
@@ -226,19 +226,19 @@ export default {
                 this.fullscreenLoading = true;
                 var groupName = this.user.name;
                 var memberIds = [];
+                console.log(JSON.stringify(this.selectedFriends),'选择的好友');
                 for(var index in this.selectedFriends){
                     if (index < 2){
                         groupName += "、"+this.selectedFriends[index].remark;
                     }
                     memberIds.push(this.selectedFriends[index].wxid);
                 }
-
                 switch (this.groupOperateState) {
                     case 0:
                         //将自己加入到群组中
                         memberIds.push(LocalStore.getUserId());
                         webSocketClient.createGroup(groupName,memberIds).then(data => {
-                            Logger.log("create group result "+data);
+                            Logger.log("create group result "+ JSON.stringify(data));
                             if(data.code == SUCCESS_CODE){
                                 var result = JSON.parse(data.result);
                                 this.fullscreenLoading = false;
@@ -246,13 +246,13 @@ export default {
                                 this.$message({
                                     type: 'success',
                                     message: '创建'+groupName+'群组成功!'
-                                 });
+                                });
                             } else {
                                 this.fullscreenLoading = false;
                                 this.$message({
                                     type: 'success',
                                     message: '创建'+groupName+'群组失败,请重试!'
-                                 });
+                                });
                             }
                         });
                         break
@@ -374,8 +374,8 @@ export default {
   .friendlist-area
     width: 50%
     padding: 2px 0px 0px 0px
-    background: #fff
-    border-right: 1px solid #e7e7e7
+    //background: #fff
+    border-right: 1px solid #4e4b4b
     .search-input
         margin-right: 10px
     .friendlist
@@ -395,6 +395,7 @@ export default {
                 padding: 5px
                 transition: background-color .1s
                 font-size: 0
+                //background-color: #333333
                 &:hover
                     background-color: rgb(220,220,220)
                 &.active
@@ -428,7 +429,7 @@ export default {
         height: 30px
         .create-group-title
             font-size: 14px
-            color: black
+            color: #FFFFFF
         .check-statu-title
             font-size: 10px
             color: #999
@@ -471,9 +472,18 @@ export default {
                     display: flex
                     align-items: center
 
+
+</style>
+<style>
 .el-dialog__wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+/* 在全局样式文件中（如 App.vue 或独立的 CSS 文件） */
+.el-input__inner {
+  background-color: #333333 !important;
+  color: #FFFFFF!important;
+}
+
 </style>

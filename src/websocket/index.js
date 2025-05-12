@@ -139,6 +139,7 @@ export default class VueWebSocket {
         console.log("send message "+data);
         if(this.isconnected){
             this.ws.send(data);
+
         } else {
             console.log("curent websocket is close");
         }
@@ -322,6 +323,10 @@ export default class VueWebSocket {
     }
 
     async createGroup(groupName,memberIds){
+        console.log('==================================');
+        console.log(groupName);
+        console.log(memberIds);
+        console.log('==================================');
         var groupInfo = new GroupInfo();
         groupInfo.name = groupName;
         groupInfo.type = GroupType.Normal;
@@ -432,7 +437,7 @@ export default class VueWebSocket {
                     resolve(new FutureResult(ERROR_CODE,""));
                  }
 
-             },10000);
+             },3000);
              var resolvePromise = new PromiseResolve(resolve,timeoutId);
              resolvePromise.protoMessageId = protoMessageId;
              vueWebSocket.resolvePromiseMap.set(messageId,resolvePromise);

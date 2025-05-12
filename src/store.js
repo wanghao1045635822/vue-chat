@@ -31,6 +31,9 @@ import ProtoMessageContent from './websocket/message/protomessageContent';
 import Logger from './websocket/utils/logger';
 import RecallMessageNotification from './websocket/message/notification/recallMessageNotification';
 import MessageStatus from './websocket/message/messageStatus';
+import MsgId from "./proto/msgid_pb";
+import * as Proto from "./proto/friend_pb";
+import {jsCallUE} from "./utils/UEmethod";
 
 Vue.use(Vuex)
 
@@ -232,6 +235,25 @@ const state = {
 }
 
 const mutations = {
+  // 查询好友列表
+  getFriendList(state,value) {
+    console.log(MsgId.C2S_FRIEND_LIST_REQ,'请求获取好友列表Id');
+    // 请求好友信息
+    let InfoReq = new Proto.default.C2SFriendListReq();
+    // 序列化
+    const bytes = InfoReq.serializeBinary();
+
+    // console.log("请求好友列表 data:", bytes);
+
+    // 反序列化
+    const userDeserialized = Proto.default.C2SFriendListReq.deserializeBinary(bytes);
+    console.log("请求好友列表 data:", JSON.stringify(userDeserialized.toObject()));
+
+    jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
+  },
+
+
+
   // 从localStorage 中获取数据
   initData(state) {
     state.userId = localStorage.getItem('vue-user-id');
@@ -831,7 +853,7 @@ const mutations = {
     //如果切换聊天，需要全局遍历，暂定。转发消息可能出现这个问题
     for (var stateChatMessage of state.messages) {
       for (var protoMessage of stateChatMessage.protoMessages) {
-        if (protoMessage.messageId == updateMessageStatus.messageId) {
+        if (protoMessage.messageId == updateMessageStatus.messageId) {1
           protoMessage.status = updateMessageStatus.status;
         }
       }
@@ -1166,6 +1188,7 @@ const actions = {
   updateSendMessage: ({commit}, value) => commit('updateSendMessage', value),
   addOldMessage: ({commit}, value) => commit('addOldMessage', value),
   deleteFriend: ({commit}, value) => commit('deleteFriend', value),
+  getFriendList: ({commit}, value) => commit('getFriendList', value),
 }
 const store = new Vuex.Store({
   state,

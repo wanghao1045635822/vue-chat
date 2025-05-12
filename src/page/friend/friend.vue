@@ -36,19 +36,21 @@ export default {
     },
 // 请求获取好友列表
     getMsgFriendList(data) {
-      console.log(MsgId.C2S_FRIEND_LIST_REQ,'请求获取好友列表Id');
-      // 请求好友信息
-      let InfoReq = new Proto.default.C2SFriendListReq();
-      // 序列化
-      const bytes = InfoReq.serializeBinary();
+      // console.log(MsgId.C2S_FRIEND_LIST_REQ,'请求获取好友列表Id');
+      // // 请求好友信息
+      // let InfoReq = new Proto.default.C2SFriendListReq();
+      // // 序列化
+      // const bytes = InfoReq.serializeBinary();
+      //
+      // // console.log("请求好友列表 data:", bytes);
+      //
+      // // 反序列化
+      // const userDeserialized = Proto.default.C2SFriendListReq.deserializeBinary(bytes);
+      // console.log("请求好友列表 data:", JSON.stringify(userDeserialized.toObject()));
+      //
+      // jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
+      this.$store.commit('getFriendList', true)
 
-      // console.log("请求好友列表 data:", bytes);
-
-      // 反序列化
-      const userDeserialized = Proto.default.C2SFriendListReq.deserializeBinary(bytes);
-      console.log("请求好友列表 data:", JSON.stringify(userDeserialized.toObject()));
-
-      jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
     }
   }
 }

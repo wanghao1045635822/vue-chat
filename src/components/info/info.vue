@@ -120,8 +120,7 @@ import * as Proto from '../../proto/friend_pb'
 import TimeUtils from "../../websocket/utils/timeUtils";
 
 export default {
-  computed: {
-    TimeUtils() {
+  computed: {    TimeUtils() {
       return TimeUtils
     },
     ...mapGetters([
@@ -147,6 +146,7 @@ export default {
   },
   watch: {
     isDeleteFriend(val) {
+      this.selectedFriend.id = 0;
       console.log("删除好友状态变化。。。", val);
       // console.log(val);
       this.$message({
@@ -209,8 +209,6 @@ export default {
         // },1000)
 
 
-
-
       }).catch(() => {
 
       });
@@ -249,6 +247,7 @@ export default {
         request.status = 1;
       },1000)
 
+      this.$store.commit('getFriendList', true);
 
     },
     handleNoFriendRequest(request) {
