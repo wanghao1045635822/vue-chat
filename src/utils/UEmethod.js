@@ -238,6 +238,17 @@ window.uemsgack = function (id, data) {
         default:
             console.error("未定义的返回信息");
             break;
+      //   返回聊天结果
+      case MsgId.S2C_CHAT_ACK:
+        try {
+          // 使用 hexToBuffer 转换数据，并确保返回值兼容 jspb.ByteSource
+          const S2CBlacklistDelAckData = Proto.default.S2CBlacklistDelAck.deserializeBinary(hexToBuffer(data));
+          console.log(`%c ${MsgId.S2C_CHAT_ACK}返回参数:`, "color: #52d10a;", S2CBlacklistDelAckData.toObject());
+
+        } catch (e) {
+          console.error("反序列化失败:", e);
+        }
+        break;
     }
 };
 
@@ -290,7 +301,7 @@ window.uploadImage = function (error, errorData, data, name, requestid = '1') {
     console.log("%c requestid:", "color: #52d10a;", requestid);
     if (error) {
         if (data && requestid === '0') {
-            // meetingCenterStore.coverImage = imageUrl + '20240730-150250_1728975865_208.png' //封面图片;
+            // meetingCenterStore.coverImage = imageUrl + '20240730-150250_1728975865 _208.png' //封面图片;
             meetingCenterStore.coverImage = imageUrl + data //封面图片;
         } else if (data && requestid === '1') {
             meetingCenterStore.displayImageA = {

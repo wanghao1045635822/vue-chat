@@ -3,8 +3,9 @@
   <div class="text">
     <div class="emoji">
       <i class="icon iconfont icon-biaoqing" @click="showEmoji=!showEmoji"></i>
-      <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation" @click="sendAudio"></i>
-      <i title="视频聊天" class="icon iconfont icon-ai-video" @click="sendVideo"></i>
+<!--      2025年5月12日16:37:01 后开发-->
+<!--      <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation" @click="sendAudio"></i>-->
+<!--      <i title="视频聊天" class="icon iconfont icon-ai-video" @click="sendVideo"></i>-->
       <i title="发送图片" class="icon iconfont icon-tupian">
         <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
       </i>
@@ -29,7 +30,6 @@
             <video id="video-local" playsinline autoplay muted></video>
           </div>
         </div>
-
       </transition>
 
 
@@ -104,29 +104,31 @@
       </div>
 
     </div>
-        <textarea id="sendText"
-                  ref="text"
-                  v-model="content"
-                  @keydown.enter.exact="sendMessage"
-                  @keydown.ctrl.enter="newline"
-                  @focus="onFocus"
-                  @click="showEmoji=false"
-                  style="background-color: transparent;"
-        ></textarea>
-<!--    <div class="editor-container">-->
-<!--      &lt;!&ndash; 绑定 v-model 或自定义事件 &ndash;&gt;-->
-<!--      <quill-editor-->
-<!--        id="sendText"-->
-<!--        ref="text"-->
-<!--        v-model="content"-->
-<!--        @keydown.enter.exact="sendMessage"-->
-<!--        @keydown.ctrl.enter="newline"-->
-<!--        @focus="onFocus"-->
-<!--        @click="showEmoji=false"-->
-<!--        :options="editorOptions"-->
-<!--        @blur="onEditorBlur"-->
-<!--      />-->
-<!--    </div>-->
+<!--        <textarea id="sendText"-->
+<!--                  ref="text"-->
+<!--                  v-model="content"-->
+<!--                  @keydown.enter.exact="sendMessage"-->
+<!--                  @keydown.ctrl.enter="newline"-->
+<!--                  @focus="onFocus"-->
+<!--                  @click="showEmoji=false"-->
+<!--                  style="background-color: transparent;"-->
+<!--        ></textarea>-->
+    <div class="editor-container">
+      <!-- 绑定 v-model 或自定义事件 -->
+      <quill-editor
+        id="sendText"
+        ref="text"
+        v-model="content"
+        @keydown.enter="sendMessage"
+        @keydown.ctrl.enter="newline"
+        @click="showEmoji=false"
+        :options="editorOptions"
+        @text-change="onTextChange"
+        @blur="onEditorBlur($event)"
+        @focus="onEditorFocus($event)"
+        @ready="onEditorReady($event)"
+      />
+    </div>
     <div class="send" @click="send" ref="sendBtn" v-bind:class="{disable : sendBtnDisabled}">
       <span>发送</span>
     </div>
@@ -156,10 +158,16 @@ import Message from '../../websocket/message/message'
 import ProtoMessage from '../../websocket/message/protomessage'
 import VideoMessageContent from '../../websocket/message/videoMessageContent'
 import FileMessageContent from '../../websocket/message/fileMessageContent'
+import MsgId from "../../proto/msgid_pb";
+import * as Proto from "../../proto/friend_pb";
+import * as Chat from "../../proto/chat_pb";
+import {jsCallUE} from "../../utils/UEmethod";
 
 export default {
   data() {
     return {
+      text: "初始内容",
+      // content: '<img src="/static/images/microzz.jpg" style="width: 30px" alt="/::+">',
       content: '',
       sendBtnDisabled: true,
       reply: '未找到',
@@ -189,6 +197,7 @@ export default {
       talkTimerInterval: null,
       editorOptions: {
         modules: {
+          placeholder: false,
           toolbar: [
             // ['bold', 'italic', 'underline', 'strike'], // 工具按钮
             // [{'header': 1}, {'header': 2}],       // 标题
@@ -218,10 +227,35 @@ export default {
     ])
   },
   methods: {
-    onEditorBlur() {
-      console.log('编辑器失焦', this.content)
+    onEditorBlur(quill) {
+      // console.log('编辑器失焦', quill)
+      this.showEmoji=false
     },
-
+    onEditorFocus(quill) {
+      // console.log('editor focus!', quill)
+      this.showEmoji = false;
+      this.$store.dispatch('clearUnreadStatus', '');
+    },
+    onEditorReady(quill) {
+      console.log('editor ready!', quill)
+    },
+    onEditorChange({ quill, html, text }) {
+      console.log('editor change!', quill, html, text)
+      this.content = html
+    },
+    //  获取编辑器实例
+    getEditor() {
+      return this.$refs.text.quill;
+    },
+    // 监听内容变化
+    onTextChange(delta, oldDelta, source) {
+      console.log('内容变化:', delta);
+    },
+    handleInput(event) {
+      console.log(event.target.innerHTML)
+      // 更新数据（双向绑定的核心）
+      this.content = event.target.innerHTML;
+    },
     sendPic(e) {
       var store = this.$store;
       var file = e.target.files[0];
@@ -459,9 +493,15 @@ export default {
     },
 
     // 点击关闭emojiBox
+    // 选择表情包
     clickemojiBox(item) {
-      this.content += item.code;
-      this.showEmoji = false;
+      console.log(item);
+      // 使用正则表达式移除包裹图片的 <p> 标签
+      this.content = this.content.replace(/<\/?p>/g, '');
+      this.content += `<img src="/static/emoji/${item.file}" alt="${item.code}" style="vertical-align: middle; width: 24px; height: 24px"/>`;
+      console.log(this.content)
+      // this.content += item.code;
+      // this.showEmoji = false;
     },
 
     newline(e) {
@@ -480,6 +520,14 @@ export default {
     // 点击发送按钮发送信息
     send() {
       console.log("send message " + this.content);
+      // 将图片换成属性值
+
+      //去掉<p>和</p> 标签
+      // this.content = this.content.replace(/<p>/g, '').replace(/<\/p>/g, '');
+      // 使用插件的api进行获取输入内容
+      // this.content = this.$refs.text.quill.getText();
+      // console.log("content " + this.content)
+
       if (this.content.length < 1) {
         this.warn = true
         this.content = ''
@@ -493,8 +541,35 @@ export default {
         console.log(new SendMessage(null, textMessageContent))
         this.sendMessageToStore(new SendMessage(null, textMessageContent));
         this.content = '';
-        this.$refs.text.focus();
+        // this.$refs.text.focus();
+        // 请求聊天方法  聊天类型 见SOCIALIZECHATTYPE   文字：0  表情：1
+        this.sendMsg(1);
+
       }
+    },
+    // 请求聊天方法
+    sendMsg(value) {
+      console.log(MsgId.C2S_CHAT_REQ,'请求聊天');
+      // 请求聊天信息
+      let InfoReq = new Chat.default.C2SSocializeChatReq();
+      // 封装聊天信息
+      InfoReq.setChanneltype(5);// 聊天渠道类型
+      InfoReq.setGroupid('');// 群聊的群id
+      InfoReq.setTargetroleid(this.selectedFriend.id);// 目标角色id
+      InfoReq.setText(this.content);// 文本信息
+      InfoReq.setVoiceid('');// 语音id
+      InfoReq.setVoiceduration('');// 语音时长
+      InfoReq.setChatType(value);// 聊天类型 见SOCIALIZECHATTYPE   文字：0  表情：1
+      // 序列化
+      const bytes = InfoReq.serializeBinary();
+
+      // console.log("请求信息 data:", bytes);
+
+      // 反序列化
+      const userDeserialized = Chat.default.C2SSocializeChatReq.deserializeBinary(bytes);
+      console.log("请求好友列表 data:", JSON.stringify(userDeserialized.toObject()));
+
+      jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
     },
     //发送语音聊天
     sendAudio() {
@@ -583,7 +658,21 @@ export default {
   },
   // 在进入的时候 聚焦输入框
   mounted() {
-    // this.$refs.text.focus()
+    // 初始化富文本编辑器样式修改
+    document.getElementById('sendText').querySelector('.ql-hidden').style.display = 'none';
+    document.getElementById('sendText').querySelector('.ql-editor').style.paddingTop = 0;
+    document.getElementById('sendText').querySelector('.ql-editor').style.width = '100%';
+    document.getElementById('sendText').querySelector('.ql-editor').style.overflow = 'auto';
+    // 获取 Quill 的根 DOM 元素
+    const editorElement = document.querySelector('#sendText .ql-editor');
+    // 直接移除 placeholder 属性
+    editorElement.removeAttribute('data-placeholder');
+
+
+
+
+
+
     var sessionCallback = new SessionCallback();
     var engineCallback = new EngineCallback();
     engineCallback.onReceiveCall = session => {
@@ -754,7 +843,7 @@ export default {
   .emoji
     position: relative
     width: 100%
-    height: 26%
+    height: 20%
     line-height: 40px
     font-size: 12px
     padding: 0 30px
@@ -1135,10 +1224,13 @@ export default {
 
 </style>
 <style lang="css" scoped>
-
   /* 确保编辑器容器高度 */
-  .ql-container {
-    min-height: 300px;
+  ::v-deep .ql-editor {
+
+  }
+  .editor-container{
+    width: 100%;
+    overflow: auto;
   }
 
 </style>

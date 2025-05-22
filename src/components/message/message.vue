@@ -18,7 +18,7 @@
                     <div v-if="isGroupNotification(item)" class="time"><span>{{notificationContent(item)}}</span></div>
                     <div v-if="isRecallNotification(item)" class="time"><span>{{notificationContent(item)}}</span></div>
                     <div v-if="item.content.type === 90" class="time"><span>{{item.content.content}}</span></div>
-		    		<div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
+		    		        <div v-if="!isNotification(item.content.type)" class="main" :class="{ self: item.direction == 0 ? true : false }">
                         <img class="avatar" width="36" height="36" :src="avatarSrc(item)"
                         onerror="this.src='static/images/vue.jpg'"/>
                         <div class="content">
@@ -30,8 +30,10 @@
 <!--                                    <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>-->
 <!--                                </div>-->
                                 <div class="content-message" @contextmenu.prevent="messageRigthClick(item.messageId)">
-                                    <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>
-                                    <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>
+<!--                                  修改了数据源，直接显示就可以-->
+                                    <div v-if="item.content.type === 1" class="text" v-html="item.content.searchableContent"></div>
+<!--                                    <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>-->
+<!--                                    <div v-if="item.content.type === 1 && !isfaceMessage(item.content.searchableContent)" class="text" v-text="item.content.searchableContent"></div>-->
                                     <div v-if="item.content.type === 2">
                                         [语音消息]
                                     </div>
@@ -202,7 +204,7 @@ export default {
                             }
 
                         }
-
+                        
                         if(!isGroupMember){
                             this.$message.error("您不是群组成员，无法查看群组信息,即将删除该会话");
                             this.$store.dispatch('deleteConversation',this.selectedChat.target)
@@ -242,13 +244,13 @@ export default {
         //  在发送信息之后，将输入的内容中属于表情的部分替换成emoji图片标签
         //  再经过v-html 渲染成真正的图片
         replaceFace (con) {
-            if(con.includes('/:')) {
-                var emojis=this.emojis;
-                for(var i=0;i<emojis.length;i++){
-                    con = con.replace(emojis[i].reg, '<img src="static/emoji/' + emojis[i].file +'"  alt="" style="vertical-align: middle; width: 24px; height: 24px" />');
-                }
-                return con;
-            }
+            // if(con.includes('/:')) {
+            //     var emojis=this.emojis;
+            //     for(var i=0;i<emojis.length;i++){
+            //         con = con.replace(emojis[i].reg, '<img src="static/emoji/' + emojis[i].file +'"  alt="" style="vertical-align: middle; width: 24px; height: 24px" />');
+            //     }
+            //     return con;
+            // }
             return con;
         },
 

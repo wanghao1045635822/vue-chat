@@ -13,8 +13,10 @@
                 </div>
                 <div class="lastmsg-info">
                     <p class="lastmsg">{{processageGroupMessage(item)}}</p>
+<!--                    <p class="lastmsg" v-html="item.conversationInfo.lastMessage.content.searchableContent"></p>-->
                     <span v-if="item.conversationInfo.unreadCount && item.conversationInfo.unreadCount.unread > 0" class="unread-num">
                         <span class="unread-num-show">{{item.conversationInfo.unreadCount ? item.conversationInfo.unreadCount.unread : 0}}</span>
+
                     </span>
                 </div>
 
@@ -81,9 +83,19 @@ export default {
                         displayContent = displayName +":"+protoConversationInfo.lastMessage.content.searchableContent;
                     }
                 }
-
             }
+
+           //  去除p标签和img标签
+           displayContent = this.removePTagsAndImgTags(displayContent);
+
            return displayContent;
+        },
+        removePTagsAndImgTags(htmlString) {
+          // 去除所有<p>标签及其属性，包括开始和结束标签
+          let result = htmlString.replace(/<\/?p[^>]*>/gi, '');
+          // 去除所有<img>标签及其属性
+          result = result.replace(/<img[^>]*>/gi, '');
+          return result;
         },
         getDisplayName(from){
             var displayName = from;
