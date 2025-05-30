@@ -17,7 +17,7 @@
     "eruda": "^3.4.1",
     "google-protobuf": "^3.21.4",
     "kurento-utils": "^6.14.0",
-    "pinyin": "^2.9.0",
+    "pinyin": "^2.11.2",
     "protobufjs": "^7.4.0",
     "qiniu-js": "^2.5.5",
     "quill": "^1.3.7",
@@ -33,7 +33,7 @@
     "vuex": "^3.0.1",
     "wangeditor": "^4.7.15",
     "webrtc-adapter": "^7.5.1",
-    "xgplayer": "^2.4.7",
+    "xgplayer": "^2.32.6",
     "xgplayer-vue": "^1.1.5"
   },
   "devDependencies": {

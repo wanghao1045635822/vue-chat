@@ -34,6 +34,8 @@ import MessageStatus from './websocket/message/messageStatus';
 import MsgId from "./proto/msgid_pb";
 import * as Proto from "./proto/friend_pb";
 import {jsCallUE} from "./utils/UEmethod";
+import TextMessageContent from "./websocket/message/textMessageContent";
+import SendMessage from "./websocket/message/sendMessage";
 
 Vue.use(Vuex)
 
@@ -72,32 +74,34 @@ const state = {
     //   remark: "我的申请",  //备注
     //   area: "",  //地区
     // },
-    // {
-    //   id: 2,
-    //   wxid: "new2", //微信号
-    //   initial: ' ', //姓名首字母
-    //   img: 'static/images/Guai.jpg', //头像
-    //   signature: "", //个性签名
-    //   nickname: "王浩",  //昵称
-    //   sex: 0,   //性别 1为男，0为女
-    //   remark: "王浩",  //备注
-    //   area: "",  //地区
-    // },
-    // {
-    //   id: 3,
-    //   wxid: "new3", //微信号
-    //   initial: ' ', //姓名首字母
-    //   img: 'static/images/新之助.jpg', //头像
-    //   signature: "", //个性签名
-    //   nickname: "仉玉良",  //昵称
-    //   sex: 0,   //性别 1为男，0为女
-    //   remark: "仉玉良",  //备注
-    //   area: "",  //地区
-    // },
+    {
+      id: 2,
+      wxid: "new2", //微信号
+      initial: ' ', //姓名首字母
+      img: 'static/images/Guai.jpg', //头像
+      signature: "", //个性签名
+      nickname: "员工1",  //昵称
+      sex: 0,   //性别 1为男，0为女
+      remark: "员工1",  //备注
+      area: "",  //地区
+    },
+    {
+      id: 3,
+      wxid: "new3", //微信号
+      initial: ' ', //姓名首字母
+      img: 'static/images/新之助.jpg', //头像
+      signature: "", //个性签名
+      nickname: "员工2",  //昵称
+      sex: 0,   //性别 1为男，0为女
+      remark: "员工2",  //备注
+      area: "",  //地区
+    },
 
   ],
   friendIds: [],
   friendDatas: [],
+  //返回的聊天信息
+  updateChatHistory:{},
   //emoji表情
   emojis: [
     {file: '100.gif', code: '/::)', title: '微笑', reg: /\/::\)/g},
@@ -171,13 +175,13 @@ const state = {
       wxid: "new2", //微信号
       status: 0, // 是否处理 0.未处理 1.同意 2.拒绝
       time: '2025-4-10 18:31:35', // 申请时间
-      reason: '王浩',  //昵称
+      reason: '员工3',  //昵称
       initial: ' ', //姓名首字母
       img: 'static/images/Guai.jpg', //头像
-      signature: "", //个性签名
-      nickname: "王浩",  //昵称
+      signature: "员工3", //个性签名
+      nickname: "员工3",  //昵称
       sex: 0,   //性别 1为男，0为女
-      remark: "王浩",  //备注
+      remark: "员工3",  //备注
       area: "",  //地区
     },
   ],
@@ -232,6 +236,7 @@ const state = {
   groupMemberTracker: 0,
   isLoadRemoteMessage: false,
   isDeleteFriend: false,//删除好友状态
+  isSendMsg: false,//好友发送聊天状态
 }
 
 const mutations = {
@@ -310,9 +315,11 @@ const mutations = {
     state.selectId = value
   },
   selectConversation(state, value) {
-    state.selectTarget = value;
+    console.log(JSON.stringify(value));
+    state.selectTarget = value.target;
+    state.selectFriendId = value.target;
     //清除未读数
-    var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === value);
+    var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === value.target);
     if (stateConversationInfo && stateConversationInfo.conversationInfo.unreadCount) {
       stateConversationInfo.conversationInfo.unreadCount.unread = 0;
     }
@@ -410,6 +417,8 @@ const mutations = {
   updateConversationBrief(state) {
     //更新会话信息
     for (var stateConversationInfo of state.conversations) {
+      // 更新会话信息
+
       var friend = state.friendlist.find(friend => friend.wxid === stateConversationInfo.conversationInfo.target);
       if (friend) {
         stateConversationInfo.name = friend.remark ? friend.remark : friend.nickname;
@@ -524,10 +533,12 @@ const mutations = {
 
   // 发送信息
   sendMessage(state, sendMessage) {
+    console.log('sendMessage:',sendMessage)
     state.isLoadRemoteMessage = false;
     var message = Message.toMessage(state, sendMessage);
+    console.log("message:",message)
     var protoMessage = ProtoMessage.convertToProtoMessage(message);
-    console.log("send protomessage " + JSON.stringify(protoMessage));
+    console.log("发送消息:" + JSON.stringify(protoMessage));
 
     // if(MessageConfig.isDisplayableMessage(protoMessage)){
     //     var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
@@ -570,11 +581,19 @@ const mutations = {
     //   "target": "new2",
     //   "line": 0
     // }
-
+    // protoMessage.target = 5;
     this.commit("preAddProtoMessage", protoMessage)
 
     //发送消息到对端
     // state.vueSocket.sendMessage(protoMessage);
+  },
+
+  //接受消息并添加到消息列表中
+  acceptProtoMessage(state, data) {
+    //进行消息类型包装
+    var textMessageContent = new TextMessageContent(data.content);
+    textMessageContent.type = data.type;
+    this.commit("sendMessage", new SendMessage(data.target, textMessageContent))
   },
 
   //图片，视频类消息，需要先加入消息，然后上传成功后在更新message content
@@ -614,6 +633,7 @@ const mutations = {
     }
   },
 
+
   updateSendMessage(state, updateMessage) {
     var stateChatMessage = state.messages.find(stateChatMessage => stateChatMessage.target === state.selectTarget);
     if (stateChatMessage) {
@@ -631,6 +651,7 @@ const mutations = {
   // 选择好友后，点击发送信息。判断在聊天列表中是否有该好友，有的话跳到该好友对话。没有的话
   // 添加该好友的对话 并置顶
   send(state) {
+    console.log(JSON.stringify(state.friendlist))
     let result = state.friendlist.find(friend => friend.id === state.selectFriendId)
     let stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === result.wxid)
     if (!stateConversationInfo) {
@@ -1156,6 +1177,7 @@ const actions = {
   updateFriendList: ({commit}, value) => commit('updateFriendList', value),
   updateUserInfos: ({commit}, value) => commit('updateUserInfos', value),
   sendMessage: ({commit}, msg) => commit('sendMessage', msg),
+  acceptProtoMessage: ({commit}, msg) => commit('acceptProtoMessage', msg),
   send: ({commit}) => commit('send'),
   initData: ({commit}) => commit('initData'),
   updateConversationInfo: ({commit}, value) => commit('updateConversationInfo', value),

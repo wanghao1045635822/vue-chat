@@ -39,7 +39,8 @@
           width="50"
         >
           <template slot-scope="scope">
-            <el-avatar :src="scope.row.portrait"></el-avatar>
+<!--            <el-avatar :src="scope.row.portrait"></el-avatar>-->
+            <el-avatar :src="scope.row.img"></el-avatar>
           </template>
         </el-table-column>
         <el-table-column
@@ -48,8 +49,9 @@
           width="120">
           <template slot-scope="scope">
             <div>
-              <p>{{ scope.row.displayName }}</p>
-              <p>{{ scope.row.signature }}</p>
+              <p>{{ scope.row.nickname }}</p>
+<!--              <p>{{ scope.row.displayName }}</p>-->
+<!--              <p>{{ scope.row.signature }}</p>-->
             </div>
           </template>
         </el-table-column>
@@ -150,6 +152,7 @@ export default {
     },
     showFriendRequestDialog(currentSearchUser) {
       this.innerVisible = true;
+      // 默认添加介绍
       this.friendRequest = "我是" + this.$store.state.user.name;
       this.currentSearchUser = currentSearchUser;
     }

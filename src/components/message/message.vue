@@ -29,7 +29,8 @@
 <!--                                    <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>-->
 <!--                                    <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>-->
 <!--                                </div>-->
-                                <div class="content-message" @contextmenu.prevent="messageRigthClick(item.messageId)">
+<!--                              文本和其他显示-->
+                                <div class="content-message"  v-if="item.content.type !== 6 && item.content.type !== 7" @contextmenu.prevent="messageRigthClick(item.messageId)">
 <!--                                  修改了数据源，直接显示就可以-->
                                     <div v-if="item.content.type === 1" class="text" v-html="item.content.searchableContent"></div>
 <!--                                    <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>-->
@@ -56,10 +57,32 @@
                                         </div>
                                     </div>
                                     <div v-if="item.content.type === 6" >
+<!--                                      视频消息-->
                                         <Xgplayer :config="videoConfig(item,false,imageThumnailSrc(item))" @player="Player = $event"/>
+<!--                                        <Xgplayer :config="{-->
+<!--                                          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // 支持 HLS-->
+<!--                                          fluid: true, // 自适应容器-->
+<!--                                          id: 'vs'+item.messageId,-->
+<!--                                          height: 330,-->
+<!--                                          width: 250,-->
+<!--                                          // fitVideoSize: 'auto',-->
+<!--                                          autoplay: false,-->
+<!--                                          download: true-->
+<!--                                        }" @player="Player = $event"/>-->
+<!--                                      原生视频播放效果-->
+<!--                                      <video controls width="100%">-->
+<!--                                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">-->
+<!--                                      </video>-->
                                     </div>
                                     <div v-if="item.content.type === 7">
-                                        [表情消息]
+<!--                                      <img :src="item.content.searchableContent" style="width: 10rem" alt="">-->
+                                      <el-image
+                                        style="width: 10rem;"
+                                        :src="item.content.searchableContent"
+                                        :preview-src-list="[
+                                          item.content.searchableContent
+                                        ]">
+                                      </el-image>
                                     </div>
                                     <div v-if="item.content.type === 8">
                                         [图片表情]
@@ -68,6 +91,38 @@
                                         [网络电话]
                                     </div>
                                 </div>
+                              <!--视频和图片显示-->
+                              <div  v-else @contextmenu.prevent="messageRigthClick(item.messageId)">
+                                <div v-if="item.content.type === 6" >
+                                  <!--                                      视频消息-->
+                                  <Xgplayer :config="videoConfig(item,false,imageThumnailSrc(item))" style="float: right;" @player="Player = $event"/>
+                                  <!--                                        <Xgplayer :config="{-->
+                                  <!--                                          url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // 支持 HLS-->
+                                  <!--                                          fluid: true, // 自适应容器-->
+                                  <!--                                          id: 'vs'+item.messageId,-->
+                                  <!--                                          height: 330,-->
+                                  <!--                                          width: 250,-->
+                                  <!--                                          // fitVideoSize: 'auto',-->
+                                  <!--                                          autoplay: false,-->
+                                  <!--                                          download: true-->
+                                  <!--                                        }" @player="Player = $event"/>-->
+                                  <!--                                      <video controls width="100%">-->
+                                  <!--                                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">-->
+                                  <!--                                      </video>-->
+                                </div>
+                                <div v-if="item.content.type === 7">
+                                  <!--                                      <img :src="item.content.searchableContent" style="width: 10rem" alt="">-->
+                                  <el-image
+                                    style="width: 10rem;"
+                                    :src="item.content.searchableContent"
+                                    :preview-src-list="[
+                                          item.content.searchableContent
+                                        ]">
+                                  </el-image>
+                                </div>
+                              </div>
+
+
                                 <rightMenu v-if="isShowMessageMenu(item)" v-bind:message="item"></rightMenu>
                             </div>
 
@@ -84,6 +139,7 @@
 import { mapGetters,mapActions, mapState } from 'vuex'
 import TimeUtils from '../../websocket/utils/timeUtils'
 import Xgplayer from 'xgplayer-vue';
+import 'xgplayer/dist/index.min.css'; // 默认样式
 import 'viewerjs/dist/viewer.css'
 import Viewer from 'v-viewer'
 import Vue from 'vue'
@@ -204,7 +260,7 @@ export default {
                             }
 
                         }
-                        
+
                         if(!isGroupMember){
                             this.$message.error("您不是群组成员，无法查看群组信息,即将删除该会话");
                             this.$store.dispatch('deleteConversation',this.selectedChat.target)
@@ -269,18 +325,19 @@ export default {
            }
            return false;
         },
-
         videoConfig(protoMessage,paly = false,posterBase64){
            return {
             id: 'vs'+protoMessage.messageId,
             // url 为空,可能导致不显示,这里强制写入poster
-            url: protoMessage.content.remoteMediaUrl == ''? posterBase64: protoMessage.content.remoteMediaUrl,
-            height: 330,
-            width: 250,
+            // url: protoMessage.content.remoteMediaUrl == ''? posterBase64: protoMessage.content.remoteMediaUrl,
+            // url: protoMessage.content.searchableContent,
+             url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', // 支持 HLS-->
             // fitVideoSize: 'auto',
+             width: '300px',
             poster:posterBase64,
             autoplay: false,
-            download: true
+            download: false,
+            fullScreen: true,
            }
         },
         // 参考资料 https://blog.csdn.net/qq449736038/article/details/80769507
@@ -387,7 +444,7 @@ export default {
 
         },
         imageThumnailSrc(item){
-            var thumbnail = item.content.binaryContent;
+            var thumbnail = item.content.searchableContent;
             if(thumbnail && thumbnail != ''){
                 thumbnail = "data:image/png;base64," +item.content.binaryContent;
             } else {

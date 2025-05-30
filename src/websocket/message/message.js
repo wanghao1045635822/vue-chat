@@ -6,36 +6,36 @@ import LocalStore from '../store/localstore';
  *  message in json format
     {
         "conversation":{
-            "conversationType": 0, 
-            "target": "UZUWUWuu", 
-            "line": 0, 
+            "conversationType": 0,
+            "target": "UZUWUWuu",
+            "line": 0,
         }
-        "from": "UZUWUWuu", 
+        "from": "UZUWUWuu",
         "content": {
-            "type": 1, 
-            "searchableContent": "1234", 
-            "pushContent": "", 
-            "content": "", 
-            "binaryContent": "", 
-            "localContent": "", 
-            "mediaType": 0, 
-            "remoteMediaUrl": "", 
-            "localMediaPath": "", 
-            "mentionedType": 0, 
+            "type": 1,
+            "searchableContent": "1234",
+            "pushContent": "",
+            "content": "",
+            "binaryContent": "",
+            "localContent": "",
+            "mediaType": 0,
+            "remoteMediaUrl": "",
+            "localMediaPath": "",
+            "mentionedType": 0,
             "mentionedTargets": [ ]
-        }, 
-        "messageId": 52, 
-        "direction": 1, 
-        "status": 5, 
-        "messageUid": 75735276990792720, 
-        "timestamp": 1550849394256, 
+        },
+        "messageId": 52,
+        "direction": 1,
+        "status": 5,
+        "messageUid": 75735276990792720,
+        "timestamp": 1550849394256,
         "to": ""
     }
  */
 export default class Message {
     conversation = {};
     from = '';
-    content = {}; 
+    content = {};
     messageId = 0;
     direction = 0;
     status = 0;
@@ -70,19 +70,19 @@ export default class Message {
         if(sendMessage.tos != ''){
            message.tos = sendMessage.tos;
         }
-        console.log("to message target "+target);
+        console.log("to message target:"+target);
         let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === target);
-        console.log("conversationtype "+stateConversationInfo.conversationInfo.conversationType +" target "+stateConversationInfo.conversationInfo.target);
+        // console.log("conversationtype:"+stateConversationInfo.conversationInfo.conversationType +" target "+stateConversationInfo.conversationInfo.target);
         message.conversation = new Conversation(stateConversationInfo.conversationInfo.conversationType,
             stateConversationInfo.conversationInfo.target,
             stateConversationInfo.conversationInfo.line);
-            console.log("send message content "+sendMessage.messageContent)
+            console.log("send message content:"+JSON.stringify(sendMessage.messageContent))
         message.content = sendMessage.messageContent;
         message.from = state.userId;
         message.status = MessageStatus.Sending;
         message.timestamp = new Date().getTime();
         message.direction = 0;
-        message.messageId = new Date().getTime(); 
+        message.messageId = new Date().getTime();
         return message;
     }
 
@@ -104,7 +104,7 @@ export default class Message {
         message.status = MessageStatus.Sending;
         message.timestamp = new Date().getTime();
         message.direction = 0;
-        message.messageId = new Date().getTime(); 
+        message.messageId = new Date().getTime();
         return message;
     }
 }

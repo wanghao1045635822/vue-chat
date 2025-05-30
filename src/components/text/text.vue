@@ -3,17 +3,17 @@
   <div class="text">
     <div class="emoji">
       <i class="icon iconfont icon-biaoqing" @click="showEmoji=!showEmoji"></i>
-<!--      2025年5月12日16:37:01 后开发-->
-<!--      <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation" @click="sendAudio"></i>-->
-<!--      <i title="视频聊天" class="icon iconfont icon-ai-video" @click="sendVideo"></i>-->
-      <i title="发送图片" class="icon iconfont icon-tupian">
-        <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">
+      <!--      2025年5月12日16:37:01 后开发-->
+      <i title="语音聊天" class="icon iconfont icon-dianhua" v-show="isSingleConversation" @click="sendAudio"></i>
+      <i title="视频聊天" class="icon iconfont icon-ai-video" @click="sendVideo"></i>
+      <i title="发送图片" class="icon iconfont icon-tupian" @click="sendUEImage(0)">
+        <!--        <input type="file" accept="image/*" id="chat-send-img" ref="uploadPic" @change="sendPic">-->
       </i>
-      <i title="发送视频" class="icon iconfont icon-shipin">
-        <input type="file" accept="video/*" id="chat-send-video" ref="uploadVideo" @change="sendVideoMessage">
+      <i title="发送视频" class="icon iconfont icon-shipin" @click="sendUEImage(1)">
+        <!--        <input type="file" accept="video/*" id="chat-send-video" ref="uploadVideo" @change="sendVideoMessage">-->
       </i>
-      <i title="发送文件" class="icon iconfont icon-wenjian">
-        <input type="file" accept="*" id="chat-send-file" ref="uploadFile" @change="sendFile">
+      <i title="发送文件" class="icon iconfont icon-wenjian" @click="sendUEImage(2)">
+        <!--        <input type="file" accept="*" id="chat-send-file" ref="uploadFile" @change="sendFile">-->
       </i>
       <transition name="showbox">
         <div class="emojiBox" v-show="showEmoji">
@@ -31,7 +31,6 @@
           </div>
         </div>
       </transition>
-
 
       <div class="callContent" v-show="showChatBox">
         <div class="">
@@ -104,15 +103,15 @@
       </div>
 
     </div>
-<!--        <textarea id="sendText"-->
-<!--                  ref="text"-->
-<!--                  v-model="content"-->
-<!--                  @keydown.enter.exact="sendMessage"-->
-<!--                  @keydown.ctrl.enter="newline"-->
-<!--                  @focus="onFocus"-->
-<!--                  @click="showEmoji=false"-->
-<!--                  style="background-color: transparent;"-->
-<!--        ></textarea>-->
+    <!--        <textarea id="sendText"-->
+    <!--                  ref="text"-->
+    <!--                  v-model="content"-->
+    <!--                  @keydown.enter.exact="sendMessage"-->
+    <!--                  @keydown.ctrl.enter="newline"-->
+    <!--                  @focus="onFocus"-->
+    <!--                  @click="showEmoji=false"-->
+    <!--                  style="background-color: transparent;"-->
+    <!--        ></textarea>-->
     <div class="editor-container">
       <!-- 绑定 v-model 或自定义事件 -->
       <quill-editor
@@ -161,7 +160,7 @@ import FileMessageContent from '../../websocket/message/fileMessageContent'
 import MsgId from "../../proto/msgid_pb";
 import * as Proto from "../../proto/friend_pb";
 import * as Chat from "../../proto/chat_pb";
-import {jsCallUE} from "../../utils/UEmethod";
+import {jsCallUE, webuploadfile} from "../../utils/UEmethod";
 
 export default {
   data() {
@@ -214,6 +213,7 @@ export default {
   computed: {
     ...mapState([
       'selectId',
+      'selectFriendId',
       'emojis',
       'showChatBox',
       'showAudioBox',
@@ -229,7 +229,7 @@ export default {
   methods: {
     onEditorBlur(quill) {
       // console.log('编辑器失焦', quill)
-      this.showEmoji=false
+      this.showEmoji = false
     },
     onEditorFocus(quill) {
       // console.log('editor focus!', quill)
@@ -239,7 +239,7 @@ export default {
     onEditorReady(quill) {
       console.log('editor ready!', quill)
     },
-    onEditorChange({ quill, html, text }) {
+    onEditorChange({quill, html, text}) {
       console.log('editor change!', quill, html, text)
       this.content = html
     },
@@ -293,7 +293,31 @@ export default {
       }
       this.$refs.uploadPic.value = null;
     },
-
+    sendUEImage(type) {
+      // webuploadfile(type);
+      if (type === 0) {
+        // 图片
+        this.$store.commit("acceptProtoMessage", {
+          // content: `<img src="../../../static/images/小姨妈.jpg" style="width: 200px;" alt="">`,//内容
+          content: '../../../static/images/小姨妈.jpg',//内容
+          target: this.$store.state.selectTarget,//角色id
+          type: 7,//消息类型：图片
+        })
+      } else if (type === 1) {
+        // 视频
+        this.$store.commit("acceptProtoMessage", {
+          content: '../../../static/video/play.mp4',//内容
+          target: this.$store.state.selectTarget,//角色id
+          type: 6,//消息类型：视频
+        })
+      } else if (type === 2) {
+        this.$store.commit("acceptProtoMessage", {
+          content: fileUrl,//内容
+          target: this.$store.state.selectTarget,//角色id
+          type: 6,//消息类型：视频
+        })
+      }
+    },
     sendImage(file) {
       var store = this.$store;
       var key = MessageContentMediaType.Image + "-" + LocalStore.getUserId() + "-" + new Date().getTime() + "-" + file.name;
@@ -519,6 +543,7 @@ export default {
     },
     // 点击发送按钮发送信息
     send() {
+      console.log("send selectFriendId ：" + this.selectFriendId);
       console.log("send message " + this.content);
       // 将图片换成属性值
 
@@ -537,25 +562,27 @@ export default {
       } else {
         //进行消息类型包装
         var textMessageContent = new TextMessageContent(this.content);
-        console.log(textMessageContent)
+        // textMessageContent.type = 6
+        console.log(new TextMessageContent(this.content))
         console.log(new SendMessage(null, textMessageContent))
         this.sendMessageToStore(new SendMessage(null, textMessageContent));
         this.content = '';
         // this.$refs.text.focus();
         // 请求聊天方法  聊天类型 见SOCIALIZECHATTYPE   文字：0  表情：1
-        this.sendMsg(1);
+        // this.sendMsg(1);
 
       }
     },
     // 请求聊天方法
     sendMsg(value) {
-      console.log(MsgId.C2S_CHAT_REQ,'请求聊天');
+      console.log(MsgId.C2S_CHAT_REQ, '请求聊天');
       // 请求聊天信息
       let InfoReq = new Chat.default.C2SSocializeChatReq();
       // 封装聊天信息
       InfoReq.setChanneltype(5);// 聊天渠道类型
       InfoReq.setGroupid('');// 群聊的群id
-      InfoReq.setTargetroleid(this.selectedFriend.id);// 目标角色id
+      // InfoReq.setTargetroleid(this.$store.state.userId);// 登录角色id
+      InfoReq.setTargetroleid(this.$store.state.selectFriendId);// 目标角色id
       InfoReq.setText(this.content);// 文本信息
       InfoReq.setVoiceid('');// 语音id
       InfoReq.setVoiceduration('');// 语音时长
@@ -567,7 +594,7 @@ export default {
 
       // 反序列化
       const userDeserialized = Chat.default.C2SSocializeChatReq.deserializeBinary(bytes);
-      console.log("请求好友列表 data:", JSON.stringify(userDeserialized.toObject()));
+      console.log("请求好友聊天信息 data:", JSON.stringify(userDeserialized.toObject()));
 
       jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
     },
@@ -642,17 +669,31 @@ export default {
       this.$store.state.showAudioBox = false;
     },
     sendMessageToStore(sendMessage) {
+      // let chatHistoryData = {
+      //   errCode:1,
+      //   total_num:0,
+      //   start_index:1,
+      //   count:1,
+      //   ChatHistoryItem:{
+      //     fromRole:  "123456",
+      //     content:  "发送的信息",
+      //   }
+      // };
       // 将封装的信息发送到store中
-      // {
-      //   "target": null,
-      //   "messageContent": {
-      //   "mentionedType": 0,
-      //     "mentionedTargets": [],
-      //     "type": 1,
-      //     "content": "更符合"
+      // let sendata ={
+      //   target: null,
+      //   messageContent: {
+      //     mentionedType: 0,
+      //     mentionedTargets: [
+      //
+      //   ],
+      //     type: 1,
+      //     content: "<p>89</p>"
       // },
-      //   "tos": ""
+      //   tos: ""
       // }
+      // sendMessage.target =4;
+      console.log('sendMessage:', JSON.stringify(sendMessage))
       this.$store.dispatch('sendMessage', sendMessage)
     }
   },
@@ -667,10 +708,6 @@ export default {
     const editorElement = document.querySelector('#sendText .ql-editor');
     // 直接移除 placeholder 属性
     editorElement.removeAttribute('data-placeholder');
-
-
-
-
 
 
     var sessionCallback = new SessionCallback();
@@ -1170,7 +1207,8 @@ export default {
     font-family: "Micrsofot Yahei"
     font-size: 13px
     resize: none
-    color : #ffffff
+    color: #ffffff
+
   .send
     position: absolute
     bottom: 10px
@@ -1224,13 +1262,14 @@ export default {
 
 </style>
 <style lang="css" scoped>
-  /* 确保编辑器容器高度 */
-  ::v-deep .ql-editor {
+/* 确保编辑器容器高度 */
+::v-deep .ql-editor {
 
-  }
-  .editor-container{
-    width: 100%;
-    overflow: auto;
-  }
+}
+
+.editor-container {
+  width: 100%;
+  overflow: auto;
+}
 
 </style>

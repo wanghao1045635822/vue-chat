@@ -2,7 +2,7 @@
 <template>
   <div class="conversationlist" :style="{height: (appHeight-60) + 'px'}">
     <ul v-loading="isEmptyConversation" style="min-height: 60px">
-        <li v-bind:key = index v-for="(item,index) in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo.target)">
+        <li v-bind:key = index v-for="(item,index) in searchedConversationList" class="sessionlist" :class="{ active: item.conversationInfo.target === selectTarget }" @click="selectConversation(item.conversationInfo)">
             <div class="list-left">
             	<img class="avatar"  width="42" height="42" alt="static/images/vue.jpg" :src="item.img" onerror="this.src='static/images/vue.jpg'">
             </div>
@@ -74,7 +74,12 @@ export default {
                 } else {
                     displayContent = protoConversationInfo.lastMessage.content.searchableContent;
                     if(protoConversationInfo.lastMessage.content.type === 400){
+
                         displayContent = '[网络电话]';
+                        //拨打电话
+
+
+
                     }
                     var isCurrentUser = protoConversationInfo.lastMessage.from === LocalStore.getUserId();
                     if(protoConversationInfo.conversationType == ConversationType.Group && !isCurrentUser){
@@ -91,6 +96,9 @@ export default {
            return displayContent;
         },
         removePTagsAndImgTags(htmlString) {
+          if (!htmlString) {
+            return '';
+          }
           // 去除所有<p>标签及其属性，包括开始和结束标签
           let result = htmlString.replace(/<\/?p[^>]*>/gi, '');
           // 去除所有<img>标签及其属性
