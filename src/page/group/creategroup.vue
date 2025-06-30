@@ -237,24 +237,26 @@ export default {
                     case 0:
                         //将自己加入到群组中
                         memberIds.push(LocalStore.getUserId());
-                        webSocketClient.createGroup(groupName,memberIds).then(data => {
-                            Logger.log("create group result "+ JSON.stringify(data));
-                            if(data.code == SUCCESS_CODE){
-                                var result = JSON.parse(data.result);
-                                this.fullscreenLoading = false;
-                                this.exit();
-                                this.$message({
-                                    type: 'success',
-                                    message: '创建'+groupName+'群组成功!'
-                                });
-                            } else {
-                                this.fullscreenLoading = false;
-                                this.$message({
-                                    type: 'success',
-                                    message: '创建'+groupName+'群组失败,请重试!'
-                                });
-                            }
-                        });
+                        console.log(LocalStore.getUserId())
+                        console.log(memberIds)
+                        // webSocketClient.createGroup(groupName,memberIds).then(data => {
+                        //     Logger.log("create group result "+ JSON.stringify(data));
+                        //     if(data.code == SUCCESS_CODE){
+                        //         var result = JSON.parse(data.result);
+                        //         this.fullscreenLoading = false;
+                        //         this.exit();
+                        //         this.$message({
+                        //             type: 'success',
+                        //             message: '创建'+groupName+'群组成功!'
+                        //         });
+                        //     } else {
+                        //         this.fullscreenLoading = false;
+                        //         this.$message({
+                        //             type: 'success',
+                        //             message: '创建'+groupName+'群组失败,请重试!'
+                        //         });
+                        //     }
+                        // });
                         break
                     case 1:
                         webSocketClient.addMembers(this.selectTarget,memberIds).then(data => {
