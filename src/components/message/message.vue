@@ -128,7 +128,7 @@
                                     <div class="files">
                                       <div class="file-lf">
                                         <div class="file-lf-name">{{item.content.searchableContent}}</div>
-                                        <div class="file-lf-size">{{(item.content.size/1024 / 1024).toFixed(2) || 0}}M</div>
+                                        <div class="file-lf-size">{{(item.content.size/1024).toFixed(2)}}kb</div>
                                       </div>
                                       <div class="file-rt">
                                         <img v-if="getFileType(item.content.searchableContent) === 'pdf'" style="width: 100%;height: 100%" src="../../../static/images/pdf.png" alt="">
