@@ -70,13 +70,13 @@ export default class Message {
         if(sendMessage.tos != ''){
            message.tos = sendMessage.tos;
         }
-        console.log("to message target:"+target);
+        console.log("发送对象:"+target);
         let stateConversationInfo =  state.conversations.find(conversation => conversation.conversationInfo.target === target);
         // console.log("conversationtype:"+stateConversationInfo.conversationInfo.conversationType +" target "+stateConversationInfo.conversationInfo.target);
         message.conversation = new Conversation(stateConversationInfo.conversationInfo.conversationType,
             stateConversationInfo.conversationInfo.target,
             stateConversationInfo.conversationInfo.line);
-            console.log("send message content:"+JSON.stringify(sendMessage.messageContent))
+            // console.log("发送内容:"+JSON.stringify(sendMessage.messageContent))
         message.content = sendMessage.messageContent;
         message.from = state.userId;
         message.status = MessageStatus.Sending;

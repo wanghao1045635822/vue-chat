@@ -277,7 +277,7 @@ export default {
                 console.log("upload error " + err.code + " message " + err.message);
               },
               complete(res) {
-                console.log("upload complete " + res);
+                console.log("upload complete" + res);
                 var localPath = e.target.value;
                 var remotePath = "http://image.comsince.cn/" + key;
                 var imageMessageContent = new ImageMessageContent(localPath, remotePath, null);
@@ -311,10 +311,12 @@ export default {
           type: 6,//消息类型：视频
         })
       } else if (type === 2) {
+        // 文件
         this.$store.commit("acceptProtoMessage", {
-          content: fileUrl,//内容
+          content: '聊天项目设计.doc',//内容
+          size: 109,
           target: this.$store.state.selectTarget,//角色id
-          type: 6,//消息类型：视频
+          type: 8,//消息类型：视频
         })
       }
     },

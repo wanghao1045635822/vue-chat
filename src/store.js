@@ -533,12 +533,12 @@ const mutations = {
 
   // 发送信息
   sendMessage(state, sendMessage) {
-    console.log('sendMessage:',sendMessage)
+    console.log('发送消息(处理前):',sendMessage)
     state.isLoadRemoteMessage = false;
     var message = Message.toMessage(state, sendMessage);
-    console.log("message:",message)
+    console.log("message:",message);
     var protoMessage = ProtoMessage.convertToProtoMessage(message);
-    console.log("发送消息:" + JSON.stringify(protoMessage));
+    console.log("发送消息(处理后):" + JSON.stringify(protoMessage));
 
     // if(MessageConfig.isDisplayableMessage(protoMessage)){
     //     var stateConversationInfo = state.conversations.find(stateConversationInfo => stateConversationInfo.conversationInfo.target === protoMessage.target);
@@ -593,6 +593,7 @@ const mutations = {
     //进行消息类型包装
     var textMessageContent = new TextMessageContent(data.content);
     textMessageContent.type = data.type;
+    textMessageContent.size = data.size;
     this.commit("sendMessage", new SendMessage(data.target, textMessageContent))
   },
 

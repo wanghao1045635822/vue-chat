@@ -29,8 +29,8 @@
 <!--                                    <i title = "发送中" class="icon iconfont icon-loading-solid" v-if="isSending(item)"></i>-->
 <!--                                    <i title = "发送失败" class="icon iconfont icon-fasongshibai" v-if="isSendFail(item)"></i>-->
 <!--                                </div>-->
-<!--                              文本和其他显示-->
-                                <div class="content-message"  v-if="item.content.type !== 6 && item.content.type !== 7" @contextmenu.prevent="messageRigthClick(item.messageId)">
+<!--                           文本和其他显示-->
+                              <div class="content-message"  v-if="item.content.type !== 6 && item.content.type !== 7 && item.content.type !== 8" @contextmenu.prevent="messageRigthClick(item.messageId)">
 <!--                                  修改了数据源，直接显示就可以-->
                                     <div v-if="item.content.type === 1" class="text" v-html="item.content.searchableContent"></div>
 <!--                                    <div v-if="item.content.type === 1 && isfaceMessage(item.content.searchableContent)" class="text" v-html="replaceFace(item.content.searchableContent)"></div>-->
@@ -93,6 +93,7 @@
                                 </div>
                               <!--视频和图片显示-->
                               <div  v-else @contextmenu.prevent="messageRigthClick(item.messageId)">
+<!--                                视频-->
                                 <div v-if="item.content.type === 6" >
                                   <!--                                      视频消息-->
                                   <Xgplayer :config="videoConfig(item,false,imageThumnailSrc(item))" style="float: right;" @player="Player = $event"/>
@@ -110,6 +111,7 @@
                                   <!--                                        <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">-->
                                   <!--                                      </video>-->
                                 </div>
+<!--                                图片-->
                                 <div v-if="item.content.type === 7">
                                   <!--                                      <img :src="item.content.searchableContent" style="width: 10rem" alt="">-->
                                   <el-image
@@ -120,9 +122,28 @@
                                         ]">
                                   </el-image>
                                 </div>
+<!--                                文件-->
+                                <div v-if="item.content.type === 8" class="files-Box">
+<!--                                  文件显示模块-->
+                                    <div class="files">
+                                      <div class="file-lf">
+                                        <div class="file-lf-name">{{item.content.searchableContent}}</div>
+                                        <div class="file-lf-size">{{(item.content.size/1024 / 1024).toFixed(2) || 0}}M</div>
+                                      </div>
+                                      <div class="file-rt">
+                                        <img v-if="getFileType(item.content.searchableContent) === 'pdf'" style="width: 100%;height: 100%" src="../../../static/images/pdf.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'text'" style="width: 100%;height: 100%" src="../../../static/images/txt.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'spreadsheet'" style="width: 100%;height: 100%" src="../../../static/images/excel.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'document'" style="width: 100%;height: 100%" src="../../../static/images/word.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'presentation'" style="width: 100%;height: 100%" src="../../../static/images/ppt.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'archive'" style="width: 100%;height: 100%" src="../../../static/images/ppt.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'audio'" style="width: 100%;height: 100%" src="../../../static/images/audio.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'video'" style="width: 100%;height: 100%" src="../../../static/images/videos.png" alt="">
+                                        <img v-else-if="getFileType(item.content.searchableContent) === 'unknown'" style="width: 100%;height: 100%" src="../../../static/images/unknown.png" alt="">
+                                      </div>
+                                    </div>
+                                </div>
                               </div>
-
-
                                 <rightMenu v-if="isShowMessageMenu(item)" v-bind:message="item"></rightMenu>
                             </div>
 
@@ -237,6 +258,70 @@ export default {
         ...mapActions([
              'addOldMessage',
         ]),
+        getFileType(filename) {
+          // 获取文件扩展名并转为小写
+          const extension = filename.split('.').pop().toLowerCase();
+
+          // 常见文件类型映射
+          const fileTypes = {
+            // 图片类型
+            jpg: 'image',
+            jpeg: 'image',
+            png: 'image',
+            gif: 'image',
+            webp: 'image',
+            svg: 'image',
+            bmp: 'image',
+
+            // 文档类型
+            pdf: 'pdf',
+            doc: 'document',
+            docx: 'document',
+            xls: 'spreadsheet',
+            xlsx: 'spreadsheet',
+            ppt: 'presentation',
+            pptx: 'presentation',
+            txt: 'text',
+
+            // 压缩文件
+            zip: 'archive',
+            rar: 'archive',
+            '7z': 'archive',
+            tar: 'archive',
+            gz: 'archive',
+
+            // 音频视频
+            mp3: 'audio',
+            wav: 'audio',
+            ogg: 'audio',
+            mp4: 'video',
+            mov: 'video',
+            avi: 'video',
+            mkv: 'video',
+
+            // 代码文件
+            js: 'javascript',
+            html: 'html',
+            css: 'css',
+            json: 'json',
+            xml: 'xml',
+            py: 'python',
+            java: 'java',
+            c: 'c',
+            cpp: 'cpp',
+            h: 'header',
+            php: 'php',
+            sh: 'shell',
+            md: 'markdown',
+
+            // 其他
+            exe: 'executable',
+            dll: 'library',
+            iso: 'disk-image'
+          };
+          // console.log("extension ", extension)
+          return fileTypes[extension] || 'unknown';
+        },
         changeShowGroupInfo(){
             if(this.showGroupInfo){
                 this.showGroupInfo = false
@@ -326,6 +411,8 @@ export default {
            return false;
         },
         videoConfig(protoMessage,paly = false,posterBase64){
+           // 这个解决方案需要从新打包
+           // https://blog.csdn.net/chouchouwaer/article/details/124604699
            return {
             id: 'vs'+protoMessage.messageId,
             // url 为空,可能导致不显示,这里强制写入poster
@@ -342,7 +429,7 @@ export default {
         },
         // 参考资料 https://blog.csdn.net/qq449736038/article/details/80769507
         scrollEvent(e){
-            let listheight= this.$refs.list.offsetHeight;
+            let listheight = this.$refs.list.offsetHeight;
             //console.log('scroll event top->'+e.srcElement.scrollTop+ ' scrollheight '+e.srcElement.scrollHeight+" list height->"+listheight);
              if(e.srcElement.scrollHeight - e.srcElement.scrollTop > listheight){
                  this.$store.dispatch('clearUnreadStatus', '')
@@ -642,4 +729,46 @@ export default {
     100%
         -webkit-transform:rotate(360deg)
 
+
+
+</style>
+
+<style lang="css" scoped >
+.files-Box{
+  display: flex;
+  justify-content: flex-end;
+  .files{
+    width: 16rem;
+    height: 5rem;
+    background: #ffffff;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #000000;
+    display: flex;
+    padding: 1rem;
+    .file-lf{
+      width: 11rem;
+      .file-lf-name{
+        display: flex;
+        font-size: 0.8rem;
+      }
+      .file-lf-size{
+        display: flex;
+        font-size: 0.8rem;
+        color: #666666;
+        margin-top: 6px;
+      }
+    }
+    .file-rt{
+      //width: 3rem;
+      //height: 3rem;
+      display: flex;
+      //align-items: center;
+      justify-content: center;
+    }
+  }
+  .files:hover{
+    background: #eeeeee;
+  }
+}
 </style>

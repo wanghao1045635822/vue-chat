@@ -6,6 +6,7 @@ import MessagePayload from "./messagePayload";
 export default class MessageContent {
     type;
     //0 普通消息, 1 部分提醒, 2 提醒全部
+    size;//文件大小
     mentionedType = 0;
     //提醒对象，mentionedType 1时有效
     mentionedTargets = [];
@@ -27,14 +28,15 @@ export default class MessageContent {
     encode() {
         let payload = new MessagePayload();
         payload.type = this.type;
+        payload.size = this.size;
         payload.mentionedType = this.mentionedType;
         payload.mentionedTargets = this.mentionedTargets;
         return payload;
     }
 
     /**
-     * 
-     * @param {object} payload object json.parse from message#content 
+     *
+     * @param {object} payload object json.parse from message#content
      */
     decode(payload) {
         this.type = payload.type;

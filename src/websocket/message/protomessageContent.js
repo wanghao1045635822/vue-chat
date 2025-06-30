@@ -16,6 +16,7 @@ export default class ProtoMessageContent{
     static toProtoMessageContent(content){
         var protoMessageContent = new ProtoMessageContent();
         protoMessageContent.type = content.type;
+        protoMessageContent.size = content.size;
         protoMessageContent.content = content.content;
         protoMessageContent.searchableContent = content.searchableContent;
         protoMessageContent.pushContent = content.pushContent;
@@ -45,7 +46,7 @@ export default class ProtoMessageContent{
                 showText = "[网络电话]";
                 break;
             case MessageContentType.Tip_Notification:
-                showText =  '[通知消息]';   
+                showText =  '[通知消息]';
         }
         return showText;
     }

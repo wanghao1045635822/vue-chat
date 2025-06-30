@@ -11,7 +11,7 @@ export default class ProtoMessage {
     target;
     line;
     from = '';
-    content = {}; 
+    content = {};
     messageId = '0';
     direction = 0;
     status = 0;
@@ -66,8 +66,9 @@ export default class ProtoMessage {
         protoMessage.messageId = message.messageId;
         protoMessage.messageUid = message.messageUid;
         protoMessage.timestamp = message.timestamp;
-        console.log("protomessage content "+message.content)
+        console.log("protomessage content: ",message.content)
         var payload = message.content.encode();
+        console.log("payload: ",payload)
         protoMessage.content = ProtoMessageContent.toProtoMessageContent(payload);
         return protoMessage;
     }
