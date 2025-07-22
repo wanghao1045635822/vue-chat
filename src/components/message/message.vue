@@ -771,4 +771,9 @@ export default {
     background: #eeeeee;
   }
 }
+.text{
+  p{
+    display: flex;
+  }
+}
 </style>

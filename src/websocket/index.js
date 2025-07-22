@@ -321,7 +321,7 @@ export default class VueWebSocket {
            memberIds: memberIds
        });
     }
-
+    // 生成群组
     async createGroup(groupName,memberIds){
         console.log('==================================');
         console.log(groupName);
@@ -411,6 +411,7 @@ export default class VueWebSocket {
      * @param {消息体内容} content
      */
     sendPublishMessage(subsignal,content,protoMessageId = 0){
+        console.log('sendPublishMessage');
         var websocketprotomessage = new WebSocketProtoMessage();
         websocketprotomessage.setSignal(PUBLISH);
         websocketprotomessage.setSubSignal(subsignal);
@@ -435,6 +436,7 @@ export default class VueWebSocket {
                     vueWebSocket.processMessage(failProtoMessage.toJson())
                  } else {
                     resolve(new FutureResult(ERROR_CODE,""));
+                    alert('创建失败')
                  }
 
              },3000);

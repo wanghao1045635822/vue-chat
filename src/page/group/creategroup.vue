@@ -223,7 +223,7 @@ export default {
        },
        confirm(){
            if(this.selectedFriends.length > 0){
-                this.fullscreenLoading = true;
+                // this.fullscreenLoading = true;
                 var groupName = this.user.name;
                 var memberIds = [];
                 console.log(JSON.stringify(this.selectedFriends),'选择的好友');
@@ -237,8 +237,11 @@ export default {
                     case 0:
                         //将自己加入到群组中
                         memberIds.push(LocalStore.getUserId());
-                        console.log(LocalStore.getUserId())
-                        console.log(memberIds)
+
+
+
+
+
                         // webSocketClient.createGroup(groupName,memberIds).then(data => {
                         //     Logger.log("create group result "+ JSON.stringify(data));
                         //     if(data.code == SUCCESS_CODE){
@@ -487,5 +490,4 @@ export default {
   background-color: #333333 !important;
   color: #FFFFFF!important;
 }
-
 </style>

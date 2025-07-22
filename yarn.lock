@@ -5688,6 +5688,11 @@ sdp@^2.12.0, sdp@^2.6.0:
   resolved "https://registry.npmjs.org/sdp/-/sdp-2.12.0.tgz"
   integrity sha512-jhXqQAQVM+8Xj5EjJGVweuEzgtGWb3tmEEpl3CLP3cStInSbVHSg0QWOGQzNq8pSID4JkpeV2mPqlMDLrm0/Vw==
 
+sdp@^3.2.0:
+  version "3.2.1"
+  resolved "https://registry.npmjs.org/sdp/-/sdp-3.2.1.tgz"
+  integrity sha512-lwsAIzOPlH8/7IIjjz3K0zYBk7aBVVcvjMwt3M4fLxpjMYyy7i3I97SLHebgn4YBjirkzfp3RvRDWSKsh/+WFw==
+
 semver@^5.3.0, "semver@2 || 3 || 4 || 5":
   version "5.7.2"
   resolved "https://registry.npmjs.org/semver/-/semver-5.7.2.tgz"
@@ -6367,6 +6372,13 @@ trim-right@^1.0.1:
   resolved "https://registry.npmjs.org/trim-right/-/trim-right-1.0.1.tgz"
   integrity sha512-WZGXGstmCWgeevgTL54hrCuw1dyMQIzWy7ZfqRJfSmJZBwklI15egmQytFP6bPidmw3M8d5yEowl1niq4vmqZw==
 
+trtc-sdk-v5@^5.11.1:
+  version "5.11.1"
+  resolved "https://registry.npmjs.org/trtc-sdk-v5/-/trtc-sdk-v5-5.11.1.tgz"
+  integrity sha512-7EPZx3UUrvBAU9HynXsIcgI91wYWTYKbEkYUp186EDwgVEzc+v4uDL0427AY1PBI8tgf2ednO4qFk/C8crTSPQ==
+  dependencies:
+    webrtc-adapter "^8.2.3"
+
 tryer@^1.0.0:
   version "1.0.1"
   resolved "https://registry.npmjs.org/tryer/-/tryer-1.0.1.tgz"
@@ -6824,6 +6836,13 @@ webrtc-adapter@^7.5.1:
   dependencies:
     rtcpeerconnection-shim "^1.2.15"
     sdp "^2.12.0"
+
+webrtc-adapter@^8.2.3:
+  version "8.2.4"
+  resolved "https://registry.npmjs.org/webrtc-adapter/-/webrtc-adapter-8.2.4.tgz"
+  integrity sha512-VwtwbYNKnVQW8koB9qb8YcxNwpSVHTvvKEZLzY6uQ3gFrA9E87VPbB5xE+m1AGwUjL1UgN35jRR9hQgteZI5bg==
+  dependencies:
+    sdp "^3.2.0"
 
 whatwg-url@^5.0.0:
   version "5.0.0"

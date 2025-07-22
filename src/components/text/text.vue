@@ -31,77 +31,146 @@
           </div>
         </div>
       </transition>
-
+<!--      视频呼叫和通知显示-->
+      <div class="wxCallBox" v-show="showCallBox">
+        <img class="bigavatar" :src="callRemoteImg" style="width: 100px;"/>
+        <span>{{callDisplayName}}</span>
+        <p id="wxCallTips" class="calltips">{{videoTextCallTips}}</p>
+        <div class="callbtnBox">
+          <!--                语音开关-->
+          <div class="activeBtn" >
+            <img v-if="!isMutedAudio"  @click="muteAudio" src="./../../../static/video/openAudio.png" alt="">
+            <img v-if="isMutedAudio"  @click="unmuteAudio" src="./../../../static/video/stopAudio.png" alt="">
+          </div>
+          <!--                接通-->
+          <div class="activeBtn" v-show="acceptCall" style="background-color: #ffffff;" @click="handleAccept">
+            <img style="width: 100%;height: 100%" src="./../../../static/video/connect.png" alt="">
+          </div>
+          <!--                挂断-->
+          <div class="activeBtn" style="background-color: #ffffff;" @click="cancel">
+            <img style="width: 100%;height: 100%" src="./../../../static/video/stop.png" alt="">
+          </div>
+          <!--                视频开关-->
+          <div class="activeBtn">
+            <img v-if="!isMutedVideo" @click="muteVideo" src="./../../../static/video/openVideo.png" alt="">
+            <img v-if="isMutedVideo" @click="unmuteVideo" src="./../../../static/video/stopVideo.png" alt="">
+          </div>
+        </div>
+      </div>
+<!--视频显示-->
       <div class="callContent" v-show="showChatBox">
         <div class="">
           <div class="callercontent callshow" style="">
             <div class="exchange-content">
               <div class="playcontent left-big-content">
-                <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/>
-                <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p>
-                <video id="wxCallRemoteVideo" autoplay="autoplay" playsinline="" style="display: none;"
-                       v-show="showCallRemoteVideo"></video>
+<!--                <img id="wxCallRemoteImg" class="bigavatar" :src="callRemoteImg" v-show="showCallRemoteImg"/>-->
+<!--                <p id="wxCallTips" class="calltips" v-text="videoTextCallTips" v-show="showCallTips"> 接通中... </p>-->
+<!--                播放远端视频-->
+                <div id="wxCallRemoteVideo" style="width: 100%;height: 380px;background-color: #666666"></div>
+                <div class="btnBox">
+                  <!--                语音开关-->
+                  <div class="activeBtn" >
+                    <img v-if="!isMutedAudio"  @click="muteAudio" src="./../../../static/video/openAudio.png" alt="">
+                    <img v-if="isMutedAudio"  @click="unmuteAudio" src="./../../../static/video/stopAudio.png" alt="">
+                  </div>
+                  <!--                挂断-->
+                  <div class="activeBtn" style="background-color: #ffffff;" @click="cancel">
+                    <img style="width: 100%;height: 100%" src="./../../../static/video/stop.png" alt="">
+                  </div>
+                  <!--                视频开关-->
+                  <div class="activeBtn" >
+                    <img v-if="!isMutedVideo" @click="muteVideo" src="./../../../static/video/openVideo.png" alt="">
+                    <img v-if="isMutedVideo" @click="unmuteVideo" src="./../../../static/video/stopVideo.png" alt="">
+                  </div>
+                  <!--                接通-->
+<!--                  <div class="activeBtn" style="background-color: #ffffff;">-->
+<!--                    <img style="width: 100%;height: 100%" src="./../../../static/video/connect.png" alt="">-->
+<!--                  </div>-->
+                </div>
               </div>
-              <div class="playcontent right-sml-content">
-                <img id="wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/>
-                <video id="wxCallLocalVideo" autoplay="autoplay" muted="muted" playsinline="" style="display: none;"
-                       v-show="showCallLocalVideo"></video>
+<!--              播放本地视频-->
+              <div  id="wxCallLocalVideo" class="playcontent right-sml-content" v-show="showCallLocalVideo">
+<!--                <img id="wxCallLocalImg" :src="callLocalImg" class="bigavatar" v-show="showCallLocalImg"/>-->
+<!--                <video autoplay="autoplay" muted="muted" playsinline=""></video>-->
               </div>
             </div>
-            <div class="opera-content flexbox">
-              <img class="calleravatar" :src="callRemoteImg"/>
-              <span class="flexauto overell callnick" v-text="callDisplayName"></span>
-              <span class="flexbox">
-                            <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span>
-                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall"
-                                  @click="reject">拒绝</span>
-                            <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall"
-                                  @click="accept">接听</span>
-                        </span>
-              <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i
-                class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span>
-              <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i
-                class="iconfont icon-guaduan"></i>挂断 </span>
-              <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button>
-              <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i>
-              </button>
-            </div>
+<!--            <div class="opera-content flexbox">-->
+<!--              <img class="calleravatar" :src="callRemoteImg"/>-->
+<!--              <span class="flexauto overell callnick" v-text="callDisplayName"></span>-->
+<!--              <span class="flexbox">-->
+<!--                            <span class="operabtn canclecall btnopacity" v-show="cancelCall" @click="cancel">取消</span>-->
+<!--                            <span class="operabtn canclecall btnopacity" style="display: none;" v-show="rejectCall"-->
+<!--                                  @click="reject">拒绝</span>-->
+<!--                            <span class="operabtn upcall btnopacity" style="display: none;" v-show="acceptCall"-->
+<!--                                  @click="accept">接听</span>-->
+<!--                        </span>-->
+<!--              <span class="talktime flexbox" style="display: none;" v-show="showTalkTime"><i-->
+<!--                class="iconfont icon-ai-video"></i> <span v-text="talkTime">00:00</span></span>-->
+<!--              <span class="operabtn canclecall btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i-->
+<!--                class="iconfont icon-guaduan"></i>挂断 </span>-->
+<!--              <button class="screenbtn"><i class="iconfont icon-quanping iconfull" style="display: none;"></i></button>-->
+<!--              <button class="screenbtn" style="display: none;"><i class="iconfont icon-tuichuquanping iconfull"></i>-->
+<!--              </button>-->
+<!--            </div>-->
+          </div>
+        </div>
+      </div>
+<!--音频显示-->
+      <!--      视频呼叫和通知显示-->
+      <div class="wxCallBox" v-show="showAudioCallBox">
+        <img class="bigavatar" :src="callRemoteImg" style="width: 100px;"/>
+        <p class="callnick" v-text="callDisplayName"></p>
+        <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p>
+        <p class="waiting-msg" v-text="waitingMsgTips"> 接通中... </p>
+        <p id="wxCallTips" class="calltips">{{videoTextCallTips}}</p>
+        <div class="callbtnBox">
+          <!--                语音开关-->
+          <div class="activeBtn" >
+            <img v-if="!isMutedAudio"  @click="muteAudio" src="./../../../static/video/openAudio.png" alt="">
+            <img v-if="isMutedAudio"  @click="unmuteAudio" src="./../../../static/video/stopAudio.png" alt="">
+          </div>
+          <!--                接通-->
+          <div class="activeBtn" v-show="acceptCall" style="background-color: #ffffff;" @click="handleAccept">
+            <img style="width: 100%;height: 100%" src="./../../../static/video/connect.png" alt="">
+          </div>
+          <!--                挂断-->
+          <div class="activeBtn" style="background-color: #ffffff;" @click="cancel">
+            <img style="width: 100%;height: 100%" src="./../../../static/video/stop.png" alt="">
           </div>
         </div>
       </div>
 
-      <div class="audioContent" v-show="showAudioBox">
-        <div class="audioBody callshow" style="">
-          <div class="audioBg">
-            <img class="callavatar" :src="callRemoteImg"/>
-            <div class="blackbg"></div>
-          </div>
-          <div class="audiomain">
-            <img class="audio-avatar" :src="callRemoteImg"/>
-            <p class="callnick" v-text="callDisplayName"></p>
-            <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p>
-            <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p>
-            <div class="call-opera flexbox">
-              <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i
-                class="iconfont icon-guaduan"></i>挂断 </span>
-              <div class="loadingcall flexbox">
-                <span class="cancleaudio callercanle btnopacity" style="display: none;" v-show="cancelCall"
-                      @click="cancel"><i class="iconfont icon-guaduan"></i>取消 </span>
-                <span class="cancleaudio btnopacity" style="display: none;" v-show="rejectCall"
-                      @click="reject">拒绝</span>
-                <span class="upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>
-              </div>
-            </div>
-          </div>
-          <div style="display: none;">
-            <audio id="wxCallRemoteAudio" autoplay="autoplay"></audio>
-          </div>
-          <div style="display: none;">
-            <audio id="wxCallLocalAudio" autoplay="autoplay" muted="muted"></audio>
-          </div>
-        </div>
-      </div>
-
+<!--      <div class="audioContent" v-show="showAudioBox">-->
+<!--        <div class="audioBody callshow">-->
+<!--          <div class="audioBg">-->
+<!--            <img class="callavatar" :src="callRemoteImg"/>-->
+<!--            <div class="blackbg"></div>-->
+<!--          </div>-->
+<!--          <div class="audiomain">-->
+<!--            <img class="audio-avatar" :src="callRemoteImg"/>-->
+<!--            <p class="callnick" v-text="callDisplayName"></p>-->
+<!--            <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p>-->
+<!--            <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p>-->
+<!--            <div class="call-opera flexbox">-->
+<!--              <div class="loadingcall flexbox">-->
+<!--                <span class="cancleaudio callercanle btnopacity" style="display: none;" v-show="cancelCall"-->
+<!--                      @click="cancel"><i class="iconfont icon-guaduan"></i>取消 </span>-->
+<!--                <span class="cancleaudio btnopacity" style="display: none;" v-show="rejectCall"-->
+<!--                      @click="reject">拒绝</span>-->
+<!--                <span class="upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>-->
+<!--                <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i-->
+<!--                  class="iconfont icon-guaduan"></i>挂断 </span>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div style="display: none;">-->
+<!--            <audio id="wxCallRemoteAudio" autoplay="autoplay"></audio>-->
+<!--          </div>-->
+<!--          <div style="display: none;">-->
+<!--            <audio id="wxCallLocalAudio" autoplay="autoplay" muted="muted"></audio>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
     </div>
     <!--        <textarea id="sendText"-->
     <!--                  ref="text"-->
@@ -161,6 +230,7 @@ import MsgId from "../../proto/msgid_pb";
 import * as Proto from "../../proto/friend_pb";
 import * as Chat from "../../proto/chat_pb";
 import {jsCallUE, webuploadfile} from "../../utils/UEmethod";
+import TRTC from 'trtc-sdk-v5';
 
 export default {
   data() {
@@ -173,20 +243,23 @@ export default {
       frequency: 0,
       warn: false,
       showEmoji: false,
-      videoTextCallTips: '',
+      videoTextCallTips: '接通中 ...',
       voipClient: null,
       rejectCall: false,
       cancelCall: false,
       acceptCall: false,
       hangUpCall: false,
-      showCallLocalImg: true,
+      showCallBtn: false,
+      showCallLocalImg: false,
       showCallLocalVideo: false,
-      showCallRemoteImg: true,
+      showCallRemoteImg: false,
       showCallRemoteVideo: false,
+      showCallBox: false,//显示通话界面
+      showAudioCallBox: false,//显示语音通话界面
       showCallTips: true,
       callRemoteImg: 'static/images/UserAvatar.jpg',
       callLocalImg: 'static/images/UserAvatar.jpg',
-      callDisplayName: '',
+      callDisplayName: '王浩',
       waitingMsg: false,
       isAudioOnly: false,
       waitingMsgTips: '',
@@ -207,7 +280,23 @@ export default {
           ]
         },
         theme: 'snow'  // 主题风格（默认 'snow'）
-      }
+      },
+      trtc: '',
+      sdkAppId: 1600041230,
+      sdkSecretKey: "a11593a1e02a21dddd162f5680f9258bdfec30089cad27f4ca6d7307209d6d6e",
+      // userId: LocalStore.getUserId(),
+      userId: 'user_123456',
+      userIds: 'user_666',
+      roomId: 8888,
+      userSig: '',
+      remoteUsersViews: [],
+      isMutedVideo: false,
+      isMutedAudio: false,
+      // status
+      camStatus: 'stopped', // stopped, starting, started, stopping
+      micStatus: 'stopped',
+      roomStatus: 'exited', // exited, exiting, entering, entered
+      shareStatus: 'stopped' // stopping, stopped, sharing, shared
     };
   },
   computed: {
@@ -281,7 +370,7 @@ export default {
                 var localPath = e.target.value;
                 var remotePath = "http://image.comsince.cn/" + key;
                 var imageMessageContent = new ImageMessageContent(localPath, remotePath, null);
-                store.dispatch('sendMessage', new SendMessage(null, imageMessageContent))
+                store.dispatch('sendMessage', new SendMessage(null, imageMessageContent));
               }
             }
             observable.subscribe(observer);
@@ -565,8 +654,8 @@ export default {
         //进行消息类型包装
         var textMessageContent = new TextMessageContent(this.content);
         // textMessageContent.type = 6
-        console.log(new TextMessageContent(this.content))
-        console.log(new SendMessage(null, textMessageContent))
+        console.log(new TextMessageContent(this.content));
+        console.log(new SendMessage(null, textMessageContent));
         this.sendMessageToStore(new SendMessage(null, textMessageContent));
         this.content = '';
         // this.$refs.text.focus();
@@ -601,32 +690,109 @@ export default {
       jsCallUE(MsgId.C2S_FRIEND_LIST_REQ, bytes);
     },
     //发送语音聊天
-    sendAudio() {
-      this.$store.state.showAudioBox = true;
-      this.waitingMsg = true;
-      this.rejectCall = false;
-      this.acceptCall = false;
-      this.hangUpCall = false;
-      this.cancelCall = true;
-      this.initCallUserInfo(this.$store.state.selectTarget);
-      this.isAudioOnly = true;
-      this.voipClient.startCall(this.$store.state.selectTarget, this.isAudioOnly);
-    },
-    //发送视频聊天
-    sendVideo() {
-      if (this.isSingleConversation) {
-        this.$store.state.showChatBox = true;
+    async sendAudio() {
+      if(this.camStatus === 'starting'){
+        return;
+      }
+      // 创建 TRTC 实例
+      this.trtc = TRTC.create();
+
+      // const userSigGenerator = new LibGenerateTestUserSig(this.sdkAppId, this.sdkSecretKey, 604800);
+      // this.userSig = userSigGenerator.genTestUserSig(this.userId);
+      // 生成健全的 userSig
+      const {sdkAppId, userSig} = genTestUserSig({
+        sdkAppId: this.sdkAppId,
+        userId: this.userId,
+        sdkSecretKey: this.sdkSecretKey,
+      });
+      // 进入房间
+      try {
+        await this.trtc.enterRoom({
+          roomId: this.roomId,
+          sdkAppId: parseInt(sdkAppId, 10),
+          userId: this.userId,
+          userSig: userSig,
+        });
+        console.log('enter room successfully');
+      } catch (error) {
+        console.error('failed to enter room ' + error);
+      }
+
+      this.camStatus = 'starting';
+      // 打开/关闭麦克风
+      await this.trtc.startLocalAudio({
+        option: {
+          microphoneId: this.microphoneId,
+        },
+      }).then(() => {
+        // this.$store.state.showAudioBox = true;
+        this.showAudioCallBox = true;
+        this.waitingMsg = true;
         this.rejectCall = false;
         this.acceptCall = false;
         this.hangUpCall = false;
         this.cancelCall = true;
-        this.showCallRemoteVideo = false;
-        this.showCallRemoteImg = true;
-        this.showCallTips = true;
-        this.videoTextCallTips = "正在接通，请稍候...";
-        this.initCallUserInfo(this.$store.state.selectTarget);
-        this.isAudioOnly = false;
-        this.voipClient.startCall(this.$store.state.selectTarget, this.isAudioOnly);
+        // this.initCallUserInfo(this.$store.state.selectTarget);
+        this.isAudioOnly = true;
+        // this.voipClient.startCall(this.$store.state.selectTarget, this.isAudioOnly);
+        this.isMutedAudio = false;
+        this.micStatus = 'started';
+        this.trtc.on(TRTC.EVENT.REMOTE_AUDIO_AVAILABLE, event => {
+          // // 当你需要播放远端音频时调用该api
+          // this.trtc.muteRemoteAudio(event.userId, false);
+          // // 停止远端音频
+          // this.trtc.muteRemoteAudio(event.userId, true);
+        });
+      });
+    },
+
+
+
+    //发送视频聊天
+    async sendVideo() {
+      if(this.camStatus === 'starting'){
+        return;
+      }
+      if (this.isSingleConversation) {
+        // 创建 TRTC 实例
+        this.trtc = TRTC.create();
+
+        // 生成健全的 userSig
+        const {sdkAppId, userSig} = genTestUserSig({
+          sdkAppId: this.sdkAppId,
+          userId: this.userId,
+          sdkSecretKey: this.sdkSecretKey,
+        });
+        // 进入房间
+        try {
+          await this.trtc.enterRoom({
+            roomId: this.roomId,
+            sdkAppId: parseInt(sdkAppId, 10),
+            userId: this.userId,
+            userSig: userSig,
+          });
+          console.log('enter room successfully');
+        } catch (error) {
+          console.error('failed to enter room ' + error);
+        }
+        this.camStatus = 'starting';
+        await this.trtc.startLocalAudio({
+          option: {
+            microphoneId: this.microphoneId,
+          },
+        });
+        this.isMutedAudio = false;
+        this.micStatus = 'started';
+        await this.trtc.startLocalVideo({
+          view: 'wxCallLocalVideo',
+          option: {
+            cameraId: this.cameraId,
+            profile: '1080p',
+          },
+        }).then(()=>{
+          this.acceptVideoCall();
+        });
+
       } else {
         this.$store.state.groupOperateState = 4;
         //触发groupMap以是vue相应变更
@@ -635,6 +801,91 @@ export default {
       }
 
     },
+    // 接通视频通话回调函数
+    async acceptVideoCall() {
+      this.showCallBox = true;
+      this.rejectCall = false;//拒绝来电
+      this.acceptCall = false;//接受来电
+      this.hangUpCall = false;//挂断电话
+      this.cancelCall = true;//取消电话
+      // this.initCallUserInfo(this.$store.state.selectTarget);
+      // this.voipClient.startCall(this.$store.state.selectTarget, this.isAudioOnly);
+      // this.showCallRemoteVideo = true;//显示对方视频
+      this.showCallRemoteImg = false;//显示对方图片
+      this.showCallTips = true;//显示通话提示
+      this.videoTextCallTips = "正在接通，请稍候...";//通话提示
+      // 在进入房间之前，监听 TRTC.EVENT.REMOTE_VIDEO_AVAILABLE 事件，以接收所有远端用户视频发布事件。
+      this.trtc.on(TRTC.EVENT.REMOTE_VIDEO_AVAILABLE, this.handleRemoteVideoAvailable);
+
+    },
+    // 接通视频通话
+    async handleAccept() {
+      // 创建 TRTC 实例
+      this.trtc = TRTC.create();
+      // 生成健全的 userSig
+      const {sdkAppId, userSig} = genTestUserSig({
+        sdkAppId: this.sdkAppId,
+        userId: this.userId,
+        sdkSecretKey: this.sdkSecretKey,
+      });
+      // 进入房间
+      try {
+        await this.trtc.enterRoom({
+          roomId: this.roomId,
+          sdkAppId: parseInt(sdkAppId, 10),
+          userId: this.userIds,
+          userSig: userSig,
+        });
+        console.log('enter room successfully');
+      } catch (error) {
+        console.error('failed to enter room ' + error);
+      }
+      this.camStatus = 'starting';
+      await this.trtc.startLocalAudio({
+        option: {
+          microphoneId: this.microphoneId,
+        },
+      });
+      this.isMutedAudio = false;
+      this.micStatus = 'started';
+      await this.trtc.startLocalVideo({
+        view: 'wxCallLocalVideo',
+        option: {
+          cameraId: this.cameraId,
+          profile: '1080p',
+        },
+      }).then(()=>{
+
+
+      });
+    },
+    // 处理远程视频可用
+    handleRemoteVideoAvailable(event) {
+      const { userId, streamType } = event;
+      console.log(streamType,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      this.showCallBox = false;
+      this.$store.state.showChatBox = true;
+      this.showCallLocalVideo = true;
+      try {
+        if (streamType === TRTC.TYPE.STREAM_TYPE_MAIN) {
+          this.$nextTick(async () => {
+            await this.trtc.startRemoteVideo({ userId, streamType, view: `wxCallRemoteVideo` });
+          });
+        } else {
+          this.$nextTick(async () => {
+            await this.trtc.startRemoteVideo({ userId, streamType, view: `wxCallRemoteVideo` });
+          });
+        }
+      } catch (error) {
+
+      }
+    },
+
+
+
+
+
+
     initCallUserInfo(target) {
       var portrait = this.getUserPortrait(target);
       if (portrait) {
@@ -655,7 +906,8 @@ export default {
       return userInfo.displayName;
     },
     hangUp() {
-      this.voipClient.cancelCall();
+      // this.voipClient.cancelCall();
+      this.cancel();
     },
     reject() {
       this.voipClient.cancelCall();
@@ -666,10 +918,73 @@ export default {
       this.hangUpCall = true;
       this.voipClient.answerCall(this.isAudioOnly);
     },
-    cancel() {
+    async cancel() {
+      // 关闭显示框
       // this.voipClient.cancelCall();
       this.$store.state.showAudioBox = false;
+      this.$store.state.showChatBox = false;
+      this.showCallBox = false;
+      this.showAudioCallBox = false;
+      this.waitingMsg = false;
+      this.rejectCall = false;
+      this.acceptCall = false;
+      this.hangUpCall = false;
+      this.cancelCall = false;
+      this.isAudioOnly = false;
+      this.showCallBtn = false;
+      this.showCallRemoteVideo = false;//显示对方视频
+      this.showCallRemoteImg = false;//显示对方图片
+      this.showCallTips = false;//显示通话提示
+      // 关闭音频检测
+      this.stopGetAudioLevel();
+      await this.trtc.stopLocalAudio();
+      await this.trtc.stopLocalVideo();
+      await this.trtc.stopScreenShare();
+      this.camStatus = 'stopped';
+      // 退出房间
+      await this.trtc.exitRoom();
+      // 被销毁的 trtc 实例无法再次使用，需要创建一个新的实例。
+      this.trtc.destroy();
     },
+    stopGetAudioLevel() {
+      this.trtc && this.trtc.enableAudioVolumeEvaluation(-1);
+    },
+    async muteVideo() {
+      try {
+        await this.trtc.updateLocalVideo({ mute: true });
+        this.isMutedVideo = true;
+      } catch (error) {
+
+      }
+    },
+
+    async muteAudio() {
+      try {
+        await this.trtc.updateLocalAudio({ mute: true });
+        this.isMutedAudio = true;
+      } catch (error) {
+
+      }
+    },
+
+    async unmuteVideo() {
+      try {
+        await this.trtc.updateLocalVideo({ mute: false });
+        this.isMutedVideo = false;
+      } catch (error) {
+
+      }
+    },
+
+    async unmuteAudio() {
+      try {
+        await this.trtc.updateLocalAudio({ mute: false });
+        this.isMutedAudio = false;
+      } catch (error) {
+
+      }
+    },
+
     sendMessageToStore(sendMessage) {
       // let chatHistoryData = {
       //   errCode:1,
@@ -968,7 +1283,7 @@ export default {
     .callContent
       .callercontent
         width: 664px;
-        height: 414px;
+        height: 380px;
         position: absolute;
         left: 0;
         right: 0;
@@ -989,7 +1304,7 @@ export default {
 
       .left-big-content
         width: 480px;
-        height: 360px;
+        //height: 360px;
         position: absolute;
         left: 0;
         top: 0
@@ -1070,8 +1385,8 @@ export default {
         left: 0;
         right: 0;
         top: 0;
-        line-height: 360px
-
+        bottom :300px;
+        line-height : 300px;
       .flexshrink
         flex-shrink: 0
 
@@ -1273,5 +1588,80 @@ export default {
   width: 100%;
   overflow: auto;
 }
+.wxCallBox{
+  position: absolute;
+  left: 20%;
+  bottom: 0;
+  width: 300px;
+  height: 500px;
+  background-color: #000000;
+  border-radius: 4px;
+  z-index: 9999;
+  transition: all .5s;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 100px;
+  .callbtnBox{
+    width: 100%;
+    position: absolute;
+    bottom: 4rem;
+    display: flex;
+    justify-content: space-evenly;
+    .activeBtn{
+      width: 3rem;
+      height: 3rem;
+      //background: #eeeeee;
+      border-radius: 50%;
+      //border: 1px solid #e5e5e5;
+      background-color: rgba(255, 255, 255, 0.5); /* 70% 不透明度 */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .3s;
+      &:hover{
+        //background: #f1f1f1;
+        border: 1px solid #f1f1f1;
+      }
+      img {
+        width: 1.8rem;
+        height: 1.8rem;
+        cursor: pointer;
+      }
+    }
+  }
+}
+.btnBox{
+  width: 100%;
+  position: absolute;
+  bottom: 4rem;
+  display: flex;
+  justify-content: space-evenly;
+  .activeBtn{
+    width: 3rem;
+    height: 3rem;
+    //background: #eeeeee;
+    border-radius: 50%;
+    //border: 1px solid #e5e5e5;
+    background-color: rgba(255, 255, 255, 0.5); /* 70% 不透明度 */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .3s;
+    &:hover{
+      //background: #f1f1f1;
+      border: 1px solid #f1f1f1;
+    }
+    img {
+      width: 1.8rem;
+      height: 1.8rem;
+      cursor: pointer;
+    }
+  }
+}
+
 
 </style>

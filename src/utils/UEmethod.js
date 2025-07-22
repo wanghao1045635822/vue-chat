@@ -8,6 +8,8 @@ import EventBus from "../utils/EventBus.js";
 import MsgId from "../proto/msgid_pb.js";
 import * as Proto from "../proto/chat_pb";
 import store from "../store";
+import LocalStore from "../websocket/store/localstore";
+import {KEY_VUE_USER_ID} from "../constant";
 
 // 数据转化：Uint8Array 转换为 JavaScript 字符串（FsString）
 export const toFsString = (data) => {
@@ -236,6 +238,7 @@ window.uemsgack = function (id, data) {
 
     default:
       console.error("未定义的返回信息");
+
       break;
     //   返回聊天结果
     case MsgId.S2C_CHAT_ACK:
@@ -379,6 +382,7 @@ window.uesetroleInfo = function (data) {
   // store.state.user = {...data};
   store.state.user.name = data.role_name;
   store.state.user.userId = data.role_id;
+  localStorage.setItem(KEY_VUE_USER_ID,data.role_id);
 };
 
 
