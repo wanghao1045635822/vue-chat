@@ -31,7 +31,7 @@
           </div>
         </div>
       </transition>
-<!--      视频呼叫和通知显示-->
+<!--视频呼叫和通知显示-->
       <div class="wxCallBox" v-show="showCallBox">
         <img class="bigavatar" :src="callRemoteImg" style="width: 100px;"/>
         <span>{{callDisplayName}}</span>
@@ -116,13 +116,11 @@
         </div>
       </div>
 <!--音频显示-->
-      <!--      视频呼叫和通知显示-->
       <div class="wxCallBox" v-show="showAudioCallBox">
         <img class="bigavatar" :src="callRemoteImg" style="width: 100px;"/>
         <p class="callnick" v-text="callDisplayName"></p>
-        <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p>
+        <p class="call-time" v-show="showTalkTime" v-text="talkTime">00:00</p>
         <p class="waiting-msg" v-text="waitingMsgTips"> 接通中... </p>
-        <p id="wxCallTips" class="calltips">{{videoTextCallTips}}</p>
         <div class="callbtnBox">
           <!--                语音开关-->
           <div class="activeBtn" >
@@ -139,38 +137,6 @@
           </div>
         </div>
       </div>
-
-<!--      <div class="audioContent" v-show="showAudioBox">-->
-<!--        <div class="audioBody callshow">-->
-<!--          <div class="audioBg">-->
-<!--            <img class="callavatar" :src="callRemoteImg"/>-->
-<!--            <div class="blackbg"></div>-->
-<!--          </div>-->
-<!--          <div class="audiomain">-->
-<!--            <img class="audio-avatar" :src="callRemoteImg"/>-->
-<!--            <p class="callnick" v-text="callDisplayName"></p>-->
-<!--            <p class="call-time" style="display: none;" v-show="showTalkTime" v-text="talkTime">00:00</p>-->
-<!--            <p class="waiting-msg" v-show="waitingMsg" v-text="waitingMsgTips"> 接通中... </p>-->
-<!--            <div class="call-opera flexbox">-->
-<!--              <div class="loadingcall flexbox">-->
-<!--                <span class="cancleaudio callercanle btnopacity" style="display: none;" v-show="cancelCall"-->
-<!--                      @click="cancel"><i class="iconfont icon-guaduan"></i>取消 </span>-->
-<!--                <span class="cancleaudio btnopacity" style="display: none;" v-show="rejectCall"-->
-<!--                      @click="reject">拒绝</span>-->
-<!--                <span class="upcall btnopacity" style="display: none;" v-show="acceptCall" @click="accept">接听</span>-->
-<!--                <span class="cancleaudio btnopacity" style="display: none;" v-show="hangUpCall" @click="hangUp"><i-->
-<!--                  class="iconfont icon-guaduan"></i>挂断 </span>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <div style="display: none;">-->
-<!--            <audio id="wxCallRemoteAudio" autoplay="autoplay"></audio>-->
-<!--          </div>-->
-<!--          <div style="display: none;">-->
-<!--            <audio id="wxCallLocalAudio" autoplay="autoplay" muted="muted"></audio>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
     </div>
     <!--        <textarea id="sendText"-->
     <!--                  ref="text"-->
@@ -262,7 +228,7 @@ export default {
       callDisplayName: '王浩',
       waitingMsg: false,
       isAudioOnly: false,
-      waitingMsgTips: '',
+      waitingMsgTips: '正在接通，请稍候...',
       showTalkTime: false,
       talkInterval: 0,
       talkTime: '00:00',
@@ -395,7 +361,7 @@ export default {
       } else if (type === 1) {
         // 视频
         this.$store.commit("acceptProtoMessage", {
-          content: '../../../static/video/play.mp4',//内容
+          content: '../../../static/images/小姨妈.jpg',//内容
           target: this.$store.state.selectTarget,//角色id
           type: 6,//消息类型：视频
         })
@@ -725,6 +691,7 @@ export default {
           microphoneId: this.microphoneId,
         },
       }).then(() => {
+        this.inCommingNotify.loopPlay();
         // this.$store.state.showAudioBox = true;
         this.showAudioCallBox = true;
         this.waitingMsg = true;
@@ -738,10 +705,25 @@ export default {
         this.isMutedAudio = false;
         this.micStatus = 'started';
         this.trtc.on(TRTC.EVENT.REMOTE_AUDIO_AVAILABLE, event => {
+          this.inCommingNotify.stopPlay();
           // // 当你需要播放远端音频时调用该api
           // this.trtc.muteRemoteAudio(event.userId, false);
           // // 停止远端音频
           // this.trtc.muteRemoteAudio(event.userId, true);
+          console.log(event,"----------------------音频进入回调------------------------");
+          // 监听进入语音频道，修改状态样式
+          this.showTalkTime = true;
+          this.waitingMsgTips = "接通中... ";
+          this.talkTime = '00:00';
+          this.talkTimerInterval = null;
+          this.talkTimerInterval = setInterval(() => {
+            this.talkInterval += 1;
+            var min = Math.floor(this.talkInterval / 60 % 60);
+            var sec = Math.floor(this.talkInterval % 60);
+            sec = sec < 10 ? "0" + sec : sec;
+            min = min < 10 ? "0" + min : min;
+            this.talkTime = min + ":" + sec;
+          }, 1000);
         });
       });
     },
@@ -801,8 +783,9 @@ export default {
       }
 
     },
-    // 接通视频通话回调函数
+    // 视频通话回调函数
     async acceptVideoCall() {
+      this.inCommingNotify.loopPlay();
       this.showCallBox = true;
       this.rejectCall = false;//拒绝来电
       this.acceptCall = false;//接受来电
@@ -860,9 +843,10 @@ export default {
       });
     },
     // 处理远程视频可用
-    handleRemoteVideoAvailable(event) {
+    async handleRemoteVideoAvailable(event) {
+      this.inCommingNotify.stopPlay();
       const { userId, streamType } = event;
-      console.log(streamType,"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+      console.log(streamType,"+++++++++++++++++++++++++++++视频进入++++++++++++++++++++++++++++++");
       this.showCallBox = false;
       this.$store.state.showChatBox = true;
       this.showCallLocalVideo = true;
@@ -880,10 +864,6 @@ export default {
 
       }
     },
-
-
-
-
 
 
     initCallUserInfo(target) {
@@ -921,6 +901,8 @@ export default {
     async cancel() {
       // 关闭显示框
       // this.voipClient.cancelCall();
+      this.inCommingNotify.stopPlay();
+      this.outGoingNotify.stopPlay();
       this.$store.state.showAudioBox = false;
       this.$store.state.showChatBox = false;
       this.showCallBox = false;
@@ -935,6 +917,11 @@ export default {
       this.showCallRemoteVideo = false;//显示对方视频
       this.showCallRemoteImg = false;//显示对方图片
       this.showCallTips = false;//显示通话提示
+      if (this.talkTimerInterval) {
+        this.showTalkTime = false;
+        this.talkInterval = 0;
+        clearInterval(this.talkTimerInterval);
+      }
       // 关闭音频检测
       this.stopGetAudioLevel();
       await this.trtc.stopLocalAudio();
@@ -1092,14 +1079,6 @@ export default {
           this.hangUpCall = true;
         }
         this.showTalkTime = true;
-        this.talkTimerInterval = setInterval(() => {
-          this.talkInterval += 1;
-          var min = Math.floor(this.talkInterval / 60 % 60);
-          var sec = Math.floor(this.talkInterval % 60);
-          sec = sec < 10 ? "0" + sec : sec;
-          min = min < 10 ? "0" + min : min;
-          this.talkTime = min + ":" + sec;
-        }, 1000)
       }
     }
 
@@ -1112,11 +1091,6 @@ export default {
         this.$store.state.showAudioBox = false;
       } else {
         this.$store.state.showChatBox = false;
-      }
-      if (this.talkTimerInterval) {
-        this.showTalkTime = false;
-        this.talkInterval = 0;
-        clearInterval(this.talkTimerInterval);
       }
     }
 
